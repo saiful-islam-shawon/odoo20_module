@@ -1,0 +1,364 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <template id="report_receipt_voucher_document_test">
+
+        <t t-call="web.html_container">
+
+            <t t-foreach="docs" t-as="o">
+
+                <t t-call="web.external_layout">
+
+                    <style type="text/css">
+
+                        .receipt-voucher-page {
+                            font-family: Arial, sans-serif;
+                            font-size: 12px;
+                            padding-top: 30mm;
+                        }
+
+                        .receipt-voucher-table {
+                            width: 100%;
+                            border-collapse: collapse;
+                        }
+
+                        .receipt-voucher-table td,
+                        .receipt-voucher-table th {
+                            border: 1px solid #000;
+                            padding: 9px;
+                            text-align: center;
+                            vertical-align: middle;
+                        }
+
+                    </style>
+
+
+                    <div class="page receipt-voucher-page">
+
+
+                        <!-- =========================
+                         TITLE
+                    ========================== -->
+
+                        <div style="
+                            margin-top:15px;
+                            margin-bottom:25px;
+                            text-align:center;
+                        ">
+                            <h2 style="
+                                margin:0;
+                                padding:0;
+                                font-size:28px;
+                                font-weight:bold;
+                            ">
+                                Receipt Voucher
+                            </h2>
+                        </div>
+
+
+                        <!-- =========================
+                         MAIN INFORMATION
+                    ========================== -->
+
+                        <table class="receipt-voucher-table">
+
+                            <tbody>
+
+                                <!-- Customer + Date -->
+
+                                <tr>
+
+                                    <td style="width:20%;">
+                                        <b>Customer</b>
+                                    </td>
+
+                                    <td style="width:30%;">
+                                        <span t-field="o.partner_id" />
+                                    </td>
+
+
+                                    <td style="width:20%;">
+                                        <b>Date</b>
+                                    </td>
+
+                                    <td style="width:30%;">
+                                        <span t-field="o.date" />
+                                    </td>
+
+                                </tr>
+
+
+                                <!-- Address + Created By -->
+
+                                <tr>
+
+                                    <td rowspan="2"
+                                        style="vertical-align:middle;">
+
+                                        <b>Address</b>
+
+                                    </td>
+
+
+                                    <td rowspan="2"
+                                        style="vertical-align:middle;">
+
+                                        <t t-set="address_parts"
+                                            t-value="[
+                                           o.partner_id.country_id.name,
+                                           o.partner_id.city,
+                                           o.partner_id.street
+                                       ]" />
+
+                                        <span
+                                            t-esc="
+                                        ', '.join(
+                                            [part for part in address_parts if part]
+                                        )
+                                    " />
+
+                                    </td>
+
+
+                                    <td>
+                                        <b>Created By</b>
+                                    </td>
+
+                                    <td>
+                                        <span t-field="o.create_uid" />
+                                    </td>
+
+                                </tr>
+
+
+                                <!-- Payment Type -->
+
+                                <tr>
+
+                                    <td>
+                                        <b>Payment Type</b>
+                                    </td>
+
+                                    <td>
+                                        <span t-field="o.payment_mode" />
+                                    </td>
+
+                                </tr>
+
+
+                                <!-- Amount + Status -->
+
+                                <tr>
+
+                                    <td>
+                                        <b>Amount</b>
+                                    </td>
+
+                                    <td style="font-weight:bold;">
+                                        <span t-esc="'%.2f Taka' % o.amount_total" />
+                                    </td>
+
+
+                                    <td>
+                                        <b>Status</b>
+                                    </td>
+
+                                    <td>
+                                        <span t-field="o.state" />
+                                    </td>
+
+                                </tr>
+
+
+                                <!-- Amount In Words -->
+
+                                <tr>
+
+                                    <td>
+                                        <b> Amount In <br /> Words </b>
+                                    </td>
+
+                                    <td colspan="3">
+
+                                        <i>
+                                            <span
+                                                t-esc="
+                                            o.currency_id.amount_to_text(
+                                                o.amount_total
+                                            )
+                                        " />
+                                            Only </i>
+
+                                    </td>
+
+                                </tr>
+
+
+                                <!-- Narration -->
+
+                                <tr>
+
+                                    <td style="vertical-align:middle;">
+                                        <b>Narration</b>
+                                    </td>
+
+                                    <td colspan="3"
+                                        style="
+                                        vertical-align:middle;
+                                        min-height:35px;
+                                        word-wrap:break-word;
+                                    ">
+
+                                        <span t-esc="o.narration or ''" />
+
+                                    </td>
+
+                                </tr>
+
+                            </tbody>
+
+                        </table>
+
+
+                        <!-- =========================
+                         INVOICE
+                    ========================== -->
+
+                        <h2
+                            style="
+                        margin-top:30px;
+                        margin-bottom:10px;
+                        font-size:21px;
+                        font-weight:bold;
+                    ">
+                            Invoice
+                        </h2>
+
+
+                        <table class="receipt-voucher-table">
+
+                            <thead>
+
+                                <tr>
+
+                                    <th style="width:40%; text-align:center; font-weight:bold;">
+                                        Invoice Number
+                                    </th>
+
+                                    <th style="width:30%; text-align:center; font-weight:bold;">
+                                        Date
+                                    </th>
+
+                                    <th style="width:30%; text-align:center; font-weight:bold;">
+                                        Amount
+                                    </th>
+
+                                </tr>
+
+                            </thead>
+
+
+                            <tbody>
+
+                                <t t-if="o.invoice_id">
+
+                                    <tr>
+
+                                        <td>
+                                            <span t-field="o.invoice_id.name" />
+                                        </td>
+
+                                        <td style="text-align:center;">
+                                            <span t-field="o.invoice_id.invoice_date" />
+                                        </td>
+
+                                        <td style="text-align:right;">
+                                            <span
+                                                t-esc="
+                                            '%.2f Taka'
+                                            % o.invoice_id.amount_total
+                                        " />
+                                        </td>
+
+                                    </tr>
+
+                                </t>
+
+
+                                <t t-else="">
+
+                                    <tr>
+
+                                        <td colspan="3"
+                                            style="text-align:center;">
+
+                                            No Invoice Selected
+
+                                        </td>
+
+                                    </tr>
+
+                                </t>
+
+                            </tbody>
+
+                        </table>
+
+
+                        <!-- =========================
+                         SIGNATURE
+                    ========================== -->
+
+                        <div
+                            style="
+                        margin-top:140px;
+                        padding:0 45px;
+                        overflow:hidden;
+                        page-break-inside:avoid;
+                    ">
+
+
+                            <div
+                                style="
+                            float:left;
+                            width:40%;
+                            text-align:center;
+                        ">
+                                __________________________ <br />
+
+                            <span style="font-weight:bold;">
+                                Received By
+                                </span>
+
+                            </div>
+
+
+                            <div
+                                style="
+                            float:right;
+                            width:40%;
+                            text-align:center;
+                        ">
+                                __________________________ <br />
+
+                            <span style="font-weight:bold;">
+                                Authorized Signature
+                                </span>
+
+                            </div>
+
+
+                        </div>
+
+
+                    </div>
+
+                </t>
+
+            </t>
+
+        </t>
+
+    </template>
+
+</odoo>

@@ -1,0 +1,7 @@
+<odoo noupdate="1">
+  <record id="seq_receipt_voucher" model="ir.sequence"><field name="name">Receipt Voucher</field><field name="code">account.voucher.receipt</field><field name="prefix">RV-</field><field name="padding">5</field><field name="company_id" eval="False"/></record>
+  <record id="seq_payment_voucher" model="ir.sequence"><field name="name">Payment Voucher</field><field name="code">account.voucher.payment</field><field name="prefix">PV-</field><field name="padding">5</field><field name="company_id" eval="False"/></record>
+  <record id="seq_contra_voucher" model="ir.sequence"><field name="name">Contra Voucher</field><field name="code">account.voucher.contra</field><field name="prefix">CV-</field><field name="padding">5</field><field name="company_id" eval="False"/></record>
+  <record id="seq_expense_voucher" model="ir.sequence"><field name="name">Expense Voucher</field><field name="code">account.voucher.expense</field><field name="prefix">EV-</field><field name="padding">5</field><field name="company_id" eval="False"/></record>
+  <record id="seq_journal_voucher" model="ir.sequence"><field name="name">Journal Voucher</field><field name="code">account.voucher.journal</field><field name="prefix">JV-</field><field name="padding">5</field><field name="company_id" eval="False"/></record>
+</odoo>

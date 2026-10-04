@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Custom Paperformat for Receipt Voucher -->
+    <record id="paperformat_receipt_voucher" model="report.paperformat">
+
+        <field name="name">Receipt Voucher A4</field>
+
+        <field name="default" eval="False"/>
+
+        <field name="format">A4</field>
+
+        <field name="orientation">Portrait</field>
+
+        <field name="margin_top">30</field>
+
+        <field name="margin_bottom">25</field>
+
+        <field name="margin_left">10</field>
+
+        <field name="margin_right">10</field>
+
+        <field name="header_line" eval="False"/>
+
+        <field name="header_spacing">10</field>
+
+        <field name="dpi">90</field>
+
+    </record>
+
+    <!-- All Vouchers Report Action -->
+    <record id="action_report_all_vouchers" model="ir.actions.report">
+        <field name="name">Voucher</field>
+        <field name="model">account.voucher</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">account_voucher_management.report_voucher_document</field>
+        <field name="binding_model_id" ref="model_account_voucher"/>
+        <field name="binding_type">report</field>
+        <field name="print_report_name">'Voucher - %s' % (object.voucher_number)</field>
+    </record>
+
+    <!-- Receipt Voucher Report Action -->
+    <record id="action_report_receipt_voucher" model="ir.actions.report">
+        <field name="name">Receipt Voucher</field>
+        <field name="model">account.voucher</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">account_voucher_management.report_receipt_voucher_document_test</field>
+        <field name="binding_model_id" ref="model_account_voucher"/>
+        <field name="binding_type">report</field>
+        <field name="domain">[('voucher_type', '=', 'receipt')]</field>
+        <field name="paperformat_id" ref="account_voucher_management.paperformat_receipt_voucher"/>
+    </record>
+  
+    <!-- Payment Voucher Report Action -->
+    <record id="action_report_payment_voucher" model="ir.actions.report">
+        <field name="name">Payment Voucher</field>
+        <field name="model">account.voucher</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">account_voucher_management.report_payment_voucher_document</field>
+        <field name="paperformat_id" ref="account_voucher_management.paperformat_receipt_voucher"/>
+        <field name="binding_model_id" ref="model_account_voucher"/>
+        <field name="binding_type">report</field>
+        <field name="domain">[('voucher_type', '=', 'payment')]</field>
+    </record>
+
+    <!-- Contra Voucher Report Action -->
+    <record id="action_report_contra_voucher" model="ir.actions.report">
+        <field name="name">Contra Voucher</field>
+        <field name="model">account.voucher</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">account_voucher_management.report_contra_voucher_document</field>
+        <field name="paperformat_id" ref="account_voucher_management.paperformat_receipt_voucher"/>
+        <field name="binding_model_id" ref="model_account_voucher"/>
+        <field name="binding_type">report</field>
+        <field name="domain">[('voucher_type', '=', 'contra')]</field>
+    </record>
+
+    <!-- Expense Voucher Report Action -->
+    <record id="action_report_expense_voucher" model="ir.actions.report">
+        <field name="name">Expense Voucher</field>
+        <field name="model">account.voucher</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">account_voucher_management.report_voucher_document</field>
+        <field name="binding_model_id" ref="model_account_voucher"/>
+        <field name="binding_type">report</field>
+        <field name="domain">[('voucher_type', '=', 'expense')]</field>
+    </record>
+
+    <!-- Journal Voucher Report Action -->
+    <record id="action_report_journal_voucher" model="ir.actions.report">
+        <field name="name">Journal Voucher</field>
+        <field name="model">account.voucher</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">account_voucher_management.report_voucher_document</field>
+        <field name="binding_model_id" ref="model_account_voucher"/>
+        <field name="binding_type">report</field>
+        <field name="domain">[('voucher_type', '=', 'journal')]</field>
+    </record>
+
+</odoo>

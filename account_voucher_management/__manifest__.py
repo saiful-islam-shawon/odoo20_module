@@ -1,0 +1,23 @@
+{
+    "name": "Custom Voucher Management",
+    "version": "20.0.1.5.0",
+    "category": "Accounting/Accounting",
+    "summary": "Receipt, payment, contra, expense and journal vouchers",
+    "author": "Saiful Islam Shawon",
+    "license": "LGPL-3",
+    "depends": ["account", "mail"],
+    "data": [
+        "security/voucher_security.xml",
+        "security/ir.access.csv",
+        "data/voucher_sequences.xml",
+        "views/res_partner_views.xml",
+        "views/voucher_views.xml",
+        "report/voucher_report.xml",
+        "report/voucher_templates.xml",
+        "report/payment_voucher_template.xml",
+        "report/contra_voucher_template.xml",
+        "report/receipt_voucher.xml",
+    ],
+    "application": True,
+    "installable": True,
+}

@@ -1,0 +1,8 @@
+id,name,model_id,group_id/id,operation,domain
+access_voucher_user,voucher user,account.voucher,account_voucher_management.group_voucher_user,crud,"[('company_id', 'in', company_ids)]"
+access_voucher_approver,voucher approver,account.voucher,account_voucher_management.group_voucher_approver,crud,"[('company_id', 'in', company_ids)]"
+access_voucher_manager,voucher manager,account.voucher,account_voucher_management.group_voucher_manager,crud,"[('company_id', 'in', company_ids)]"
+access_voucher_line_user,voucher line user,account.voucher.line,account_voucher_management.group_voucher_user,crud,"[('company_id', 'in', company_ids)]"
+access_voucher_line_approver,voucher line approver,account.voucher.line,account_voucher_management.group_voucher_approver,crud,"[('company_id', 'in', company_ids)]"
+access_voucher_line_manager,voucher line manager,account.voucher.line,account_voucher_management.group_voucher_manager,crud,"[('company_id', 'in', company_ids)]"
+access_res_bank_user,res.bank user,res.bank,base.group_user,crud,

@@ -1,0 +1,351 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <template id="report_contra_voucher_document">
+
+        <t t-call="web.html_container">
+
+            <t t-foreach="docs" t-as="o">
+
+                <!-- Odoo Default Header + Footer -->
+                <t t-call="web.external_layout">
+
+                    <style type="text/css">
+
+                        .contra-voucher-page {
+                            font-family: Arial, sans-serif;
+                            font-size: 12px;
+                            padding-top: 30mm;
+                        }
+
+                        .contra-voucher-table {
+                            width: 100%;
+                            border-collapse: collapse;
+                        }
+
+                        .contra-voucher-table td,
+                        .contra-voucher-table th {
+                            border: 1px solid #000;
+                            padding: 10px;
+                            text-align: center;
+                            vertical-align: middle;
+                        }
+
+                    </style>
+
+
+                    <div class="page contra-voucher-page">
+
+                        <!-- =========================
+                             TITLE
+                        ========================== -->
+
+                        <h2 style="
+                            text-align:center;
+                            font-size:28px;
+                            font-weight:bold;
+                            margin:0 0 25px 0;
+                            padding:0;
+                        ">
+                            Contra Voucher
+                        </h2>
+
+
+                        <!-- =========================
+                             MAIN INFORMATION TABLE
+                        ========================== -->
+
+                        <table class="contra-voucher-table">
+
+                            <tbody>
+
+                                <!-- Date + Created By -->
+
+                                <tr>
+
+                                    <td style="width:20%;">
+                                        <b>Date</b>
+                                    </td>
+
+                                    <td style="width:30%;">
+                                        <span t-field="o.date"/>
+                                    </td>
+
+
+                                    <td style="width:20%;">
+                                        <b>Created By</b>
+                                    </td>
+
+                                    <td style="width:30%;">
+                                        <span t-field="o.create_uid"/>
+                                    </td>
+
+                                </tr>
+
+
+                                <!-- Currency + Company -->
+
+                                <tr>
+
+                                    <td>
+                                        <b>Currency</b>
+                                    </td>
+
+                                    <td>
+                                        <span t-field="o.currency_id"/>
+                                    </td>
+
+
+                                    <td>
+                                        <b>Company</b>
+                                    </td>
+
+                                    <td>
+                                        <span t-field="o.company_id"/>
+                                    </td>
+
+                                </tr>
+
+
+                                <!-- Amount + Status -->
+
+                                <tr>
+
+                                    <td>
+                                        <b>Amount</b>
+                                    </td>
+
+                                    <td style="font-weight:bold;">
+                                        <span t-esc="'%.2f Taka' % o.amount_total"/>
+                                    </td>
+
+
+                                    <td>
+                                        <b>Status</b>
+                                    </td>
+
+                                    <td>
+                                        <span t-field="o.state"/>
+                                    </td>
+
+                                </tr>
+
+
+                                <!-- Amount In Words -->
+
+                                <tr>
+
+                                    <td>
+                                        <b>
+                                            Amount In
+                                            <br/>
+                                            Words
+                                        </b>
+                                    </td>
+
+
+                                    <td colspan="3">
+
+                                        <i>
+
+                                            <span t-esc="
+                                                o.currency_id.amount_to_text(
+                                                    o.amount_total
+                                                )
+                                            "/>
+
+                                            Only
+
+                                        </i>
+
+                                    </td>
+
+                                </tr>
+
+
+                                <!-- Narration -->
+
+                                <tr>
+
+                                    <td>
+                                        <b>Narration</b>
+                                    </td>
+
+
+                                    <td colspan="3"
+                                        style="word-wrap:break-word;">
+
+                                        <span t-esc="o.narration or ''"/>
+
+                                    </td>
+
+                                </tr>
+
+                            </tbody>
+
+                        </table>
+
+
+                        <!-- =========================
+                             ACCOUNT DETAILS
+                        ========================== -->
+
+                        <h2 style="
+                            margin-top:30px;
+                            margin-bottom:10px;
+                            font-size:21px;
+                            font-weight:bold;
+                        ">
+                            Account Details
+                        </h2>
+
+
+                        <table class="contra-voucher-table">
+
+                            <thead>
+
+                                <tr>
+
+                                    <th style="width:50%; font-weight:bold;">
+                                        Accounts
+                                    </th>
+
+                                    <th style="width:25%; font-weight:bold;">
+                                        Debit
+                                    </th>
+
+                                    <th style="width:25%; font-weight:bold;">
+                                        Credit
+                                    </th>
+
+                                </tr>
+
+                            </thead>
+
+
+                            <tbody>
+
+                                <!-- Debit Account -->
+
+                                <tr>
+
+                                    <td>
+
+                                        <span t-esc="
+                                            '%s %s' % (
+                                                o.debit_account_id.code or '',
+                                                o.debit_account_id.name or ''
+                                            )
+                                        "/>
+
+                                    </td>
+
+
+                                    <td>
+                                        <span t-esc="'%.2f' % o.amount_total"/>
+                                    </td>
+
+
+                                    <td>
+                                        0.00
+                                    </td>
+
+                                </tr>
+
+
+                                <!-- Credit Account -->
+
+                                <tr>
+
+                                    <td>
+
+                                        <span t-esc="
+                                            '%s %s' % (
+                                                o.credit_account_id.code or '',
+                                                o.credit_account_id.name or ''
+                                            )
+                                        "/>
+
+                                    </td>
+
+
+                                    <td>
+                                        0.00
+                                    </td>
+
+
+                                    <td>
+                                        <span t-esc="'%.2f' % o.amount_total"/>
+                                    </td>
+
+                                </tr>
+
+                            </tbody>
+
+                        </table>
+
+
+                        <!-- =========================
+                             SIGNATURE SECTION
+                        ========================== -->
+
+                        <div style="
+                            margin-top:140px;
+                            padding:0 45px;
+                            overflow:hidden;
+                            page-break-inside:avoid;
+                        ">
+
+
+                            <!-- LEFT -->
+
+                            <div style="
+                                float:left;
+                                width:40%;
+                                text-align:center;
+                            ">
+
+                                __________________________
+
+                                <br/>
+
+                                <span style="font-weight:bold;">
+                                    Prepared By
+                                </span>
+
+                            </div>
+
+
+                            <!-- RIGHT -->
+
+                            <div style="
+                                float:right;
+                                width:40%;
+                                text-align:center;
+                            ">
+
+                                __________________________
+
+                                <br/>
+
+                                <span style="font-weight:bold;">
+                                    Authorized Signature
+                                </span>
+
+                            </div>
+
+
+                        </div>
+
+
+                    </div>
+
+                </t>
+
+            </t>
+
+        </t>
+
+    </template>
+
+</odoo>
