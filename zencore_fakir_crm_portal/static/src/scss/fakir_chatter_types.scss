@@ -1,0 +1,15 @@
+// Scoped type labels: do not affect Odoo backend mail/chatter.
+.fpm-crm-detail-page #fpmCrmChatterTimeline {
+  .fakir-chatter-kind-line { margin: 5px 0 7px; }
+  .fakir-chatter-kind {
+    display: inline-flex; align-items: center; gap: 5px;
+    width: max-content; max-width: 100%; padding: 3px 9px;
+    border: 1px solid #cbd5e1; border-radius: 999px;
+    font-size: 11px; font-weight: 600; line-height: 1.5;
+    white-space: nowrap; background: #f8fafc; color: #475569;
+  }
+  .fakir-chatter-kind--message { background: #edf6ff; border-color: #c7e4ff; color: #1c5986; }
+  .fakir-chatter-kind--note { background: #fff8e9; border-color: #f4deb0; color: #825713; }
+  .fakir-chatter-kind--activity { background: #effaf2; border-color: #c5e8cf; color: #24643a; }
+  .fakir-chatter-kind--tracking { background: #f3f1f7; border-color: #ded7e7; color: #675178; }
+}

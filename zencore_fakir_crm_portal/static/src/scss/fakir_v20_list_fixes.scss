@@ -1,0 +1,17 @@
+// Scoped Opportunity list & portal home additions.
+.fpm-crm-list-breadcrumb { margin: 3px 0 20px; display: flex; align-items: center; font-size: 14px; }
+.fpm-crm-list-breadcrumb .oi { font-size: 17px; }
+#fpmCrmOpportunityTable .fpm-crm-optional-column[hidden] { display: none !important; }
+#fpmCrmOptionalColumnsButton { display: inline-flex; justify-content: center; align-items: center; }
+.fpm-crm-optional-menu[hidden] { display: none !important; }
+.fpm-crm-optional-menu:not([hidden]) { position: fixed !important; display: block !important; z-index: 11000 !important; background: white; padding: 12px; max-height: 65vh; overflow-y: auto; border: 1px solid #ddd; border-radius: 8px; box-shadow: 0 12px 28px rgba(0,0,0,.15); }
+.o_portal_docs .o_portal_category:has(> .fpm-crm-home-card) { margin-top: 12px; }
+.fpm-crm-home-icon { color: #714b67; }
+.fpm-crm-chatter-title-icon svg { display: block; }
+
+.fpm-crm-detail-breadcrumb { display: flex; align-items: center; flex-wrap: wrap; padding: 8px 0 18px; font-size: 14px; }
+.fpm-crm-detail-breadcrumb a { color: #714b67; text-decoration: none; }
+.fpm-crm-detail-breadcrumb a:hover { text-decoration: underline; }
+#fpmCrmOpportunityTable .fpm-crm-optional-column { display: none; }
+.fpm-crm-list-actions svg, .fakir-odoo20-smart svg { vertical-align: -3px; margin-right: 3px; }
+.fpm-crm-chatter-title-icon svg, .fpm-crm-home-icon svg { width: 24px; height: 24px; }

@@ -1,0 +1,2661 @@
+// ============================================================================
+// FAKIR PORTAL CRM
+// ============================================================================
+
+$crm-primary: #714b67;
+$crm-primary-dark: #5f3f57;
+$crm-primary-soft: #f7f2f5;
+
+$crm-text: #212529;
+$crm-muted: #6b7280;
+
+$crm-border: #e3e6e9;
+$crm-border-soft: #edf0f2;
+
+$crm-surface: #ffffff;
+$crm-surface-soft: #f8f9fa;
+
+$crm-success: #198754;
+$crm-danger: #dc3545;
+
+
+// ============================================================================
+// PORTAL HOME - CRM CARD
+// ============================================================================
+
+.fpm-crm-home-card {
+    display: block;
+
+    width: 100%;
+    max-width: 100%;
+    height: 100%;
+
+    overflow: hidden;
+
+    color: inherit;
+    background: #f8f9fa;
+
+    border: 1px solid transparent;
+    border-radius: 8px;
+
+    box-shadow: none;
+
+    transition:
+        background-color 0.18s ease,
+        border-color 0.18s ease,
+        box-shadow 0.18s ease,
+        transform 0.18s ease;
+
+    &:hover {
+        color: inherit;
+
+        background: #fff;
+
+        border-color: #e1e4e8;
+
+        box-shadow:
+            0 6px 18px rgba(16, 24, 40, 0.07);
+
+        transform: translateY(-1px);
+
+        text-decoration: none;
+    }
+
+    .fpm-crm-home-card-body {
+        display: flex;
+        align-items: center;
+
+        width: 100%;
+        min-height: 96px;
+
+        padding: 16px 24px;
+    }
+
+    .fpm-crm-home-icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        width: 50px;
+        height: 50px;
+        flex: 0 0 50px;
+
+        margin-right: 18px;
+
+        color: $crm-primary;
+        font-size: 19px;
+
+        background: $crm-primary-soft;
+
+        border-radius: 10px;
+
+        transition:
+            color 0.18s ease,
+            background-color 0.18s ease,
+            transform 0.18s ease;
+    }
+
+    &:hover .fpm-crm-home-icon {
+        color: #fff;
+
+        background: $crm-primary;
+
+        transform: scale(1.03);
+    }
+
+    .fpm-crm-home-content {
+        flex: 1 1 auto;
+
+        min-width: 0;
+    }
+
+    .fpm-crm-home-title {
+        margin-bottom: 4px;
+
+        color: #1f2933;
+
+        font-size: 16px;
+        font-weight: 600;
+        line-height: 1.3;
+    }
+
+    .fpm-crm-home-subtitle {
+        color: #60676f;
+
+        font-size: 14px;
+        line-height: 1.4;
+
+        strong {
+            color: $crm-primary;
+
+            font-weight: 700;
+        }
+    }
+
+    .fpm-crm-home-arrow {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        width: 30px;
+        height: 30px;
+        flex: 0 0 30px;
+
+        margin-left: 16px;
+
+        color: #a0a7af;
+        font-size: 18px;
+
+        border-radius: 50%;
+
+        transition:
+            color 0.18s ease,
+            background-color 0.18s ease,
+            transform 0.18s ease;
+    }
+
+    &:hover .fpm-crm-home-arrow {
+        color: $crm-primary;
+
+        background: $crm-primary-soft;
+
+        transform: translateX(2px);
+    }
+}
+
+
+// ============================================================================
+// SEARCH
+// ============================================================================
+
+#fpmCrmOpportunitySearchWrapper {
+    display: flex;
+    justify-content: center;
+
+    width: 100%;
+
+    .fpm-crm-search-form {
+        width: 100%;
+        max-width: 640px;
+
+        margin: 0;
+    }
+
+    .fpm-crm-search-box {
+        display: flex;
+        align-items: stretch;
+
+        width: 100%;
+        min-height: 46px;
+
+        overflow: hidden;
+
+        background: #fff;
+
+        border: 1px solid #dfe3e7;
+        border-radius: 9px;
+
+        box-shadow:
+            0 2px 6px rgba(16, 24, 40, 0.04);
+
+        transition:
+            border-color 0.15s ease,
+            box-shadow 0.15s ease;
+
+        &:focus-within {
+            border-color: #9d7e94;
+
+            box-shadow:
+                0 0 0 3px rgba(113, 75, 103, 0.10);
+        }
+    }
+
+    .fpm-crm-search-icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        width: 46px;
+        min-width: 46px;
+
+        color: #8a929b;
+
+        background: #fff;
+    }
+
+    .fpm-crm-search-input {
+        flex: 1 1 auto;
+
+        min-width: 0;
+
+        padding: 0 8px;
+
+        color: $crm-text;
+
+        font-size: 14px;
+
+        background: #fff;
+
+        border: 0;
+        outline: 0;
+
+        box-shadow: none;
+
+        &::placeholder {
+            color: #9ba1a8;
+        }
+
+        &:focus {
+            outline: 0;
+            box-shadow: none;
+        }
+
+        &::-webkit-search-decoration {
+            -webkit-appearance: none;
+        }
+    }
+
+    .fpm-crm-search-clear {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        width: 42px;
+        min-width: 42px;
+
+        color: #98a0a8;
+
+        text-decoration: none;
+
+        background: #fff;
+
+        transition:
+            color 0.15s ease,
+            background-color 0.15s ease;
+
+        &:hover {
+            color: $crm-danger;
+
+            background: #fff5f5;
+        }
+    }
+
+    .fpm-crm-search-button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+
+        min-width: 108px;
+
+        padding: 0 18px;
+
+        font-size: 14px;
+        font-weight: 600;
+
+        border: 0;
+        border-radius: 0;
+    }
+}
+
+
+// ============================================================================
+// EMPTY STATE
+// ============================================================================
+
+.fpm-crm-empty-state {
+    padding: 64px 24px;
+
+    text-align: center;
+
+    background: #fff;
+
+    border: 1px solid $crm-border;
+    border-radius: 12px;
+
+    box-shadow:
+        0 2px 8px rgba(16, 24, 40, 0.04);
+
+    .fpm-crm-empty-icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        width: 60px;
+        height: 60px;
+
+        margin: 0 auto 18px;
+
+        color: $crm-primary;
+
+        font-size: 23px;
+
+        background: $crm-primary-soft;
+
+        border-radius: 50%;
+    }
+
+    h4 {
+        margin-bottom: 8px;
+
+        color: $crm-text;
+
+        font-size: 18px;
+        font-weight: 650;
+    }
+
+    p {
+        margin: 0;
+
+        color: $crm-muted;
+
+        font-size: 14px;
+    }
+}
+
+
+// ============================================================================
+// OPPORTUNITY LIST
+// ============================================================================
+
+#fpmCrmOpportunityList {
+    position: relative;
+
+    display: block;
+
+    width: 100%;
+    max-width: 100%;
+
+    overflow-x: auto;
+    overflow-y: visible;
+
+    background: #fff;
+
+    border: 1px solid $crm-border;
+    border-radius: 11px;
+
+    box-shadow:
+        0 2px 8px rgba(16, 24, 40, 0.04);
+
+    -webkit-overflow-scrolling: touch;
+
+    overscroll-behavior-x: contain;
+
+    scrollbar-width: thin;
+    scrollbar-color: #c4c8cc transparent;
+
+
+    #fpmCrmOpportunityTable {
+        width: max-content;
+        min-width: 100%;
+
+        margin: 0;
+
+        table-layout: auto;
+
+        border-collapse: separate;
+        border-spacing: 0;
+
+
+        th,
+        td {
+            vertical-align: middle;
+
+            white-space: nowrap;
+
+            border-color: $crm-border-soft;
+        }
+
+
+        // --------------------------------------------------------------------
+        // HEADER
+        // --------------------------------------------------------------------
+
+        thead th {
+            padding: 13px 14px;
+
+            color: #667085;
+
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.045em;
+            text-transform: uppercase;
+
+            background: #f8f9fa;
+
+            border-bottom: 1px solid $crm-border;
+        }
+
+
+        // --------------------------------------------------------------------
+        // BODY
+        // --------------------------------------------------------------------
+
+        tbody td {
+            padding: 13px 14px;
+
+            color: #4b5563;
+
+            font-size: 13.5px;
+
+            background: #fff;
+
+            transition:
+                background-color 0.14s ease;
+        }
+
+
+        .fpm-crm-opportunity-row {
+            cursor: pointer;
+
+            &:hover td {
+                background: #fafbfc;
+            }
+
+            &:hover td:last-child {
+                background: #fafbfc;
+            }
+        }
+
+
+        // --------------------------------------------------------------------
+        // FIXED COLUMNS
+        // --------------------------------------------------------------------
+
+        th:first-child,
+        td:first-child,
+        .fpm-crm-select-column {
+            width: 48px;
+            min-width: 48px;
+            max-width: 48px;
+
+            text-align: center;
+        }
+
+        th:nth-child(2),
+        td:nth-child(2) {
+            min-width: 225px;
+        }
+
+        th:nth-child(3),
+        td:nth-child(3) {
+            min-width: 205px;
+        }
+
+
+        // --------------------------------------------------------------------
+        // OPTIONAL COLUMN WIDTHS
+        // --------------------------------------------------------------------
+
+        [data-column="created_on"] {
+            min-width: 160px;
+        }
+
+        [data-column="contact"] {
+            min-width: 180px;
+        }
+
+        [data-column="contact_name"] {
+            min-width: 170px;
+        }
+
+        [data-column="phone"] {
+            min-width: 150px;
+        }
+
+        [data-column="city"] {
+            min-width: 130px;
+        }
+
+        [data-column="state"] {
+            min-width: 150px;
+        }
+
+        [data-column="country"] {
+            min-width: 160px;
+        }
+
+        [data-column="salesperson"] {
+            min-width: 180px;
+        }
+
+        [data-column="sales_team"] {
+            min-width: 170px;
+        }
+
+        [data-column="priority"] {
+            min-width: 120px;
+        }
+
+        [data-column="activities"] {
+            min-width: 190px;
+        }
+
+        [data-column="activity_by"] {
+            min-width: 160px;
+        }
+
+        [data-column="my_deadline"] {
+            min-width: 150px;
+        }
+
+        [data-column="campaign"] {
+            min-width: 160px;
+        }
+
+        [data-column="medium"] {
+            min-width: 150px;
+        }
+
+        [data-column="source"] {
+            min-width: 150px;
+        }
+
+        [data-column="expected_revenue"] {
+            min-width: 180px;
+        }
+
+        [data-column="expected_closing"] {
+            min-width: 170px;
+        }
+
+        [data-column="stage"] {
+            min-width: 140px;
+        }
+
+        [data-column="probability"] {
+            min-width: 145px;
+        }
+
+        [data-column="lost_reason"] {
+            min-width: 170px;
+        }
+
+        [data-column="tags"] {
+            min-width: 190px;
+        }
+
+
+        // --------------------------------------------------------------------
+        // OPPORTUNITY
+        // --------------------------------------------------------------------
+
+        .fpm-crm-opportunity-name {
+            color: $crm-text;
+
+            font-weight: 650;
+
+            text-decoration: none;
+
+            transition:
+                color 0.15s ease;
+
+            &:hover {
+                color: $crm-primary;
+            }
+        }
+
+
+        // --------------------------------------------------------------------
+        // SALESPERSON
+        // --------------------------------------------------------------------
+
+        .fpm-crm-salesperson {
+            display: flex;
+            align-items: center;
+
+            gap: 8px;
+        }
+
+        .fpm-crm-salesperson-avatar {
+            width: 26px;
+            height: 26px;
+            flex: 0 0 26px;
+
+            object-fit: cover;
+
+            border: 1px solid $crm-border;
+            border-radius: 50%;
+        }
+
+
+        // --------------------------------------------------------------------
+        // PRIORITY
+        // --------------------------------------------------------------------
+
+        .fpm-crm-priority {
+            color: #e7a82e;
+
+            font-size: 13px;
+
+            .fa + .fa {
+                margin-left: 2px;
+            }
+        }
+
+
+        // --------------------------------------------------------------------
+        // BADGES
+        // --------------------------------------------------------------------
+
+        .fpm-crm-soft-badge {
+            display: inline-flex;
+
+            padding: 4px 8px;
+
+            margin-right: 4px;
+
+            color: #59636e;
+
+            font-size: 11px;
+            font-weight: 600;
+
+            background: #f3f4f6;
+
+            border: 1px solid #e5e7eb;
+            border-radius: 6px;
+        }
+
+
+        .fpm-crm-stage-badge {
+            display: inline-flex;
+
+            padding: 5px 9px;
+
+            color: $crm-primary;
+
+            font-size: 11px;
+            font-weight: 650;
+
+            background: $crm-primary-soft;
+
+            border: 1px solid #e8dce4;
+            border-radius: 20px;
+        }
+
+
+        .fpm-crm-tag {
+            display: inline-flex;
+
+            padding: 4px 8px;
+
+            margin-right: 4px;
+
+            color: #59636e;
+
+            font-size: 11px;
+            font-weight: 600;
+
+            background: #f5f6f7;
+
+            border: 1px solid #e5e7eb;
+            border-radius: 20px;
+        }
+
+
+        .fpm-crm-probability {
+            color: #475467;
+
+            font-weight: 600;
+        }
+
+
+        // --------------------------------------------------------------------
+        // REVENUE
+        // --------------------------------------------------------------------
+
+        .fpm-crm-revenue {
+            color: $crm-text;
+
+            font-weight: 650;
+
+            text-align: right;
+        }
+
+
+        // --------------------------------------------------------------------
+        // SETTINGS
+        // --------------------------------------------------------------------
+
+        .fpm-crm-settings-column {
+            position: sticky;
+            right: 0;
+
+            z-index: 20;
+
+            width: 54px;
+            min-width: 54px;
+            max-width: 54px;
+
+            padding: 8px;
+
+            text-align: center;
+
+            background: #f8f9fa;
+
+            border-left: 1px solid $crm-border;
+        }
+
+
+        tbody td:last-child,
+        tfoot td:last-child {
+            position: sticky;
+            right: 0;
+
+            z-index: 10;
+
+            width: 54px;
+            min-width: 54px;
+            max-width: 54px;
+
+            background: #fff;
+
+            border-left: 1px solid $crm-border;
+        }
+
+
+        // --------------------------------------------------------------------
+        // FOOTER
+        // --------------------------------------------------------------------
+
+        tfoot td {
+            padding: 14px;
+
+            background: #fafbfc;
+
+            border-top: 1px solid $crm-border;
+        }
+
+        tfoot td:last-child {
+            background: #fafbfc;
+        }
+
+        .fpm-crm-total-revenue {
+            color: $crm-primary;
+
+            font-size: 14px;
+            font-weight: 700;
+
+            text-align: right;
+        }
+    }
+
+
+    // ------------------------------------------------------------------------
+    // CHECKBOXES
+    // ------------------------------------------------------------------------
+
+    #fpmCrmSelectAll,
+    .fpm-crm-row-checkbox {
+        cursor: pointer;
+
+        border-color: #c5c9ce;
+
+        &:checked {
+            background-color: $crm-primary;
+
+            border-color: $crm-primary;
+        }
+
+        &:focus {
+            border-color: $crm-primary;
+
+            box-shadow:
+                0 0 0 0.2rem rgba(113, 75, 103, 0.12);
+        }
+    }
+
+
+    // ------------------------------------------------------------------------
+    // OPTIONAL COLUMNS BUTTON
+    // ------------------------------------------------------------------------
+
+    #fpmCrmOptionalColumnsButton {
+        position: relative;
+
+        z-index: 21;
+
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+
+        width: 34px;
+        height: 32px;
+
+        padding: 0;
+
+        color: #667085;
+
+        background: #fff;
+
+        border: 1px solid #dfe2e6;
+        border-radius: 7px;
+
+        cursor: pointer;
+
+        transition:
+            color 0.15s ease,
+            border-color 0.15s ease,
+            background-color 0.15s ease;
+
+        &:hover {
+            color: $crm-primary;
+
+            background: $crm-primary-soft;
+
+            border-color: #d9cbd4;
+        }
+    }
+
+
+    // ------------------------------------------------------------------------
+    // OPTIONAL MENU
+    // ------------------------------------------------------------------------
+
+    .fpm-crm-optional-menu {
+        min-width: 255px;
+        max-height: 520px;
+
+        padding: 12px;
+
+        overflow-x: hidden;
+        overflow-y: auto;
+
+        background: #fff;
+
+        border: 1px solid $crm-border;
+        border-radius: 10px;
+
+        box-shadow:
+            0 14px 35px rgba(16, 24, 40, 0.12);
+
+        .fpm-crm-column-menu-title {
+            padding: 3px 3px 10px;
+
+            margin-bottom: 7px;
+
+            color: #667085;
+
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+
+            border-bottom: 1px solid $crm-border-soft;
+        }
+
+        .form-check {
+            display: flex;
+            align-items: center;
+
+            min-height: 31px;
+
+            margin: 0;
+
+            padding-top: 2px;
+            padding-bottom: 2px;
+        }
+
+        .form-check-input {
+            flex-shrink: 0;
+
+            cursor: pointer;
+
+            &:checked {
+                background-color: $crm-primary;
+
+                border-color: $crm-primary;
+            }
+        }
+
+        .form-check-label {
+            width: 100%;
+
+            margin-left: 6px;
+
+            color: #475467;
+
+            font-size: 13px;
+
+            cursor: pointer;
+
+            user-select: none;
+        }
+    }
+
+
+    // ------------------------------------------------------------------------
+    // SCROLLBAR
+    // ------------------------------------------------------------------------
+
+    &::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+    }
+
+    &::-webkit-scrollbar-track {
+        background: #f6f7f8;
+    }
+
+    &::-webkit-scrollbar-thumb {
+        background: #c7cacf;
+
+        border: 2px solid #f6f7f8;
+        border-radius: 20px;
+    }
+
+    &::-webkit-scrollbar-thumb:hover {
+        background: #aeb2b7;
+    }
+}
+
+
+// ============================================================================
+// FLOATING OPTIONAL MENU
+// ============================================================================
+
+.fpm-crm-floating-optional-menu {
+    display: block;
+
+    min-width: 255px;
+
+    padding: 12px;
+
+    overflow-x: hidden;
+    overflow-y: auto;
+
+    background: #fff;
+
+    border: 1px solid $crm-border;
+    border-radius: 10px;
+
+    box-shadow:
+        0 14px 35px rgba(16, 24, 40, 0.14);
+
+    z-index: 2000;
+
+    .fpm-crm-column-menu-title {
+        padding: 3px 3px 10px;
+
+        margin-bottom: 7px;
+
+        color: #667085;
+
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+
+        border-bottom: 1px solid $crm-border-soft;
+    }
+
+    .form-check {
+        display: flex;
+        align-items: center;
+
+        min-height: 31px;
+
+        margin: 0;
+    }
+
+    .form-check-input {
+        flex-shrink: 0;
+
+        cursor: pointer;
+
+        &:checked {
+            background-color: $crm-primary;
+
+            border-color: $crm-primary;
+        }
+    }
+
+    .form-check-label {
+        width: 100%;
+
+        margin-left: 6px;
+
+        color: #475467;
+
+        font-size: 13px;
+
+        cursor: pointer;
+
+        user-select: none;
+    }
+}
+
+
+// ============================================================================
+// PAGER
+// ============================================================================
+
+.fpm-crm-pager-wrapper {
+    margin-top: 20px;
+}
+
+
+// ============================================================================
+// DETAIL PAGE
+// ============================================================================
+
+.fpm-crm-detail-page {
+    --fpm-crm-primary: #714b67;
+}
+
+
+// ============================================================================
+// BACK NAVIGATION
+// ============================================================================
+
+.fpm-crm-back-navigation {
+    margin-bottom: 14px;
+
+    a {
+        display: inline-flex;
+        align-items: center;
+
+        gap: 7px;
+
+        color: #69717a;
+
+        font-size: 13px;
+        font-weight: 600;
+
+        text-decoration: none;
+
+        transition:
+            color 0.15s ease;
+
+        &:hover {
+            color: $crm-primary;
+        }
+    }
+}
+
+
+// ============================================================================
+// ALERT
+// ============================================================================
+
+.fpm-crm-alert {
+    display: flex;
+    align-items: center;
+
+    gap: 9px;
+
+    padding: 12px 15px;
+
+    font-size: 13px;
+
+    border: 0;
+    border-radius: 8px;
+
+    box-shadow: none;
+}
+
+
+// ============================================================================
+// COMMAND BAR
+// ============================================================================
+
+.fpm-crm-commandbar {
+    margin-bottom: 22px;
+
+    padding: 12px 14px;
+
+    background: #fff;
+
+    border: 1px solid $crm-border;
+    border-radius: 10px;
+
+    box-shadow:
+        0 2px 7px rgba(16, 24, 40, 0.04);
+}
+
+
+.fpm-crm-commandbar-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 18px;
+}
+
+
+.fpm-crm-record-actions {
+    display: flex;
+    align-items: center;
+
+    gap: 7px;
+
+    flex-shrink: 0;
+}
+
+
+.fpm-crm-action-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    gap: 6px;
+
+    min-height: 35px;
+
+    padding: 7px 12px;
+
+    color: #59636e;
+
+    font-size: 12.5px;
+    font-weight: 600;
+
+    background: #fff;
+
+    border: 1px solid #dfe2e6;
+    border-radius: 7px;
+
+    transition:
+        color 0.15s ease,
+        background-color 0.15s ease,
+        border-color 0.15s ease;
+
+    &:hover {
+        color: $crm-primary;
+
+        background: $crm-primary-soft;
+
+        border-color: #d8cad3;
+    }
+}
+
+
+.fpm-crm-action-won {
+    color: $crm-success;
+
+    &.active {
+        color: #fff;
+
+        background: $crm-success;
+
+        border-color: $crm-success;
+    }
+}
+
+
+.fpm-crm-action-lost {
+    color: #6b7280;
+
+    &.active {
+        color: #fff;
+
+        background: $crm-danger;
+
+        border-color: $crm-danger;
+    }
+}
+
+
+// ============================================================================
+// STAGE PIPELINE
+// ============================================================================
+
+.fpm-crm-stage-pipeline {
+    display: flex;
+    align-items: stretch;
+    justify-content: flex-end;
+
+    min-width: 0;
+
+    overflow-x: auto;
+
+    scrollbar-width: none;
+
+    &::-webkit-scrollbar {
+        display: none;
+    }
+}
+
+
+.fpm-crm-stage-step {
+    position: relative;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    min-height: 35px;
+
+    padding: 7px 16px;
+
+    margin-left: -1px;
+
+    color: #667085;
+
+    font-size: 12px;
+    font-weight: 600;
+
+    white-space: nowrap;
+
+    text-decoration: none;
+
+    background: #fafafa;
+
+    border: 1px solid #e0e3e6;
+
+    transition:
+        color 0.15s ease,
+        background-color 0.15s ease;
+
+    &:first-child {
+        margin-left: 0;
+
+        border-radius: 7px 0 0 7px;
+    }
+
+    &:last-child {
+        border-radius: 0 7px 7px 0;
+    }
+
+    &:hover {
+        z-index: 2;
+
+        color: $crm-primary;
+
+        background: $crm-primary-soft;
+
+        border-color: #d8cad3;
+    }
+
+    &.active {
+        z-index: 3;
+
+        color: #fff;
+
+        background: $crm-primary;
+
+        border-color: $crm-primary;
+    }
+}
+
+
+// ============================================================================
+// RECORD CARD
+// ============================================================================
+
+.fpm-crm-record-card {
+    overflow: hidden;
+
+    background: #fff;
+
+    border: 1px solid $crm-border;
+    border-radius: 11px;
+
+    box-shadow:
+        0 2px 8px rgba(16, 24, 40, 0.04);
+}
+
+
+// ============================================================================
+// RECORD TITLE
+// ============================================================================
+
+.fpm-crm-record-title {
+    padding: 26px 28px 23px;
+
+    border-bottom: 1px solid $crm-border-soft;
+}
+
+
+.fpm-crm-section-caption {
+    margin-bottom: 4px;
+
+    color: #8a929b;
+
+    font-size: 10.5px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+}
+
+
+.fpm-crm-title-input {
+    display: block;
+
+    width: 100%;
+
+    padding: 0;
+
+    color: #20242a;
+
+    font-size: 25px;
+    font-weight: 650;
+    line-height: 1.3;
+
+    background: transparent;
+
+    border: 0;
+    border-bottom: 1px solid transparent;
+
+    outline: 0;
+
+    transition:
+        border-color 0.15s ease;
+
+    &:hover {
+        border-bottom-color: #e2e4e7;
+    }
+
+    &:focus {
+        border-bottom-color: $crm-primary;
+    }
+}
+
+
+// ============================================================================
+// FORM
+// ============================================================================
+
+.fpm-crm-form-section {
+    padding: 25px 28px;
+}
+
+
+.fpm-crm-section-heading {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+
+    margin-bottom: 22px;
+
+    h5 {
+        margin: 0 0 4px;
+
+        color: #2b3036;
+
+        font-size: 14px;
+        font-weight: 650;
+    }
+
+    p {
+        margin: 0;
+
+        color: #8a929b;
+
+        font-size: 12.5px;
+    }
+}
+
+
+.fpm-crm-field {
+    margin-bottom: 18px;
+
+    label {
+        display: block;
+
+        margin-bottom: 6px;
+
+        color: #59636e;
+
+        font-size: 12px;
+        font-weight: 600;
+    }
+
+    .form-control,
+    .form-select {
+        min-height: 39px;
+
+        color: #343a40;
+
+        font-size: 13.5px;
+
+        background-color: #fff;
+
+        border: 1px solid #dfe3e7;
+        border-radius: 7px;
+
+        box-shadow: none;
+
+        transition:
+            border-color 0.15s ease,
+            box-shadow 0.15s ease;
+
+        &:focus {
+            border-color: #a17e98;
+
+            box-shadow:
+                0 0 0 3px rgba(113, 75, 103, 0.08);
+        }
+
+        &[readonly] {
+            color: #68717a;
+
+            background: #f7f8f9;
+        }
+    }
+
+    textarea.form-control {
+        padding: 10px 12px;
+
+        line-height: 1.55;
+
+        resize: vertical;
+    }
+
+    .input-group-text {
+        min-width: 42px;
+
+        justify-content: center;
+
+        color: #69717a;
+
+        font-size: 13px;
+
+        background: #f8f9fa;
+
+        border-color: #dfe3e7;
+    }
+}
+
+
+.fpm-crm-field-help {
+    margin-top: 5px;
+
+    color: #9299a1;
+
+    font-size: 11px;
+}
+
+
+.fpm-crm-tag-select {
+    min-height: 105px !important;
+}
+
+
+// ============================================================================
+// TABS
+// ============================================================================
+
+.fpm-crm-tabs {
+    border-top: 1px solid $crm-border-soft;
+
+    > .nav {
+        display: flex;
+
+        padding: 0 28px;
+
+        gap: 24px;
+
+        background: #fafbfc;
+
+        border-bottom: 1px solid $crm-border;
+
+        .nav-link {
+            position: relative;
+
+            display: inline-flex;
+            align-items: center;
+
+            gap: 7px;
+
+            padding: 15px 2px 13px;
+
+            color: #747d86;
+
+            font-size: 12.5px;
+            font-weight: 600;
+
+            background: transparent;
+
+            border: 0;
+            border-radius: 0;
+
+            &::after {
+                content: "";
+
+                position: absolute;
+
+                right: 0;
+                bottom: -1px;
+                left: 0;
+
+                height: 2px;
+
+                background: transparent;
+            }
+
+            &:hover {
+                color: $crm-primary;
+            }
+
+            &.active {
+                color: $crm-primary;
+
+                background: transparent;
+
+                &::after {
+                    background: $crm-primary;
+                }
+            }
+        }
+    }
+
+    > .tab-content {
+        padding: 25px 28px 28px;
+    }
+}
+
+
+.fpm-crm-description {
+    min-height: 155px;
+}
+
+
+.fpm-crm-subsection-title {
+    display: flex;
+    align-items: center;
+
+    gap: 8px;
+
+    padding-bottom: 10px;
+
+    margin-bottom: 18px;
+
+    color: #464e56;
+
+    font-size: 12px;
+    font-weight: 650;
+
+    border-bottom: 1px solid $crm-border-soft;
+
+    i {
+        color: $crm-primary;
+    }
+}
+
+
+// ============================================================================
+// FORM FOOTER
+// ============================================================================
+
+.fpm-crm-form-footer {
+    display: flex;
+    justify-content: flex-end;
+
+    padding: 17px 28px;
+
+    background: #fafbfc;
+
+    border-top: 1px solid $crm-border;
+}
+
+
+.fpm-crm-save-btn {
+    min-height: 38px;
+
+    padding: 7px 18px;
+
+    font-size: 13px;
+    font-weight: 600;
+}
+
+
+// ============================================================================
+// CHATTER
+// ============================================================================
+
+#fpmCrmChatter {
+
+    &.fpm-crm-chatter {
+        overflow: hidden;
+
+        background: #fff;
+
+        border: 1px solid $crm-border;
+        border-radius: 11px;
+
+        box-shadow:
+            0 2px 8px rgba(16, 24, 40, 0.04);
+    }
+
+
+    .fpm-crm-chatter-header {
+        padding: 20px;
+
+        background: #fff;
+
+        border-bottom: 1px solid $crm-border;
+    }
+
+
+    .fpm-crm-chatter-title {
+        display: flex;
+        align-items: center;
+
+        gap: 11px;
+
+        margin-bottom: 16px;
+
+        .fpm-crm-chatter-title-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            width: 38px;
+            height: 38px;
+            flex: 0 0 38px;
+
+            color: $crm-primary;
+
+            background: $crm-primary-soft;
+
+            border-radius: 9px;
+        }
+
+        h5 {
+            margin: 0 0 2px;
+
+            color: #292f35;
+
+            font-size: 15px;
+            font-weight: 650;
+        }
+
+        span {
+            color: #8a929b;
+
+            font-size: 11.5px;
+        }
+    }
+
+
+    .fpm-crm-chatter-actions {
+        display: flex;
+
+        gap: 7px;
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+
+            flex: 1;
+
+            gap: 6px;
+
+            min-height: 34px;
+
+            font-size: 11.5px;
+            font-weight: 600;
+
+            border-radius: 6px;
+        }
+
+        .btn-light {
+            color: #59636e;
+
+            background: #fff;
+
+            border: 1px solid #dfe2e6;
+
+            &:hover {
+                color: $crm-primary;
+
+                background: $crm-primary-soft;
+            }
+        }
+    }
+
+
+    .fpm-crm-chatter-body {
+        padding: 16px 18px;
+
+        background: #fafbfc;
+    }
+
+
+    // ------------------------------------------------------------------------
+    // COMPOSER
+    // ------------------------------------------------------------------------
+
+    .fpm-crm-chatter-composer {
+        padding: 14px;
+
+        background: #fff;
+
+        border: 1px solid $crm-border;
+        border-radius: 8px;
+
+        box-shadow:
+            0 2px 5px rgba(16, 24, 40, 0.04);
+
+        textarea {
+            min-height: 95px;
+            max-height: 220px;
+
+            font-size: 13px;
+
+            resize: vertical;
+
+            border-color: #dfe3e7;
+
+            &:focus {
+                border-color: #a17e98;
+
+                box-shadow:
+                    0 0 0 3px rgba(113, 75, 103, 0.08);
+            }
+        }
+    }
+
+
+    .fpm-crm-message-composer {
+        border-left: 3px solid $crm-primary;
+    }
+
+
+    .fpm-crm-note-composer {
+        background: #fffdf7;
+
+        border-left: 3px solid #d7a029;
+    }
+
+
+    .fpm-crm-composer-title {
+        display: flex;
+        align-items: center;
+
+        gap: 6px;
+
+        margin-bottom: 10px;
+
+        color: #4c555e;
+
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 0.03em;
+        text-transform: uppercase;
+    }
+
+
+    .fpm-crm-composer-actions {
+        display: flex;
+
+        gap: 7px;
+
+        margin-top: 10px;
+    }
+
+
+    // ------------------------------------------------------------------------
+    // TIMELINE
+    // ------------------------------------------------------------------------
+
+    .fpm-crm-chatter-timeline {
+        max-height: 590px;
+
+        padding-right: 4px;
+
+        overflow-x: hidden;
+        overflow-y: auto;
+
+        scrollbar-width: thin;
+        scrollbar-color: #c8ccd0 transparent;
+
+        &::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        &::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        &::-webkit-scrollbar-thumb {
+            background: #c8ccd0;
+
+            border-radius: 20px;
+        }
+    }
+
+
+    .fpm-crm-timeline-item {
+        position: relative;
+
+        display: flex;
+        align-items: flex-start;
+
+        gap: 11px;
+
+        padding: 13px 10px;
+
+        margin-bottom: 8px;
+
+        background: #fff;
+
+        border: 1px solid #e8eaed;
+        border-radius: 8px;
+
+        transition:
+            border-color 0.15s ease,
+            box-shadow 0.15s ease;
+
+        &:hover {
+            border-color: #dde0e4;
+
+            box-shadow:
+                0 2px 7px rgba(16, 24, 40, 0.04);
+        }
+    }
+
+
+    .fpm-crm-timeline-marker {
+        width: 36px;
+        flex: 0 0 36px;
+    }
+
+
+    .fpm-crm-timeline-avatar,
+    .fpm-crm-timeline-avatar img,
+    .fpm-crm-default-avatar,
+    .fpm-crm-timeline-icon {
+        width: 36px;
+        height: 36px;
+
+        border-radius: 50%;
+    }
+
+
+    .fpm-crm-timeline-avatar {
+        overflow: hidden;
+
+        img {
+            display: block;
+
+            object-fit: cover;
+        }
+    }
+
+
+    .fpm-crm-default-avatar,
+    .fpm-crm-timeline-icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+
+    .fpm-crm-default-avatar {
+        color: #747d86;
+
+        background: #eef0f2;
+    }
+
+
+    .fpm-crm-timeline-icon {
+        color: $crm-primary;
+
+        background: $crm-primary-soft;
+    }
+
+
+    .fpm-crm-timeline-content {
+        flex: 1;
+
+        min-width: 0;
+
+        word-break: break-word;
+        overflow-wrap: anywhere;
+    }
+
+
+    .fpm-crm-timeline-top {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+
+        gap: 8px;
+
+        strong {
+            color: #353c43;
+
+            font-size: 12.5px;
+            font-weight: 650;
+        }
+
+        small {
+            color: #9299a1;
+
+            font-size: 10.5px;
+
+            white-space: nowrap;
+        }
+    }
+
+
+    .fpm-crm-timeline-type {
+        margin-top: 2px;
+
+        color: #8a929b;
+
+        font-size: 10.5px;
+    }
+
+
+    .fpm-crm-activity-summary {
+        margin-top: 8px;
+
+        color: #444c54;
+
+        font-size: 12.5px;
+    }
+
+
+    .fpm-crm-activity-assignee {
+        margin-top: 7px;
+
+        color: #7d858e;
+
+        font-size: 11px;
+
+        strong {
+            color: #59636e;
+        }
+    }
+
+
+    .fpm-crm-activity-note {
+        margin-top: 9px;
+
+        padding: 8px 9px;
+
+        color: #68717a;
+
+        font-size: 11.5px;
+        line-height: 1.45;
+
+        background: #f8f9fa;
+
+        border: 1px solid #eceef0;
+        border-radius: 6px;
+    }
+
+
+    .fpm-crm-message-body {
+        margin-top: 8px;
+
+        color: #4b535b;
+
+        font-size: 12.5px;
+        line-height: 1.55;
+
+        p:last-child {
+            margin-bottom: 0;
+        }
+
+        img {
+            max-width: 100%;
+
+            height: auto;
+        }
+    }
+
+
+    // ------------------------------------------------------------------------
+    // TRACKING
+    // ------------------------------------------------------------------------
+
+    .fpm-crm-tracking-values {
+        padding: 8px 9px;
+
+        margin-top: 9px;
+
+        background: #f8f9fa;
+
+        border: 1px solid #eceef0;
+        border-radius: 6px;
+    }
+
+
+    .fpm-crm-tracking-value {
+        color: #747d86;
+
+        font-size: 10.5px;
+
+        strong {
+            color: #59636e;
+        }
+
+        + .fpm-crm-tracking-value {
+            padding-top: 6px;
+
+            margin-top: 6px;
+
+            border-top: 1px solid #e8eaed;
+        }
+    }
+
+
+    .fpm-crm-old-value {
+        margin-left: 4px;
+
+        color: #9a6262;
+
+        text-decoration: line-through;
+    }
+
+
+    .fpm-crm-change-arrow {
+        margin: 0 4px;
+
+        color: #9aa0a6;
+    }
+
+
+    .fpm-crm-new-value {
+        color: #43815f;
+
+        font-weight: 650;
+    }
+
+
+    // ------------------------------------------------------------------------
+    // EMPTY CHATTER
+    // ------------------------------------------------------------------------
+
+    .fpm-crm-chatter-empty {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+
+        padding: 45px 15px;
+
+        color: #8a929b;
+
+        text-align: center;
+
+        .fpm-crm-chatter-empty-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            width: 48px;
+            height: 48px;
+
+            margin-bottom: 11px;
+
+            color: $crm-primary;
+
+            background: $crm-primary-soft;
+
+            border-radius: 50%;
+        }
+
+        strong {
+            margin-bottom: 3px;
+
+            color: #59636e;
+
+            font-size: 13px;
+        }
+
+        span {
+            font-size: 11px;
+        }
+    }
+}
+
+
+// ============================================================================
+// MODALS
+// ============================================================================
+
+.fpm-crm-modal {
+
+    .modal-content {
+        overflow: hidden;
+
+        border: 0;
+        border-radius: 12px;
+
+        box-shadow:
+            0 22px 60px rgba(16, 24, 40, 0.18);
+    }
+
+    .modal-header {
+        padding: 18px 22px;
+
+        background: #fff;
+
+        border-bottom: 1px solid $crm-border;
+    }
+
+    .modal-body {
+        padding: 23px 22px;
+    }
+
+    .modal-footer {
+        padding: 13px 22px;
+
+        background: #fafbfc;
+
+        border-top: 1px solid $crm-border;
+
+        .btn {
+            min-height: 37px;
+
+            padding-left: 16px;
+            padding-right: 16px;
+
+            font-size: 12.5px;
+            font-weight: 600;
+
+            border-radius: 7px;
+        }
+    }
+}
+
+
+.fpm-crm-modal-heading {
+    display: flex;
+    align-items: center;
+
+    gap: 11px;
+
+    .fpm-crm-modal-icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        width: 38px;
+        height: 38px;
+        flex: 0 0 38px;
+
+        color: $crm-primary;
+
+        background: $crm-primary-soft;
+
+        border-radius: 8px;
+    }
+
+    .fpm-crm-modal-icon-danger {
+        color: $crm-danger;
+
+        background: #fff1f2;
+    }
+
+    h5 {
+        margin: 0 0 2px;
+
+        color: #292f35;
+
+        font-size: 15px;
+        font-weight: 650;
+    }
+
+    p {
+        margin: 0;
+
+        color: #8b929a;
+
+        font-size: 11.5px;
+    }
+}
+
+
+// ============================================================================
+// ACTIVITY TYPE
+// ============================================================================
+
+.fpm-crm-activity-types {
+    display: flex;
+    flex-wrap: wrap;
+
+    gap: 7px;
+}
+
+
+.fpm-crm-activity-type {
+    display: inline-flex;
+    align-items: center;
+
+    gap: 6px;
+
+    padding: 7px 11px;
+
+    color: #626b74;
+
+    font-size: 12px;
+    font-weight: 600;
+
+    background: #fff;
+
+    border: 1px solid #dfe2e6;
+    border-radius: 20px;
+
+    cursor: pointer;
+
+    transition:
+        color 0.15s ease,
+        background-color 0.15s ease,
+        border-color 0.15s ease;
+
+    &:hover {
+        color: $crm-primary;
+
+        background: $crm-primary-soft;
+
+        border-color: #d8cad3;
+    }
+}
+
+
+.btn-check:checked + .fpm-crm-activity-type {
+    color: #fff;
+
+    background: $crm-primary;
+
+    border-color: $crm-primary;
+}
+
+
+// ============================================================================
+// TABLET
+// ============================================================================
+
+@media (max-width: 991.98px) {
+
+    .fpm-crm-commandbar-top {
+        align-items: flex-start;
+
+        flex-direction: column;
+    }
+
+    .fpm-crm-stage-pipeline {
+        justify-content: flex-start;
+
+        width: 100%;
+    }
+
+    #fpmCrmOpportunityList {
+
+        #fpmCrmOpportunityTable {
+
+            th,
+            td {
+                padding-left: 12px;
+                padding-right: 12px;
+            }
+        }
+    }
+
+    #fpmCrmChatter {
+        margin-top: 4px;
+    }
+}
+
+
+// ============================================================================
+// MOBILE
+// ============================================================================
+
+@media (max-width: 767.98px) {
+
+    // HOME CARD
+
+    .fpm-crm-home-card {
+
+        .fpm-crm-home-card-body {
+            min-height: 90px;
+
+            padding: 15px 18px;
+        }
+
+        .fpm-crm-home-icon {
+            width: 46px;
+            height: 46px;
+            flex-basis: 46px;
+
+            margin-right: 15px;
+        }
+
+        .fpm-crm-home-title {
+            font-size: 15px;
+        }
+
+        .fpm-crm-home-subtitle {
+            font-size: 13px;
+        }
+    }
+
+
+    // SEARCH
+
+    #fpmCrmOpportunitySearchWrapper {
+
+        .fpm-crm-search-form {
+            max-width: none;
+        }
+    }
+
+
+    // COMMAND BAR
+
+    .fpm-crm-commandbar {
+        padding: 10px;
+    }
+
+    .fpm-crm-record-actions {
+        width: 100%;
+
+        flex-wrap: wrap;
+
+        form {
+            flex: 1;
+        }
+
+        .fpm-crm-action-btn {
+            width: 100%;
+
+            flex: 1;
+        }
+
+        > .fpm-crm-action-btn {
+            flex: 1;
+        }
+    }
+
+
+    // STAGE
+
+    .fpm-crm-stage-step {
+        padding-left: 13px;
+        padding-right: 13px;
+    }
+
+
+    // RECORD
+
+    .fpm-crm-record-title {
+        padding: 21px 19px;
+    }
+
+    .fpm-crm-title-input {
+        font-size: 21px;
+    }
+
+    .fpm-crm-form-section {
+        padding: 21px 19px;
+    }
+
+
+    // TABS
+
+    .fpm-crm-tabs {
+
+        > .nav {
+            padding: 0 19px;
+
+            gap: 18px;
+
+            overflow-x: auto;
+
+            flex-wrap: nowrap;
+
+            .nav-link {
+                white-space: nowrap;
+            }
+        }
+
+        > .tab-content {
+            padding: 21px 19px;
+        }
+    }
+
+
+    // FORM FOOTER
+
+    .fpm-crm-form-footer {
+        padding: 15px 19px;
+
+        .fpm-crm-save-btn {
+            width: 100%;
+        }
+    }
+
+
+    // TABLE
+
+    #fpmCrmOpportunityList {
+
+        #fpmCrmOpportunityTable {
+
+            th,
+            td {
+                padding: 11px 12px;
+            }
+
+            th:nth-child(2),
+            td:nth-child(2) {
+                min-width: 195px;
+            }
+
+            th:nth-child(3),
+            td:nth-child(3) {
+                min-width: 190px;
+            }
+
+            .fpm-crm-settings-column,
+            tbody td:last-child,
+            tfoot td:last-child {
+                width: 48px;
+                min-width: 48px;
+                max-width: 48px;
+            }
+        }
+
+        .fpm-crm-optional-menu {
+            min-width: 230px;
+
+            max-height: 65vh;
+        }
+    }
+
+
+    // CHATTER
+
+    #fpmCrmChatter {
+
+        .fpm-crm-chatter-timeline {
+            max-height: 460px;
+        }
+    }
+}
+
+
+// ============================================================================
+// SMALL MOBILE
+// ============================================================================
+
+@media (max-width: 575.98px) {
+
+    // HOME CARD
+
+    .fpm-crm-home-card {
+
+        .fpm-crm-home-card-body {
+            padding: 14px 16px;
+        }
+
+        .fpm-crm-home-arrow {
+            margin-left: 10px;
+        }
+    }
+
+
+    // SEARCH
+
+    #fpmCrmOpportunitySearchWrapper {
+
+        .fpm-crm-search-box {
+            min-height: 42px;
+        }
+
+        .fpm-crm-search-icon {
+            width: 40px;
+            min-width: 40px;
+        }
+
+        .fpm-crm-search-clear {
+            width: 38px;
+            min-width: 38px;
+        }
+
+        .fpm-crm-search-input {
+            font-size: 13px;
+        }
+
+        .fpm-crm-search-button {
+            min-width: 44px;
+
+            padding: 0 13px;
+
+            span {
+                display: none;
+            }
+
+            i {
+                margin-right: 0 !important;
+            }
+        }
+    }
+
+
+    // ACTIONS
+
+    .fpm-crm-record-actions {
+
+        .fpm-crm-action-btn {
+            padding-left: 9px;
+            padding-right: 9px;
+
+            font-size: 11.5px;
+        }
+    }
+
+
+    // STAGES
+
+    .fpm-crm-stage-step {
+        min-height: 34px;
+
+        padding: 6px 11px;
+
+        font-size: 11px;
+    }
+
+
+    // CHATTER
+
+    #fpmCrmChatter {
+
+        .fpm-crm-chatter-header {
+            padding: 16px;
+        }
+
+        .fpm-crm-chatter-body {
+            padding: 13px;
+        }
+
+        .fpm-crm-chatter-actions {
+
+            .btn {
+                padding-left: 7px;
+                padding-right: 7px;
+
+                font-size: 10.5px;
+            }
+        }
+
+        .fpm-crm-timeline-item {
+            padding: 11px 8px;
+        }
+
+        .fpm-crm-timeline-top {
+            flex-direction: column;
+
+            gap: 3px;
+
+            small {
+                white-space: normal;
+            }
+        }
+    }
+
+
+    // MODAL
+
+    .fpm-crm-modal {
+
+        .modal-body {
+            padding: 19px 17px;
+        }
+
+        .modal-header {
+            padding: 16px 17px;
+        }
+
+        .modal-footer {
+            padding: 12px 17px;
+        }
+    }
+}
+/* Product editor added for Fakir CRM fields. */
+.fpm-product-table {
+    min-width: 820px;
+}
+.fpm-product-table th {
+    white-space: nowrap;
+}
+.fpm-product-table td {
+    vertical-align: middle;
+}
+
+/* Product commercial fields */
+.fpm-product-table { min-width: 1250px; }
+.fpm-product-table .fpm-product-quantity { min-width: 90px; }
+.fpm-product-table .fpm-product-price { min-width: 110px; }
+.fpm-product-table .fpm-product-taxes { min-width: 150px; }
+.fpm-product-table .fpm-product-amount { min-width: 110px; font-weight: 600; }
+.fpm-product-total-wrap { font-size: 1rem; }
+
+// CRM standard-like list, isolated to the Opportunity list page.
+#fpmCrmOpportunityList.fpm-crm-standard-list {
+  border-radius: 5px;
+  #fpmCrmOpportunityTable { width: 100%; min-width: 970px; }
+  #fpmCrmOpportunityTable thead th { text-transform: none; letter-spacing: normal; font-size: 13px; font-weight: 500; padding: 10px 9px; }
+  #fpmCrmOpportunityTable tbody td { font-size: 13px; padding: 9px; }
+  #fpmCrmOpportunityTable .fpm-crm-optional-column[hidden] { display: none !important; }
+  .fpm-crm-list-actions { white-space: nowrap; text-align: right; }
+  .fpm-crm-list-actions a { display: inline-block; margin-left: 12px; color: #00858c; text-decoration: none; }
+  .fpm-crm-list-actions a:hover { text-decoration: underline; }
+  .fpm-crm-list-actions .fa { margin-right: 3px; }
+  .fpm-crm-settings-column, .fpm-crm-settings-spacer { width: 35px; }
+  .fpm-crm-total-revenue { font-weight: 700; }
+}
+
+// Native per-cell links keep portal navigation independent of legacy row-click widgets.
+#fpmCrmOpportunityTable {
+    td.fpm-crm-link-cell {
+        padding: 0 !important;
+        .fpm-crm-cell-link {
+            display: flex;
+            width: 100%;
+            min-height: 44px;
+            align-items: center;
+            padding: 10px 12px;
+            color: inherit;
+            text-decoration: none;
+            cursor: pointer;
+            &:hover { color: #714b67; }
+        }
+        .fpm-crm-cell-link-end { justify-content: flex-end; }
+    }
+}

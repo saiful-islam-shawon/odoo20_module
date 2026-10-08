@@ -1,0 +1,7 @@
+.fakir-assignment-toast {
+  position: fixed; top: 80px; right: 24px; z-index: 1100;
+  width: 420px; max-width: calc(100vw - 40px);
+  display: flex; align-items: flex-start; gap: 14px;
+  justify-content: space-between; box-shadow: 0 6px 25px rgba(0,0,0,.14);
+  .btn-close { flex: 0 0 auto; }
+}

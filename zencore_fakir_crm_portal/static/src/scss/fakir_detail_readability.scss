@@ -1,0 +1,110 @@
+// Readability improvements restricted to the Opportunity Details page.
+.fpm-crm-detail-page {
+  .fakir-v20-field { grid-template-columns: 112px minmax(0, 1fr); align-items:center; }
+  .fakir-v20-field > label { line-height:1.35; overflow-wrap:normal; }
+  .fakir-v20-input:not([readonly]) {
+    min-height:35px; padding:.4rem .55rem;
+    border:1px solid #d8dee5; border-radius:5px;
+    background:#fff; color:#253443;
+  }
+  .fakir-v20-input[readonly] { color:#4b6072; opacity:1; }
+  .fakir-v20-input::placeholder { color:#8796a6; opacity:1; }
+  .fakir-v20-input:focus-visible, .fpm-product-table input:focus-visible,
+  .fpm-product-table select:focus-visible { outline:2px solid #78546e; outline-offset:1px; }
+  .fakir-v20-metric-value input { font-variant-numeric:tabular-nums; }
+  .fakir-v20-fields select:not([multiple]) { cursor:pointer; }
+  .fpm-product-table { min-width: 1080px; border-collapse:separate; border-spacing:0; }
+  .fpm-product-table th { padding:.7rem .55rem; color:#435568; font-weight:600; }
+  .fpm-product-table td { padding:.45rem .45rem; vertical-align:middle; }
+  .fpm-product-table .form-control, .fpm-product-table .form-select {
+    min-height:34px; border:1px solid #d8dee5; border-radius:4px;
+    background:#fff; padding:.3rem .45rem; color:#253443;
+  }
+  .fpm-product-table .fpm-product-select { min-width:175px; }
+  .fpm-product-table .fpm-product-quantity,
+  .fpm-product-table .fpm-product-price,
+  .fpm-product-table .fpm-product-part-number { text-align:right; font-variant-numeric:tabular-nums; }
+  .fpm-product-table .fpm-product-amount { text-align:right; font-variant-numeric:tabular-nums; font-weight:600; }
+  .fpm-product-table .fpm-product-brand,
+  .fpm-product-table .fpm-product-group { min-width:120px; }
+  .fakir-readable-select { position:relative; min-width:0; width:100%; }
+  .fakir-readable-native { position:absolute!important; opacity:0!important; width:1px!important; height:1px!important; pointer-events:none!important; top:0; left:0; }
+  .fakir-readable-trigger {
+    display:flex; align-items:center; justify-content:space-between; gap:.5rem;
+    width:100%; min-height:36px; padding:.3rem .5rem;
+    background:#fff; color:#253443; text-align:left;
+    border:1px solid #d8dee5; border-radius:5px; cursor:pointer;
+  }
+  .fakir-readable-trigger:focus-visible { outline:2px solid #78546e; outline-offset:1px; }
+  .fakir-readable-chips { display:flex; flex-wrap:wrap; gap:4px; min-width:0; }
+  .fakir-readable-chip { display:inline-block; max-width:100%; overflow-wrap:anywhere; padding:2px 7px; border-radius:12px; background:#f2eaf0; color:#69445e; font-size:.78rem; line-height:1.45; }
+  .fakir-readable-placeholder { color:#8796a6; font-size:.84rem; }
+  .fakir-readable-chevron { color:#64748b; flex-shrink:0; }
+  .fakir-readable-options {
+    position:absolute; top:calc(100% + 4px); left:0; width:100%; min-width:190px;
+    max-height:220px; overflow-y:auto; z-index:30;
+    background:#fff; border:1px solid #cbd5e1; border-radius:6px;
+    box-shadow:0 8px 22px rgba(0,0,0,.12); padding:4px;
+  }
+  .fakir-readable-options[hidden] { display:none!important; }
+  .fakir-readable-option { display:flex; align-items:center; gap:9px; padding:6px 8px; font-size:.84rem; font-weight:400; cursor:pointer; border-radius:4px; overflow-wrap:anywhere; }
+  .fakir-readable-option:hover { background:#f5f1f4; }
+  .fakir-readable-option input { flex-shrink:0; }
+  // Product Taxes: content-sized chips; multi-select rows wrap without splitting a tax name.
+  // Scoped to the details product table, leaving Tags and other widgets unchanged.
+  .fpm-product-table { width:max-content; min-width:100%; table-layout:auto; }
+  .fpm-product-table th:nth-child(4),
+  .fpm-product-table td:nth-child(4) { min-width:190px; width:auto; }
+  .fpm-product-table td:nth-child(4) .fakir-readable-select {
+    width:max-content;
+    min-width:170px;
+    max-width:420px;
+  }
+  .fpm-product-table td:nth-child(4) .fakir-readable-trigger {
+    width:100%; min-width:170px; height:auto;
+    align-items:center;
+  }
+  .fpm-product-table td:nth-child(4) .fakir-readable-chips {
+    flex:1 1 auto;
+    display:flex;
+    flex-wrap:wrap;
+    align-items:center;
+    gap:5px;
+    min-width:0;
+  }
+  .fpm-product-table td:nth-child(4) .fakir-readable-chip {
+    display:inline-flex;
+    align-items:center;
+    flex:0 0 auto;
+    width:max-content;
+    max-width:none;
+    white-space:nowrap;
+    overflow-wrap:normal;
+    word-break:normal;
+  }
+  .fpm-product-table td:nth-child(4) .fakir-readable-options {
+    width:max-content;
+    min-width:100%;
+    max-width:420px;
+  }
+  @media (max-width:850px) { .fakir-v20-field { grid-template-columns:110px minmax(0,1fr); } }
+}
+
+// Visible remove action for each opportunity product row.
+.fpm-crm-detail-page .fpm-remove-product-row {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  min-width: 32px;
+  min-height: 32px;
+  padding: 0.2rem;
+  cursor: pointer;
+}
+.fpm-crm-detail-page .fpm-product-remove-cross {
+  display: inline-block;
+  font-family: Arial, sans-serif;
+  font-weight: 700;
+  font-size: 22px;
+  line-height: 1;
+  white-space: nowrap;
+}

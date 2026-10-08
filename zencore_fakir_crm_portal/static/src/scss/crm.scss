@@ -1,0 +1,440 @@
+// ============================================================
+// Variables
+// ============================================================
+
+$crm-heading-color: #0d508b;
+$crm-text-color: #333333;
+$crm-primary-green: #71bf44;
+$crm-hover-green: #5fa637;
+$crm-border-color: #e5e7eb;
+$crm-bg-soft: #f8fafc;
+
+
+// ============================================================
+// Main Page
+// ============================================================
+
+.crm_opportunity_page {
+    min-height: 100vh;
+    background: #f6f8fb;
+    color: $crm-text-color;
+
+    .container {
+        max-width: 1320px;
+    }
+
+    .crm_section_title {
+        color: $crm-heading-color;
+        font-size: 1.85rem;
+        font-weight: 700;
+
+        i {
+            color: $crm-primary-green;
+        }
+    }
+
+    .crm_panel_card {
+        position: relative;
+        background: #ffffff;
+        border: 1px solid $crm-border-color;
+        border-radius: 12px;
+        box-shadow: 0 4px 16px rgba(13, 80, 139, 0.05);
+        overflow: visible;
+
+        .crm_panel_header {
+            padding: 16px 24px;
+            border-bottom: 1px solid $crm-border-color;
+
+            h5 {
+                margin: 0;
+                color: $crm-heading-color;
+                font-size: 1.15rem;
+                font-weight: 600;
+
+                i {
+                    color: $crm-primary-green;
+                }
+            }
+        }
+
+        .crm_panel_body {
+            padding: 24px;
+            overflow: visible;
+        }
+    }
+
+    .form-label {
+        margin-bottom: 5px;
+        color: $crm-text-color;
+        font-size: 0.9rem;
+        font-weight: 500;
+    }
+
+    .form-control {
+        min-height: 40px;
+        border-color: $crm-border-color;
+        border-radius: 7px;
+        color: $crm-text-color;
+        font-size: 0.92rem;
+
+        &::placeholder {
+            color: #9ca3af;
+        }
+
+        &:focus {
+            border-color: $crm-primary-green;
+            box-shadow: 0 0 0 3px rgba(113, 191, 68, 0.15);
+        }
+    }
+
+    textarea.form-control {
+        min-height: auto;
+    }
+
+    .input-group-text {
+        min-width: 42px;
+        justify-content: center;
+        background: $crm-bg-soft;
+        border-color: $crm-border-color;
+        color: $crm-heading-color;
+    }
+
+    .input-group:focus-within {
+        .input-group-text {
+            border-color: $crm-primary-green;
+            color: $crm-primary-green;
+        }
+    }
+
+    .btn-crm-submit {
+        padding: 10px 24px;
+        background: $crm-primary-green;
+        border: 0;
+        border-radius: 8px;
+        color: #ffffff;
+        font-size: 0.95rem;
+        font-weight: 600;
+        transition: 0.2s ease;
+
+        &:hover {
+            background: $crm-hover-green;
+            color: #ffffff;
+            box-shadow: 0 6px 16px rgba(113, 191, 68, 0.25);
+            transform: translateY(-1px);
+        }
+    }
+}
+
+
+// ============================================================
+// Success
+// ============================================================
+
+.custom_success_banner {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 16px 20px;
+    background: #f0fdf4;
+    border: 1px solid #bbf7d0;
+    border-radius: 10px;
+
+    .custom_success_icon {
+        display: flex;
+        flex: 0 0 40px;
+        align-items: center;
+        justify-content: center;
+        width: 40px;
+        height: 40px;
+        background: $crm-primary-green;
+        border-radius: 50%;
+        color: #ffffff;
+    }
+
+    .custom_success_text {
+        h5 {
+            margin: 0 0 2px;
+            color: $crm-heading-color;
+            font-size: 15px;
+            font-weight: 600;
+        }
+
+        p {
+            margin: 0;
+            color: $crm-text-color;
+            font-size: 13.5px;
+        }
+    }
+}
+
+
+// ============================================================
+// CRM Tags
+// ============================================================
+
+.crm_tags_dropdown {
+    width: 100%;
+}
+
+.crm_tag_selector {
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: 100%;
+    min-height: 40px;
+    padding: 6px 38px 6px 12px;
+    background: #ffffff;
+    border: 1px solid $crm-border-color;
+    border-radius: 7px;
+    cursor: pointer;
+
+    &::after {
+        display: none;
+    }
+
+    &[aria-expanded="true"] {
+        border-color: $crm-primary-green;
+        box-shadow: 0 0 0 3px rgba(113, 191, 68, 0.15);
+    }
+}
+
+.crm_selected_tags {
+    display: flex;
+    flex: 1;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px;
+}
+
+.crm_tag_placeholder {
+    color: #9ca3af;
+    font-size: 0.88rem;
+}
+
+.crm_selected_tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 3px 10px;
+    background: #e6f3fa;
+    border: 1px solid #bae0f7;
+    border-radius: 20px;
+    color: $crm-heading-color;
+    font-size: 12.5px;
+    font-weight: 500;
+}
+
+.crm_tag_remove {
+    color: #64748b;
+    cursor: pointer;
+    font-size: 15px;
+
+    &:hover {
+        color: #ef4444;
+    }
+}
+
+.crm_tag_dropdown_icon {
+    position: absolute;
+    top: 50%;
+    right: 14px;
+    color: $crm-heading-color;
+    transform: translateY(-50%);
+}
+
+.crm_tags_dropdown_menu {
+    width: 100%;
+    max-height: 300px;
+    padding: 8px;
+    border: 1px solid $crm-border-color;
+    border-radius: 8px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+    z-index: 1055;
+}
+
+.crm_tag_search_wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    margin-bottom: 8px;
+
+    > i {
+        position: absolute;
+        left: 12px;
+        z-index: 1;
+        color: #9ca3af;
+    }
+
+    .crm_tag_search {
+        padding-left: 34px;
+    }
+}
+
+.crm_tag_options {
+    max-height: 210px;
+    overflow-y: auto;
+}
+
+.crm_tag_option {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 10px;
+    border-radius: 6px;
+    cursor: pointer;
+
+    &:hover {
+        background: #f1f5f9;
+    }
+}
+
+.crm_tag_option_input {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.crm_tag_checkmark {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 18px;
+    height: 18px;
+    border: 1px solid #cbd5e1;
+    border-radius: 4px;
+    color: transparent;
+    font-size: 11px;
+}
+
+.crm_tag_option_input:checked + .crm_tag_checkmark {
+    background: $crm-primary-green;
+    border-color: $crm-primary-green;
+    color: #ffffff;
+}
+
+
+// ============================================================
+// Autocomplete
+// ============================================================
+
+.crm_country_search_wrapper,
+.crm_state_search_wrapper,
+.crm_campaign_search_wrapper,
+.crm_medium_search_wrapper,
+.crm_source_search_wrapper {
+    position: relative;
+}
+
+.crm_country_suggestions_dropdown,
+.crm_state_suggestions_dropdown,
+.crm_campaign_suggestions_dropdown,
+.crm_medium_suggestions_dropdown,
+.crm_source_suggestions_dropdown {
+    position: absolute;
+    top: calc(100% + 4px);
+    right: 0;
+    left: 0;
+    z-index: 1055;
+    max-height: 220px;
+    overflow-y: auto;
+    background: #ffffff;
+    border: 1px solid $crm-border-color;
+    border-radius: 7px;
+    box-shadow: 0 10px 25px rgba(13, 80, 139, 0.12);
+}
+
+.crm_country_suggestion_item,
+.crm_state_suggestion_item,
+.crm_campaign_suggestion_item,
+.crm_medium_suggestion_item,
+.crm_source_suggestion_item {
+    padding: 9px 12px;
+    background: #ffffff;
+    border-bottom: 1px solid #f1f5f9;
+    color: $crm-text-color;
+    cursor: pointer;
+    font-size: 0.9rem;
+
+    &:last-child {
+        border-bottom: 0;
+    }
+
+    &:hover {
+        background: #f1f5f9;
+        color: $crm-heading-color;
+    }
+}
+
+
+// ============================================================
+// Scrollbars
+// ============================================================
+
+.crm_tag_options,
+.crm_country_suggestions_dropdown,
+.crm_state_suggestions_dropdown,
+.crm_campaign_suggestions_dropdown,
+.crm_medium_suggestions_dropdown,
+.crm_source_suggestions_dropdown {
+
+    &::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    &::-webkit-scrollbar-track {
+        background: #f8fafc;
+    }
+
+    &::-webkit-scrollbar-thumb {
+        background: #cbd5e1;
+        border-radius: 4px;
+    }
+}
+
+
+// ============================================================
+// Responsive
+// ============================================================
+
+@media (max-width: 767.98px) {
+
+    .crm_opportunity_page {
+        padding-top: 1.5rem !important;
+
+        .crm_section_title {
+            font-size: 1.5rem;
+        }
+
+        .crm_panel_card {
+            .crm_panel_header {
+                padding: 14px 16px;
+            }
+
+            .crm_panel_body {
+                padding: 16px;
+            }
+        }
+    }
+
+    .custom_success_banner {
+        padding: 12px 14px;
+    }
+}
+/* Product editor added for Fakir CRM fields. */
+.fpm-product-table {
+    min-width: 820px;
+}
+.fpm-product-table th {
+    white-space: nowrap;
+}
+.fpm-product-table td {
+    vertical-align: middle;
+}
+
+/* Product commercial fields */
+.fpm-product-table { min-width: 1250px; }
+.fpm-product-table .fpm-product-quantity { min-width: 90px; }
+.fpm-product-table .fpm-product-price { min-width: 110px; }
+.fpm-product-table .fpm-product-taxes { min-width: 150px; }
+.fpm-product-table .fpm-product-amount { min-width: 110px; font-weight: 600; }
+.fpm-product-total-wrap { font-size: 1rem; }

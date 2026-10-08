@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <record id="crm_lead_view_form_inherit_fakir" model="ir.ui.view">
+
+        <field name="name">crm.lead.form.inherit.fakir</field>
+
+        <field name="model">crm.lead</field>
+
+        <field name="inherit_id" ref="crm.crm_lead_view_form"/>
+
+        <field name="arch" type="xml">
+
+            <!-- Custom CRM Fields -->
+
+            <xpath expr="//field[@name='tag_ids']" position="after">
+
+                <field name="lead_creator_id"/>
+
+                <field name="assign_team"/>
+
+                <field name="expected_budget"/>
+
+            </xpath>
+
+
+            <!-- Products Tab -->
+
+            <xpath expr="//page[@name='internal_notes']" position="after">
+
+                <page string="Products" name="products">
+
+                    <field name="product_line_ids">
+
+                        <list editable="bottom">
+
+                            <field name="product_id"/>
+                            <field name="quantity"/>
+                            <field name="price_unit"/>
+                            <field name="tax_ids" widget="many2many_tags"/>
+                            <field name="amount_total" readonly="1"/>
+                            <field name="category_id"/>
+                            <field name="brand"/>
+                            <field name="product_group"/>
+                            <field name="part_number" width="120px"/>
+
+                        </list>
+
+                    </field>
+
+                    <group class="oe_subtotal_footer oe_right">
+                        <field name="product_total" string="Total" readonly="1"/>
+                    </group>
+
+                </page>
+
+            </xpath>
+
+        </field>
+
+    </record>
+
+</odoo>

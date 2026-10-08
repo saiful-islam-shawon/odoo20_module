@@ -1,0 +1,105 @@
+/* Scoped Odoo 20-inspired portal opportunity detail. Does not affect CRM Create or list. */
+.fpm-crm-detail-page {
+  .fakir-odoo20-topbar { display:flex; justify-content:space-between; align-items:center; gap:1rem; margin:0 0 0.7rem; flex-wrap:wrap; }
+  .fakir-odoo20-record-nav { display:flex; align-items:center; gap:.75rem; }
+  .fakir-odoo20-crumb { display:flex; flex-direction:column; font-size:.86rem; line-height:1.25; }
+  .fakir-odoo20-crumb a { color:#167d8d; text-decoration:none; }
+  .fakir-odoo20-smart-buttons { display:flex; align-items:center; }
+  .fakir-odoo20-smart { display:flex; align-items:center; gap:.5rem; padding:.48rem .8rem; border:1px solid #d6dce2; background:white; font-size:.85rem; }
+  .fakir-odoo20-smart:first-child { border-radius:6px 0 0 6px; }
+  .fakir-odoo20-smart:last-child { border-radius:0 6px 6px 0; border-left:0; }
+  .fakir-odoo20-smart .fa { color:#78506a; font-size:1.1rem; }
+  .fpm-crm-workspace { --bs-gutter-x:1rem; }
+  .fpm-crm-workspace > .col-xl-8 { flex:0 0 auto; width:66.66666667%; }
+  .fpm-crm-workspace > .col-xl-4 { flex:0 0 auto; width:33.33333333%; }
+  .fpm-crm-record-card { border-radius:6px; box-shadow:none; }
+  .fpm-crm-record-title { padding:1.25rem 1.5rem .5rem; }
+  .fpm-crm-title-input { font-size:1.9rem; font-weight:400; }
+  .fpm-crm-form-section { padding-top:.6rem; }
+  .fpm-crm-tabs .nav { border-bottom:1px solid #d6dce2; }
+  .fpm-crm-tabs .nav-link { border-radius:5px 5px 0 0; font-weight:400; }
+  .fpm-crm-tabs .nav-link.active { color:#80566e; border-top:3px solid #80566e; }
+  .fpm-crm-chatter { box-shadow:none; border-radius:3px; }
+  .fakir-odoo20-subtitle { font-size:.72rem; font-weight:700; padding-bottom:.5rem; border-bottom:1px solid #dce0e3; }
+  .fakir-odoo20-assigned { min-height:220px; }
+  .fpm-crm-form-footer { display:flex; justify-content:flex-end; }
+  @media (max-width:991.98px) {
+    .fpm-crm-workspace > .col-xl-8, .fpm-crm-workspace > .col-xl-4 { width:100%; }
+  }
+}
+
+.fpm-crm-detail-page {
+  .fakir-stage-choice { cursor:pointer; font:inherit; transition:background .15s ease; }
+  .fakir-stage-choice:focus-visible { outline:2px solid #73516c; outline-offset:2px; }
+  .fakir-odoo20-metrics { margin-top:.7rem; }
+  .fakir-odoo20-metrics label { display:block; font-size:.8rem; font-weight:600; margin-bottom:.3rem; }
+  .fakir-odoo20-priority { margin-top:1rem; }
+  .fakir-live-message { border-left:2px solid #74536b; padding-left:.5rem; }
+}
+/* Opportunity detail only: Odoo 20 form placement and inline one2many appearance. */
+.fpm-crm-detail-page {
+  .fakir-v20-primary { padding: .7rem 1.5rem 1.75rem; }
+  .fakir-v20-metrics { display:flex; flex-wrap:wrap; gap:2.4rem; align-items:flex-start; margin-bottom:1.35rem; }
+  .fakir-v20-metric { width: 45%; max-width: 230px; }
+  .fakir-v20-metric label { font-size:.83rem; font-weight:650; display:block; margin-bottom:.25rem; }
+  .fakir-v20-metric-value { display:flex; align-items:center; gap:.45rem; font-size:1.22rem; font-weight:600; }
+  .fakir-v20-metric-value input { background:transparent; border:0; padding:0; min-width:0; width:110px; font:inherit; outline-offset:2px; }
+  .fakir-v20-ai { color:#b87923; font-size:.76rem; }
+  .fakir-v20-at { font-size:.95rem; margin-right:.25rem; }
+  .fakir-v20-fields { display:grid; grid-template-columns:1fr 1fr; gap:2rem; }
+  .fakir-v20-field { display:grid; grid-template-columns:110px minmax(0,1fr); gap:.6rem; align-items:center; min-height:36px; margin-bottom:.25rem; }
+  .fakir-v20-field > label { font-size:.84rem; font-weight:600; margin:0; }
+  .fakir-v20-input { display:block; width:100%; min-width:0; padding:.35rem .3rem; border:1px solid transparent; border-radius:3px; background:transparent; font-size:.88rem; color:inherit; }
+  .fakir-v20-input:hover, .fakir-v20-input:focus { border-color:#c6cbd1; background:#fff; outline:0; }
+  .fakir-v20-input[readonly] { color:#607483; cursor:default; }
+  .fakir-v20-input::placeholder { color:#bdc7d1; }
+  .fakir-v20-closing { grid-template-columns:110px minmax(0,1fr) 70px; }
+  .fakir-v20-stars { display:flex; white-space:nowrap; }
+  .fakir-v20-star { border:0; background:transparent; color:#d2d4d8; padding:0 1px; cursor:pointer; font-size:1.2rem; }
+  .fakir-v20-star.is-active { color:#f6c343; }
+  .fpm-product-editor { padding:.3rem 0 1rem; }
+  .fpm-product-table { min-width:900px; font-size:.84rem; }
+  .fpm-product-table th { font-weight:500; white-space:nowrap; }
+  .fpm-product-table .form-control,.fpm-product-table .form-select { font-size:.83rem; min-width:80px; border-color:transparent; background:transparent; }
+  .fpm-product-table .form-control:focus,.fpm-product-table .form-select:focus { border-color:#9ba5ad; background:white; }
+  .fakir-v20-add-row td { border-top:1px solid #dce2e6; }
+  .fakir-v20-add-line { color:#008b91; background:none; border:0; padding:.45rem .25rem; font:inherit; cursor:pointer; }
+  .fakir-v20-add-line:hover { text-decoration:underline; }
+  @media (max-width:850px) { .fakir-v20-fields { grid-template-columns:1fr; gap:.5rem; } }
+  @media (max-width:480px) { .fakir-v20-field { grid-template-columns:95px minmax(0,1fr); } .fakir-v20-closing { grid-template-columns:95px minmax(0,1fr) 68px; } }
+}
+
+/* Odoo 20 Extra Info/Assigned Partner: detail-page-only, no global overrides. */
+.fpm-crm-detail-page {
+  .fakir-odoo20-topbar { position:relative; justify-content:flex-start; min-height:54px; }
+  .fakir-odoo20-smart-buttons { position:absolute; left:50%; transform:translateX(-50%); top:50%; margin-top:-18px; white-space:nowrap; }
+  .fakir-extra-standard, .fakir-odoo20-assigned { padding:1.35rem 1.4rem 2rem; }
+  .fakir-extra-grid { display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); column-gap:2rem; row-gap:2rem; }
+  .fakir-extra-company { grid-column:1; grid-row:1; }
+  .fakir-extra-contact { grid-column:2; grid-row:1; }
+  .fakir-extra-marketing { grid-column:1; grid-row:2; }
+  .fakir-extra-ownership { grid-column:2; grid-row:2; }
+  .fakir-extra-group h6 { font-size:.76rem; font-weight:700; line-height:1.45; border-bottom:1px solid #d9dee4; padding-bottom:.4rem; margin:0 0 .75rem; }
+  .fakir-extra-field { display:grid; grid-template-columns:125px minmax(0,1fr); align-items:start; column-gap:.5rem; margin:.35rem 0; min-height:33px; }
+  .fakir-extra-field > label { font-size:.84rem; font-weight:600; line-height:2.1; margin:0; }
+  .fakir-extra-field .form-control, .fakir-extra-field .form-select { min-width:0; width:100%; font-size:.86rem; color:#263344; padding:.3rem .55rem; border:1px solid transparent; background:transparent; border-radius:4px; }
+  .fakir-extra-field .form-control:hover, .fakir-extra-field .form-select:hover,
+  .fakir-extra-field .form-control:focus, .fakir-extra-field .form-select:focus { border-color:#aebac7; background:#fff; }
+  .fakir-extra-field input::placeholder { color:#a9b8c7; }
+  .fakir-extra-address-inputs { display:grid; gap:.28rem; }
+  .fakir-extra-address-triple { display:grid; grid-template-columns:1fr 1fr .65fr; gap:.3rem; min-width:0; }
+  .fakir-assignment-grid { display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:2rem; }
+  .fakir-assignment-action { display:flex; flex-direction:column; align-items:stretch; gap:.6rem; }
+  .fakir-auto-assign { width:100%; font-size:.85rem; }
+  .fakir-assignment-action small { font-size:.75rem; }
+  @media (max-width: 900px) {
+    .fakir-odoo20-topbar { flex-wrap:wrap; }
+    .fakir-odoo20-smart-buttons { position:static; transform:none; margin-top:0; }
+    .fakir-extra-grid, .fakir-assignment-grid { grid-template-columns:1fr; }
+    .fakir-extra-company, .fakir-extra-contact, .fakir-extra-marketing, .fakir-extra-ownership { grid-column:auto; grid-row:auto; }
+  }
+  @media (max-width: 480px) {
+    .fakir-extra-field { grid-template-columns:95px minmax(0,1fr); }
+    .fakir-extra-standard, .fakir-odoo20-assigned { padding:1rem .7rem; }
+  }
+}

@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="portal_user_security_category"
+            model="ir.module.category">
+
+        <field name="name">
+            Portal User Security
+        </field>
+
+        <field name="sequence">
+            20
+        </field>
+
+    </record>
+
+
+    <record id="crm_website_privilege"
+            model="res.groups.privilege">
+
+        <field name="name">
+            CRM for Website
+        </field>
+
+        <field name="category_id"
+               ref="zencore_fakir_crm_portal.portal_user_security_category"/>
+
+        <field name="sequence">
+            10
+        </field>
+
+    </record>
+
+
+    <record id="group_crm_website_access"
+            model="res.groups">
+
+        <field name="name">
+            Yes
+        </field>
+
+        <field name="privilege_id"
+               ref="zencore_fakir_crm_portal.crm_website_privilege"/>
+
+    </record>
+
+</odoo>

@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_fakir_crm_send_mail_wizard_form" model="ir.ui.view">
+        <field name="name">fakir.crm.send.mail.wizard.form</field>
+        <field name="model">fakir.crm.send.mail.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Send Mail">
+                <field name="lead_id" invisible="1"/>
+
+                <group>
+                    <field name="email_to"
+                           placeholder="user@example.com"/>
+                    <field name="subject"/>
+                </group>
+
+                <group>
+                    <field name="message_body"
+                           nolabel="1"
+                           placeholder="Write your email..."/>
+                </group>
+
+                <footer>
+                    <button name="action_send_mail"
+                            string="Send Mail"
+                            type="object"
+                            class="btn-primary"
+                            icon="fa-paper-plane"
+                            data-hotkey="q"/>
+                    <button string="Cancel"
+                            special="cancel"
+                            class="btn-secondary"
+                            data-hotkey="x"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_crm_lead_form_fakir_send_mail" model="ir.ui.view">
+        <field name="name">crm.lead.form.fakir.send.mail</field>
+        <field name="model">crm.lead</field>
+        <field name="inherit_id" ref="crm.crm_lead_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//header/button[@name='%(crm.crm_lead_lost_action)d']"
+                   position="after">
+                <button name="action_open_fakir_send_mail"
+                        string="Send Mail"
+                        type="object"
+                        icon="fa-envelope-o"
+                        invisible="type == 'lead' or not active"/>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>
