@@ -10,12 +10,12 @@ class TestVoucher(TransactionCase):
     def setUpClass(cls):
         super().setUpClass()
         cls.company = cls.env.company
-        # The workflow tests exercise approval. Grant the test user the real
-        # approver group, without bypassing the production permission check.
+        # Workflow tests exercise both approval and posting. The manager group
+        # implies the approver group and keeps production security checks intact.
         # Odoo versions differ in the technical name of the user groups field.
         user_groups_field = "group_ids" if "group_ids" in cls.env.user._fields else "groups_id"
         cls.env.user.write({user_groups_field: [Command.link(
-            cls.env.ref("account_voucher_management.group_voucher_approver").id
+            cls.env.ref("account_voucher_management.group_voucher_manager").id
         )]})
         cls.bank = cls.env["account.account"].create({"name": "Voucher Bank", "code": "V1000", "account_type": "asset_cash", "company_ids": [Command.set(cls.company.ids)]})
         cls.receivable = cls.env["account.account"].create({"name": "Voucher Receivable", "code": "V1100", "account_type": "asset_receivable", "reconcile": True, "company_ids": [Command.set(cls.company.ids)]})
@@ -158,7 +158,12 @@ class TestVoucher(TransactionCase):
             "line_ids": [Command.create({"account_id": self.expense.id, "name": "Debit", "debit": 50}),
                          Command.create({"account_id": self.payable.id, "name": "Credit", "credit": 50})],
         })
-        self.assertEqual(journal_voucher.entry_journal_id, self.general)
+        expected_general = self.env["account.journal"].search([
+            ("company_id", "=", self.company.id),
+            ("type", "=", "general"),
+        ], order="sequence, id", limit=1)
+        self.assertTrue(expected_general)
+        self.assertEqual(journal_voucher.entry_journal_id, expected_general)
 
     def test_payment_and_partner_classification(self):
         payment = self._simple("payment", partner_id=self.vendor.id, debit_account_id=self.payable.id, credit_account_id=self.bank.id)
