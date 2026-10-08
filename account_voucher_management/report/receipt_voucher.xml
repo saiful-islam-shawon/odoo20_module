@@ -111,7 +111,7 @@
                                        ]" />
 
                                         <span
-                                            t-esc="
+                                            t-out="
                                         ', '.join(
                                             [part for part in address_parts if part]
                                         )
@@ -155,7 +155,7 @@
                                     </td>
 
                                     <td style="font-weight:bold;">
-                                        <span t-esc="'%.2f Taka' % o.amount_total" />
+                                        <span t-out="'%.2f Taka' % o.amount_total" />
                                     </td>
 
 
@@ -182,7 +182,7 @@
 
                                         <i>
                                             <span
-                                                t-esc="
+                                                t-out="
                                             o.currency_id.amount_to_text(
                                                 o.amount_total
                                             )
@@ -209,7 +209,7 @@
                                         word-wrap:break-word;
                                     ">
 
-                                        <span t-esc="o.narration or ''" />
+                                        <span t-out="o.narration or ''" />
 
                                     </td>
 
@@ -274,7 +274,7 @@
 
                                         <td style="text-align:right;">
                                             <span
-                                                t-esc="
+                                                t-out="
                                             '%.2f Taka'
                                             % o.invoice_id.amount_total
                                         " />

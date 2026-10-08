@@ -2,10 +2,10 @@
     <template id="report_voucher_document">
         <t t-call="web.html_container">
             <t t-foreach="docs" t-as="o">
-                <div class="page" style="font-family: Arial, sans-serif; font-size:12px; padding:15mm;">
+                <div t-if="o.voucher_type != 'journal'" class="page" style="font-family: Arial, sans-serif; font-size:12px; padding:15mm;">
 
                     <h2 style="text-align:center; font-size:28px; font-weight:bold; margin:0 0 35px 0;">
-                        Receipt Voucher
+                        <span t-out="dict(o._fields['voucher_type'].selection).get(o.voucher_type, 'Voucher')"/>
                     </h2>
 
                     <table style="width:100%; border-collapse:collapse;">
@@ -29,7 +29,7 @@
                                         o.partner_id.city,
                                         o.partner_id.street
                                     ]"/>
-                                    <span t-esc="', '.join([part for part in address_parts if part])"/>
+                                    <span t-out="', '.join([part for part in address_parts if part])"/>
                                 </td>
                                 <td style="border:1px solid #000; padding:10px;"><b>Created By</b></td>
                                 <td style="border:1px solid #000; padding:10px;">
@@ -47,7 +47,7 @@
                             <tr>
                                 <td style="border:1px solid #000; padding:10px;"><b>Amount</b></td>
                                 <td style="border:1px solid #000; padding:10px; font-weight:bold;">
-                                    <span t-esc="'%.2f Taka' % o.amount_total"/>
+                                    <span t-out="'%.2f Taka' % o.amount_total"/>
                                 </td>
                                 <td style="border:1px solid #000; padding:10px;"><b>Status</b></td>
                                 <td style="border:1px solid #000; padding:10px;">
@@ -58,14 +58,14 @@
                             <tr>
                                 <td style="border:1px solid #000; padding:10px;"><b>Amount In<br/>Words</b></td>
                                 <td colspan="3" style="border:1px solid #000; padding:10px;">
-                                    <i><span t-esc="o.currency_id.amount_to_text(o.amount_total)"/> Only</i>
+                                    <i><span t-out="o.currency_id.amount_to_text(o.amount_total)"/> Only</i>
                                 </td>
                             </tr>
 
                             <tr>
                                 <td style="border:1px solid #000; padding:10px; vertical-align:middle;"><b>Narration</b></td>
                                 <td colspan="3" style="border:1px solid #000; padding:10px; vertical-align:middle;">
-                                    <span t-esc="o.narration or ''"/>
+                                    <span t-out="o.narration or ''"/>
                                 </td>
                             </tr>
                         </tbody>
@@ -86,7 +86,7 @@
                                 <tr>
                                     <td style="border:1px solid #000; padding:10px;"><span t-field="o.invoice_id.name"/></td>
                                     <td style="border:1px solid #000; padding:10px;"><span t-field="o.invoice_id.invoice_date"/></td>
-                                    <td style="border:1px solid #000; padding:10px;"><span t-esc="'%.2f Taka' % o.invoice_id.amount_total"/></td>
+                                    <td style="border:1px solid #000; padding:10px;"><span t-out="'%.2f Taka' % o.invoice_id.amount_total"/></td>
                                 </tr>
                             </t>
                             <t t-else="">
@@ -114,6 +114,37 @@
                         </table>
                     </div>
 
+                </div>
+
+                <!-- Dedicated journal voucher layout. Do not display receipt/payment-only fields. -->
+                <div t-if="o.voucher_type == 'journal'" class="page" style="font-family: Arial, sans-serif; font-size:12px; padding:15mm;">
+                    <h2 style="text-align:center; margin-bottom:25px;">Journal Voucher</h2>
+                    <table style="width:100%; border-collapse:collapse; margin-bottom:20px;">
+                        <tr><td><strong>Voucher Number:</strong> <span t-out="o.voucher_number"/></td>
+                            <td><strong>Date:</strong> <span t-field="o.date"/></td></tr>
+                        <tr><td><strong>Journal:</strong> <span t-field="o.entry_journal_id"/></td>
+                            <td><strong>Status:</strong> <span t-field="o.state"/></td></tr>
+                        <tr><td colspan="2"><strong>Reference:</strong> <span t-out="o.reference or ''"/></td></tr>
+                        <tr><td colspan="2"><strong>Narration:</strong> <span t-out="o.narration or ''"/></td></tr>
+                    </table>
+                    <table style="width:100%; border-collapse:collapse;" border="1" cellpadding="8">
+                        <thead><tr><th>Account</th><th>Description</th><th style="text-align:right;">Debit</th><th style="text-align:right;">Credit</th></tr></thead>
+                        <tbody>
+                            <tr t-foreach="o.line_ids" t-as="line">
+                                <td><span t-field="line.account_id"/></td>
+                                <td><span t-out="line.name or ''"/></td>
+                                <td style="text-align:right;"><span t-out="'%.2f' % line.debit"/></td>
+                                <td style="text-align:right;"><span t-out="'%.2f' % line.credit"/></td>
+                            </tr>
+                            <tr><td colspan="2"><strong>Total</strong></td>
+                                <td style="text-align:right;"><strong t-out="'%.2f' % o.total_debit"/></td>
+                                <td style="text-align:right;"><strong t-out="'%.2f' % o.total_credit"/></td></tr>
+                        </tbody>
+                    </table>
+                    <div style="margin-top:100px; display:flex; justify-content:space-between;">
+                        <div>_______________________<br/>Prepared By</div>
+                        <div>_______________________<br/>Authorized Signature</div>
+                    </div>
                 </div>
             </t>
         </t>

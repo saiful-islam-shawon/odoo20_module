@@ -191,7 +191,9 @@ class TestVoucher(TransactionCase):
         self.assertTrue(all(voucher.accounting_move_id.line_ids.mapped("currency_id")))
         self.assertEqual(voucher.reversal_move_id.state, "posted")
         html, _ = self.env["ir.actions.report"]._render_qweb_html("account_voucher_management.action_report_journal_voucher", voucher.ids)
-        self.assertIn(b"JV-", html)
+        self.assertIn(voucher.voucher_number.encode(), html)
+        self.assertIn(b"Journal Voucher", html)
+        self.assertNotIn(b"Receipt Voucher", html)
 
     def test_received_cheque_workflow_and_duplicate_protection(self):
         cheque = self._simple(
