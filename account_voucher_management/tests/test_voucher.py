@@ -10,6 +10,13 @@ class TestVoucher(TransactionCase):
     def setUpClass(cls):
         super().setUpClass()
         cls.company = cls.env.company
+        # The workflow tests exercise approval. Grant the test user the real
+        # approver group, without bypassing the production permission check.
+        # Odoo versions differ in the technical name of the user groups field.
+        user_groups_field = "group_ids" if "group_ids" in cls.env.user._fields else "groups_id"
+        cls.env.user.write({user_groups_field: [Command.link(
+            cls.env.ref("account_voucher_management.group_voucher_approver").id
+        )]})
         cls.bank = cls.env["account.account"].create({"name": "Voucher Bank", "code": "V1000", "account_type": "asset_cash", "company_ids": [Command.set(cls.company.ids)]})
         cls.receivable = cls.env["account.account"].create({"name": "Voucher Receivable", "code": "V1100", "account_type": "asset_receivable", "reconcile": True, "company_ids": [Command.set(cls.company.ids)]})
         cls.payable = cls.env["account.account"].create({"name": "Voucher Payable", "code": "V2000", "account_type": "liability_payable", "reconcile": True, "company_ids": [Command.set(cls.company.ids)]})
@@ -126,7 +133,8 @@ class TestVoucher(TransactionCase):
     def test_hidden_journal_fields_are_defaulted(self):
         receipt = self.env["account.voucher"].create({
             "voucher_type": "receipt", "partner_id": self.customer.id,
-            "debit_account_id": self.bank.id, "credit_account_id": self.receivable.id,
+            # Let the hidden liquidity account default from the selected journal.
+            "credit_account_id": self.receivable.id,
             "amount_total": 100,
         })
         self.assertIn(receipt.journal_id.type, ("bank", "cash"))

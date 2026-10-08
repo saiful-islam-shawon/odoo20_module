@@ -204,7 +204,9 @@ class AccountVoucher(models.Model):
         journals = self.env["account.journal"].search([
             ("company_id", "=", company.id), ("type", "in", ("bank", "cash")),
         ], order="type, sequence, id")
-        liquidity_accounts = journals.mapped("default_account_id")
+        # Keep the liquidity account tied to the selected default journal.
+        # mapped() returns an account recordset that may have a different order.
+        default_liquidity_account = journals[:1].default_account_id
         if voucher_type in ("receipt", "payment", "expense") and journals:
             values["journal_id"] = journals[0].id
         elif voucher_type == "contra" and journals:
@@ -218,18 +220,18 @@ class AccountVoucher(models.Model):
 
         account_domain = [("company_ids", "in", company.ids)]
         if voucher_type == "receipt":
-            values["debit_account_id"] = liquidity_accounts[:1].id
+            values["debit_account_id"] = default_liquidity_account.id
             values["credit_account_id"] = self.env["account.account"].search(
                 account_domain + [("account_type", "=", "asset_receivable")], limit=1).id
         elif voucher_type == "payment":
             values["debit_account_id"] = self.env["account.account"].search(
                 account_domain + [("account_type", "=", "liability_payable")], limit=1).id
-            values["credit_account_id"] = liquidity_accounts[:1].id
+            values["credit_account_id"] = default_liquidity_account.id
         elif voucher_type == "contra":
             values["credit_account_id"] = journals[:1].default_account_id.id
             values["debit_account_id"] = journals[1:2].default_account_id.id
         elif voucher_type == "expense":
-            values["credit_account_id"] = liquidity_accounts[:1].id
+            values["credit_account_id"] = default_liquidity_account.id
         return values
 
     @api.model
