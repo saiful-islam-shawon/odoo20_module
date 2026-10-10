@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="website_menu_sales" model="website.menu">
+        <field name="name">Sales</field>
+        <field name="url">/zaintagro/sales</field>
+        <field name="parent_id" ref="website.main_menu"/>
+        <field name="sequence">41</field>
+        <field name="group_ids" eval="[(6, 0, [ref('zencore_zaintagro_sales_portal.group_sales_portal_access')])]"/>
+    </record>
+</odoo>

@@ -1,0 +1,334 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="sales_quotation_page" name="Zaint Agro Sales Quotation">
+        <t t-call="website.layout">
+            <div id="wrap" class="zencore_zaintagro_sales_portal">
+                <main class="zzsp-page">
+                    <div class="container-fluid zzsp-container">
+                        <div class="zzsp-page-header">
+                            <div>
+                                <div class="zzsp-eyebrow">Sales</div>
+                                <h1 class="zzsp-title">New Quotation</h1>
+                            </div>
+                        </div>
+
+                        <t t-if="success">
+                            <div class="zzsp-alert zzsp-alert-success js_zzsp_flash" data-flash-type="success">
+                                <div><strong>Quotation created successfully.</strong> <span t-if="created_name"><t t-out="created_name"/></span></div>
+                                <button type="button" class="zzsp-alert-close js_zzsp_flash_close" aria-label="Close">×</button>
+                            </div>
+                        </t>
+                        <t t-if="error">
+                            <div class="zzsp-alert zzsp-alert-error js_zzsp_flash" data-flash-type="error">
+                                <div><t t-out="error"/></div>
+                                <button type="button" class="zzsp-alert-close js_zzsp_flash_close" aria-label="Close">×</button>
+                            </div>
+                        </t>
+                        <div class="zzsp-alert zzsp-alert-error d-none js_zzsp_client_error" data-flash-type="error">
+                            <div class="js_zzsp_client_error_text"/>
+                            <button type="button" class="zzsp-alert-close js_zzsp_client_error_close" aria-label="Close">×</button>
+                        </div>
+
+                        <form method="post" action="/zaintagro/sales/quotation/create" class="zzsp-card js_zzsp_form">
+                            <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()" class="js_zzsp_csrf"/>
+                            <input type="hidden" name="lines_json" class="js_zzsp_lines_json"/>
+                            <input type="hidden" name="tag_ids" class="js_zzsp_tag_ids"/>
+
+                            <section class="zzsp-top-grid">
+                                <div class="zzsp-field zzsp-field-customer">
+                                    <label class="zzsp-label">Customer <span class="zzsp-required">*</span></label>
+                                    <div class="zzsp-autocomplete js_zzsp_autocomplete" data-kind="customer" data-field="partner_id">
+                                        <div class="zzsp-input-shell">
+                                            <input type="text" class="zzsp-input js_zzsp_ac_input" autocomplete="off" placeholder="Search customer..." required="required"/>
+                                            <button type="button" class="zzsp-dropdown-trigger js_zzsp_dropdown_trigger" aria-label="Open customer list">⌄</button>
+                                        </div>
+                                        <input type="hidden" name="partner_id" class="js_zzsp_ac_value js_zzsp_partner_id"/>
+                                        <div class="zzsp-ac-menu js_zzsp_ac_menu" role="listbox"/>
+                                    </div>
+                                </div>
+
+                                <div class="zzsp-field">
+                                    <label class="zzsp-label">Expiration</label>
+                                    <input type="date" name="validity_date" class="zzsp-input js_zzsp_validity_date" t-att-value="defaults.get('validity_date') or ''"/>
+                                </div>
+                                <div class="zzsp-field">
+                                    <label class="zzsp-label">Quotation Date</label>
+                                    <input type="datetime-local" name="date_order" class="zzsp-input js_zzsp_date_order" t-att-value="now_input"/>
+                                </div>
+                                <div class="zzsp-field">
+                                    <label class="zzsp-label">Payment Terms</label>
+                                    <div class="zzsp-autocomplete js_zzsp_autocomplete" data-kind="payment_term" data-field="payment_term_id">
+                                        <div class="zzsp-input-shell">
+                                            <input type="text" class="zzsp-input js_zzsp_ac_input" autocomplete="off" placeholder="Search payment terms..." t-att-value="(defaults.get('payment_term_id') or {}).get('name') or ''"/>
+                                            <button type="button" class="zzsp-dropdown-trigger js_zzsp_dropdown_trigger">⌄</button>
+                                        </div>
+                                        <input type="hidden" name="payment_term_id" class="js_zzsp_ac_value" t-att-value="(defaults.get('payment_term_id') or {}).get('id') or ''"/>
+                                        <div class="zzsp-ac-menu js_zzsp_ac_menu" role="listbox"/>
+                                    </div>
+                                </div>
+                                <div class="zzsp-field">
+                                    <label class="zzsp-label">Delivery Date</label>
+                                    <input type="datetime-local" name="commitment_date" class="zzsp-input"/>
+                                </div>
+                            </section>
+
+                            <div class="zzsp-tabs" role="tablist">
+                                <button type="button" class="zzsp-tab active js_zzsp_tab" data-tab="order-lines">Order Lines</button>
+                                <button type="button" class="zzsp-tab js_zzsp_tab" data-tab="other-info">Other Info</button>
+                            </div>
+
+                            <section class="zzsp-tab-panel active js_zzsp_tab_panel" data-panel="order-lines">
+                                <div class="zzsp-tax-mode-wrap">
+                                    <span class="zzsp-tax-mode-label">Prices</span>
+                                    <div class="zzsp-segmented js_zzsp_tax_mode">
+                                        <button type="button" class="zzsp-segment active" data-value="tax_excluded">Tax Excl.</button>
+                                        <button type="button" class="zzsp-segment" data-value="tax_included">Tax Incl.</button>
+                                    </div>
+                                    <input type="hidden" name="document_tax_mode" class="js_zzsp_tax_mode_value" t-att-value="defaults.get('document_tax_mode') or 'tax_excluded'"/>
+                                </div>
+
+                                <div class="zzsp-lines-shell js_zzsp_lines_shell">
+                                    <div class="zzsp-lines-head js_zzsp_lines_head">
+                                        <div class="zzsp-col zzsp-col-description" data-col="description">Description</div>
+                                        <div class="zzsp-col zzsp-col-product" data-col="product">Product</div>
+                                        <div class="zzsp-col zzsp-col-product-variant" data-col="product_variant">Product Variant</div>
+                                        <div class="zzsp-col zzsp-col-quantity" data-col="quantity">Quantity</div>
+                                        <div class="zzsp-col zzsp-col-unit-price" data-col="unit_price">Unit Price</div>
+                                        <div class="zzsp-col zzsp-col-lead-time" data-col="lead_time">Lead Time</div>
+                                        <div class="zzsp-col zzsp-col-margin" data-col="margin">Margin</div>
+                                        <div class="zzsp-col zzsp-col-margin-percent" data-col="margin_percent">Margin (%)</div>
+                                        <div class="zzsp-col zzsp-col-taxes" data-col="taxes">Taxes</div>
+                                        <div class="zzsp-col zzsp-col-unit-cost" data-col="unit_cost">Unit Cost</div>
+                                        <div class="zzsp-col zzsp-col-tax-excl" data-col="tax_excl">Tax Excl.</div>
+                                        <div class="zzsp-col zzsp-col-tax-incl" data-col="tax_incl">Tax Incl.</div>
+                                        <div class="zzsp-col zzsp-col-amount" data-col="amount">Amount</div>
+                                        <div class="zzsp-column-chooser-wrap">
+                                            <button type="button" class="zzsp-column-chooser-btn js_zzsp_column_chooser_btn" aria-label="Optional columns" title="Optional columns">☷</button>
+                                            <div class="zzsp-column-menu js_zzsp_column_menu" role="menu">
+                                                <label><input type="checkbox" data-col-toggle="product"/> <span>Product</span></label>
+                                                <label><input type="checkbox" data-col-toggle="product_variant"/> <span>Product Variant</span></label>
+                                                <label><input type="checkbox" data-col-toggle="lead_time"/> <span>Lead Time</span></label>
+                                                <label><input type="checkbox" data-col-toggle="margin"/> <span>Margin</span></label>
+                                                <label><input type="checkbox" data-col-toggle="margin_percent"/> <span>Margin (%)</span></label>
+                                                <label><input type="checkbox" data-col-toggle="taxes" checked="checked"/> <span>Taxes</span></label>
+                                                <label><input type="checkbox" data-col-toggle="unit_cost"/> <span>Unit Cost</span></label>
+                                                <label><input type="checkbox" data-col-toggle="tax_excl"/> <span>Tax Excl.</span></label>
+                                                <label><input type="checkbox" data-col-toggle="tax_incl"/> <span>Tax Incl.</span></label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="zzsp-lines-body js_zzsp_lines_body"/>
+                                </div>
+
+                                <div class="zzsp-line-actions">
+                                    <button type="button" class="zzsp-link-btn js_zzsp_add_line">Add Line</button>
+                                    <button type="button" class="zzsp-link-btn js_zzsp_add_section">Add Section</button>
+                                    <button type="button" class="zzsp-link-btn js_zzsp_add_note">Add Note</button>
+                                </div>
+
+                                <div class="zzsp-order-bottom">
+                                    <div class="zzsp-terms">
+                                        <textarea name="note" rows="4" class="zzsp-textarea zzsp-terms-input js_zzsp_note" placeholder="Terms and conditions..."><t t-out="defaults.get('note') or ''"/></textarea>
+                                    </div>
+                                    <div class="zzsp-totals">
+                                        <div class="zzsp-total-row"><span>Untaxed Amount</span><strong class="js_zzsp_amount_untaxed">0.00</strong></div>
+                                        <div class="zzsp-total-row js_zzsp_tax_total_row d-none"><span>Taxes</span><strong class="js_zzsp_amount_tax">0.00</strong></div>
+                                        <div class="zzsp-total-row zzsp-total-grand"><span>Total</span><strong class="js_zzsp_amount_total">0.00</strong></div>
+                                    </div>
+                                </div>
+                            </section>
+
+                            <section class="zzsp-tab-panel js_zzsp_tab_panel" data-panel="other-info">
+                                <div class="zzsp-other-grid">
+                                    <div class="zzsp-group">
+                                        <div class="zzsp-group-title">Confirmation</div>
+                                        <div class="zzsp-group-line"/>
+                                        <div class="zzsp-inline-switch">
+                                            <label class="zzsp-label mb-0">Online Signature</label>
+                                            <label class="zzsp-switch"><input type="checkbox" name="require_signature" value="1" class="js_zzsp_require_signature" t-att-checked="defaults.get('require_signature')"/><span/></label>
+                                        </div>
+                                        <div class="zzsp-field">
+                                            <label class="zzsp-label">Prepayment</label>
+                                            <div class="zzsp-percent"><input type="number" min="0" max="100" step="0.01" name="prepayment_percent" class="zzsp-input js_zzsp_prepayment" t-att-value="defaults.get('prepayment_percent') or 0"/><span>%</span></div>
+                                        </div>
+                                    </div>
+
+                                        <div class="zzsp-group">
+                                            <div class="zzsp-group-title">Sales</div>
+                                            <div class="zzsp-group-line"/>
+                                        <div class="zzsp-field">
+                                            <label class="zzsp-label">Salesperson</label>
+                                            <div class="zzsp-autocomplete js_zzsp_autocomplete" data-kind="salesperson" data-field="user_id">
+                                                <div class="zzsp-input-shell">
+                                                    <input type="text" class="zzsp-input js_zzsp_ac_input" autocomplete="off" placeholder="Search salesperson..." t-att-value="(defaults.get('user_id') or {}).get('name') or ''"/>
+                                                    <button type="button" class="zzsp-dropdown-trigger js_zzsp_dropdown_trigger" aria-label="Open Salesperson">⌄</button>
+                                                </div>
+                                                <input type="hidden" name="user_id" class="js_zzsp_ac_value" t-att-value="(defaults.get('user_id') or {}).get('id') or ''"/>
+                                                <div class="zzsp-ac-menu js_zzsp_ac_menu" role="listbox"/>
+                                            </div>
+                                        </div>
+                                        <div class="zzsp-field">
+                                            <label class="zzsp-label">Sales Team</label>
+                                            <div class="zzsp-autocomplete js_zzsp_autocomplete" data-kind="team" data-field="team_id">
+                                                <div class="zzsp-input-shell">
+                                                    <input type="text" class="zzsp-input js_zzsp_ac_input" autocomplete="off" placeholder="Search sales team..." t-att-value="(defaults.get('team_id') or {}).get('name') or ''"/>
+                                                    <button type="button" class="zzsp-dropdown-trigger js_zzsp_dropdown_trigger" aria-label="Open Sales Team">⌄</button>
+                                                </div>
+                                                <input type="hidden" name="team_id" class="js_zzsp_ac_value" t-att-value="(defaults.get('team_id') or {}).get('id') or ''"/>
+                                                <div class="zzsp-ac-menu js_zzsp_ac_menu" role="listbox"/>
+                                            </div>
+                                        </div>
+                                        <div class="zzsp-field">
+                                            <label class="zzsp-label">Template</label>
+                                            <div class="zzsp-autocomplete js_zzsp_autocomplete" data-kind="template" data-field="sale_order_template_id">
+                                                <div class="zzsp-input-shell">
+                                                    <input type="text" class="zzsp-input js_zzsp_ac_input" autocomplete="off" placeholder="Search quotation template..." t-att-value="(defaults.get('sale_order_template_id') or {}).get('name') or ''"/>
+                                                    <button type="button" class="zzsp-dropdown-trigger js_zzsp_dropdown_trigger" aria-label="Open Template">⌄</button>
+                                                </div>
+                                                <input type="hidden" name="sale_order_template_id" class="js_zzsp_ac_value" t-att-value="(defaults.get('sale_order_template_id') or {}).get('id') or ''"/>
+                                                <div class="zzsp-ac-menu js_zzsp_ac_menu" role="listbox"/>
+                                            </div>
+                                        </div>
+                                        <div class="zzsp-field"><label class="zzsp-label">Customer Reference</label><input type="text" name="client_order_ref" class="zzsp-input"/></div>
+                                        <div class="zzsp-field">
+                                            <label class="zzsp-label">Tags</label>
+                                            <div class="zzsp-autocomplete js_zzsp_autocomplete" data-kind="tag" data-field="tag_ids" data-multiple="1">
+                                                <div class="zzsp-chip-list js_zzsp_chip_list"/>
+                                                <div class="zzsp-input-shell"><input type="text" class="zzsp-input js_zzsp_ac_input" autocomplete="off" placeholder="Search tags..."/><button type="button" class="zzsp-dropdown-trigger js_zzsp_dropdown_trigger">⌄</button></div>
+                                                <div class="zzsp-ac-menu js_zzsp_ac_menu" role="listbox"/>
+                                            </div>
+                                        </div>
+                                        </div>
+
+                                    <div class="zzsp-group">
+                                        <div class="zzsp-group-title">Invoicing</div>
+                                        <div class="zzsp-group-line"/>
+                                        <div class="zzsp-field">
+                                            <label class="zzsp-label">Fiscal Position</label>
+                                            <div class="zzsp-autocomplete js_zzsp_autocomplete" data-kind="fiscal_position" data-field="fiscal_position_id">
+                                                <div class="zzsp-input-shell">
+                                                    <input type="text" class="zzsp-input js_zzsp_ac_input" autocomplete="off" placeholder="Search fiscal position..." t-att-value="(defaults.get('fiscal_position_id') or {}).get('name') or ''"/>
+                                                    <button type="button" class="zzsp-dropdown-trigger js_zzsp_dropdown_trigger" aria-label="Open Fiscal Position">⌄</button>
+                                                </div>
+                                                <input type="hidden" name="fiscal_position_id" class="js_zzsp_ac_value" t-att-value="(defaults.get('fiscal_position_id') or {}).get('id') or ''"/>
+                                                <div class="zzsp-ac-menu js_zzsp_ac_menu" role="listbox"/>
+                                            </div>
+                                        </div>
+                                        <div class="zzsp-field">
+                                            <label class="zzsp-label">Payment Method</label>
+                                            <div class="zzsp-autocomplete js_zzsp_autocomplete" data-kind="payment_method" data-field="preferred_payment_method_line_id">
+                                                <div class="zzsp-input-shell">
+                                                    <input type="text" class="zzsp-input js_zzsp_ac_input" autocomplete="off" placeholder="Search payment method..." t-att-value="(defaults.get('preferred_payment_method_line_id') or {}).get('name') or ''"/>
+                                                    <button type="button" class="zzsp-dropdown-trigger js_zzsp_dropdown_trigger" aria-label="Open Payment Method">⌄</button>
+                                                </div>
+                                                <input type="hidden" name="preferred_payment_method_line_id" class="js_zzsp_ac_value" t-att-value="(defaults.get('preferred_payment_method_line_id') or {}).get('id') or ''"/>
+                                                <div class="zzsp-ac-menu js_zzsp_ac_menu" role="listbox"/>
+                                            </div>
+                                        </div>
+                                        <div class="zzsp-field">
+                                            <label class="zzsp-label">Journal</label>
+                                            <div class="zzsp-autocomplete js_zzsp_autocomplete" data-kind="journal" data-field="journal_id">
+                                                <div class="zzsp-input-shell">
+                                                    <input type="text" class="zzsp-input js_zzsp_ac_input" autocomplete="off" placeholder="Search journal..." t-att-value="(defaults.get('journal_id') or {}).get('name') or ''"/>
+                                                    <button type="button" class="zzsp-dropdown-trigger js_zzsp_dropdown_trigger" aria-label="Open Journal">⌄</button>
+                                                </div>
+                                                <input type="hidden" name="journal_id" class="js_zzsp_ac_value" t-att-value="(defaults.get('journal_id') or {}).get('id') or ''"/>
+                                                <div class="zzsp-ac-menu js_zzsp_ac_menu" role="listbox"/>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="zzsp-group">
+                                        <div class="zzsp-group-title">Delivery</div>
+                                        <div class="zzsp-group-line"/>
+                                        <div class="zzsp-field">
+                                            <label class="zzsp-label">Incoterm</label>
+                                            <div class="zzsp-autocomplete js_zzsp_autocomplete" data-kind="incoterm" data-field="incoterm">
+                                                <div class="zzsp-input-shell">
+                                                    <input type="text" class="zzsp-input js_zzsp_ac_input" autocomplete="off" placeholder="Search incoterm..." t-att-value="(defaults.get('incoterm') or {}).get('name') or ''"/>
+                                                    <button type="button" class="zzsp-dropdown-trigger js_zzsp_dropdown_trigger" aria-label="Open Incoterm">⌄</button>
+                                                </div>
+                                                <input type="hidden" name="incoterm" class="js_zzsp_ac_value" t-att-value="(defaults.get('incoterm') or {}).get('id') or ''"/>
+                                                <div class="zzsp-ac-menu js_zzsp_ac_menu" role="listbox"/>
+                                            </div>
+                                        </div>
+                                        <div class="zzsp-field"><label class="zzsp-label">Incoterm Location</label><input type="text" name="incoterm_location" class="zzsp-input js_zzsp_incoterm_location" t-att-value="defaults.get('incoterm_location') or ''"/></div>
+                                        <div class="zzsp-field">
+                                            <label class="zzsp-label">Warehouse</label>
+                                            <div class="zzsp-autocomplete js_zzsp_autocomplete" data-kind="warehouse" data-field="warehouse_id">
+                                                <div class="zzsp-input-shell">
+                                                    <input type="text" class="zzsp-input js_zzsp_ac_input" autocomplete="off" placeholder="Search warehouse..." t-att-value="(defaults.get('warehouse_id') or {}).get('name') or ''"/>
+                                                    <button type="button" class="zzsp-dropdown-trigger js_zzsp_dropdown_trigger" aria-label="Open Warehouse">⌄</button>
+                                                </div>
+                                                <input type="hidden" name="warehouse_id" class="js_zzsp_ac_value" t-att-value="(defaults.get('warehouse_id') or {}).get('id') or ''"/>
+                                                <div class="zzsp-ac-menu js_zzsp_ac_menu" role="listbox"/>
+                                            </div>
+                                        </div>
+                                        <div class="zzsp-field"><label class="zzsp-label">Shipping Policy</label><select name="picking_policy" class="zzsp-select js_zzsp_picking_policy"><option value="direct" t-att-selected="defaults.get('picking_policy') == 'direct'">As soon as possible, with backorders</option><option value="one" t-att-selected="defaults.get('picking_policy') == 'one'">When all products are ready</option></select></div>
+                                    </div>
+
+                                    <div class="zzsp-group zzsp-group-tracking">
+                                        <div class="zzsp-group-title">Tracking</div>
+                                        <div class="zzsp-group-line"/>
+                                        <div class="zzsp-tracking-grid">
+                                            <div class="zzsp-field"><label class="zzsp-label">Source Document</label><input type="text" name="origin" class="zzsp-input"/></div>
+                                        <div class="zzsp-field">
+                                            <label class="zzsp-label">Opportunity</label>
+                                            <div class="zzsp-autocomplete js_zzsp_autocomplete" data-kind="opportunity" data-field="opportunity_id">
+                                                <div class="zzsp-input-shell">
+                                                    <input type="text" class="zzsp-input js_zzsp_ac_input" autocomplete="off" placeholder="Search opportunity..." t-att-value="(defaults.get('opportunity_id') or {}).get('name') or ''"/>
+                                                    <button type="button" class="zzsp-dropdown-trigger js_zzsp_dropdown_trigger" aria-label="Open Opportunity">⌄</button>
+                                                </div>
+                                                <input type="hidden" name="opportunity_id" class="js_zzsp_ac_value" t-att-value="(defaults.get('opportunity_id') or {}).get('id') or ''"/>
+                                                <div class="zzsp-ac-menu js_zzsp_ac_menu" role="listbox"/>
+                                            </div>
+                                        </div>
+                                        <div class="zzsp-field">
+                                            <label class="zzsp-label">Campaign</label>
+                                            <div class="zzsp-autocomplete js_zzsp_autocomplete" data-kind="campaign" data-field="campaign_id">
+                                                <div class="zzsp-input-shell">
+                                                    <input type="text" class="zzsp-input js_zzsp_ac_input" autocomplete="off" placeholder="Search campaign..." t-att-value="(defaults.get('campaign_id') or {}).get('name') or ''"/>
+                                                    <button type="button" class="zzsp-dropdown-trigger js_zzsp_dropdown_trigger" aria-label="Open Campaign">⌄</button>
+                                                </div>
+                                                <input type="hidden" name="campaign_id" class="js_zzsp_ac_value" t-att-value="(defaults.get('campaign_id') or {}).get('id') or ''"/>
+                                                <div class="zzsp-ac-menu js_zzsp_ac_menu" role="listbox"/>
+                                            </div>
+                                        </div>
+                                        <div class="zzsp-field">
+                                            <label class="zzsp-label">Medium</label>
+                                            <div class="zzsp-autocomplete js_zzsp_autocomplete" data-kind="medium" data-field="medium_id">
+                                                <div class="zzsp-input-shell">
+                                                    <input type="text" class="zzsp-input js_zzsp_ac_input" autocomplete="off" placeholder="Search medium..." t-att-value="(defaults.get('medium_id') or {}).get('name') or ''"/>
+                                                    <button type="button" class="zzsp-dropdown-trigger js_zzsp_dropdown_trigger" aria-label="Open Medium">⌄</button>
+                                                </div>
+                                                <input type="hidden" name="medium_id" class="js_zzsp_ac_value" t-att-value="(defaults.get('medium_id') or {}).get('id') or ''"/>
+                                                <div class="zzsp-ac-menu js_zzsp_ac_menu" role="listbox"/>
+                                            </div>
+                                        </div>
+                                        <div class="zzsp-field">
+                                            <label class="zzsp-label">Source</label>
+                                            <div class="zzsp-autocomplete js_zzsp_autocomplete" data-kind="source" data-field="source_id">
+                                                <div class="zzsp-input-shell">
+                                                    <input type="text" class="zzsp-input js_zzsp_ac_input" autocomplete="off" placeholder="Search source..." t-att-value="(defaults.get('source_id') or {}).get('name') or ''"/>
+                                                    <button type="button" class="zzsp-dropdown-trigger js_zzsp_dropdown_trigger" aria-label="Open Source">⌄</button>
+                                                </div>
+                                                <input type="hidden" name="source_id" class="js_zzsp_ac_value" t-att-value="(defaults.get('source_id') or {}).get('id') or ''"/>
+                                                <div class="zzsp-ac-menu js_zzsp_ac_menu" role="listbox"/>
+                                            </div>
+                                        </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </section>
+
+                            <div class="zzsp-footer-actions">
+                                <button type="submit" class="zzsp-btn zzsp-btn-primary js_zzsp_save">Save</button>
+                            </div>
+                        </form>
+                    </div>
+                </main>
+            </div>
+        </t>
+    </template>
+
+</odoo>

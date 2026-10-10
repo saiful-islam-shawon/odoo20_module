@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_zc_purchase_requisition_list" model="ir.ui.view">
+        <field name="name">zc.purchase.requisition.list</field>
+        <field name="model">zc.purchase.requisition</field>
+        <field name="arch" type="xml">
+            <list string="Requisitions" default_order="id desc" create="0">
+                <field name="name"/>
+                <field name="request_date"/>
+                <field name="requested_by"/>
+                <field name="approval_request_id" optional="hide"/>
+                <field name="rfq_count" string="RFQs"/>
+                <field name="purchase_order_count" string="POs"/>
+                <field name="state" widget="badge"/>
+                <field name="company_id" groups="base.group_multi_company"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_zc_purchase_requisition_form" model="ir.ui.view">
+        <field name="name">zc.purchase.requisition.form</field>
+        <field name="model">zc.purchase.requisition</field>
+        <field name="arch" type="xml">
+            <form string="Purchase Requisition" create="0">
+                <header>
+                    <button name="action_confirm" string="Confirm" type="object" class="btn-primary" invisible="state != 'draft'"/>
+                    <button name="action_create_rfq" string="Create Vendor RFQ" type="object" class="btn-primary" invisible="state not in ('confirmed', 'sourcing')"/>
+                    <button name="action_compare_rfqs" string="Compare RFQs" type="object" class="btn-secondary" invisible="received_rfq_count &lt; 2 or state in ('done', 'cancelled')"/>
+                    <button name="action_create_purchase_orders" string="Create Purchase Orders" type="object" class="btn-success" invisible="unprocessed_recommended_line_count == 0 or state in ('done', 'cancelled')"/>
+                    <button name="action_print_comparison_sheet" string="Comparison Sheet" type="object" class="btn-secondary" icon="picture_as_pdf" invisible="not comparison_sheet_ready"/>
+                    <button name="action_cancel" string="Cancel" type="object" invisible="state in ('done', 'cancelled')"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,confirmed,sourcing,done,cancelled"/>
+                </header>
+                <sheet>
+                    <field name="received_rfq_count" invisible="1"/>
+                    <field name="unprocessed_recommended_line_count" invisible="1"/>
+                    <field name="comparison_count" invisible="1"/>
+                    <field name="comparison_sheet_ready" invisible="1"/>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_rfqs" type="object" class="oe_stat_button" icon="description" invisible="rfq_count == 0">
+                            <field name="rfq_count" widget="statinfo" string="Vendor RFQs"/>
+                        </button>
+                        <button name="action_view_purchase_orders" type="object" class="oe_stat_button" icon="shopping_cart" invisible="purchase_order_count == 0">
+                            <field name="purchase_order_count" widget="statinfo" string="Purchase Orders"/>
+                        </button>
+                        <button name="action_view_comparisons" type="object" class="oe_stat_button" icon="balance" invisible="comparison_count == 0">
+                            <field name="comparison_count" widget="statinfo" string="Comparisons"/>
+                        </button>
+                    </div>
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1><field name="name"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="requested_by" readonly="state != 'draft'"/>
+                            <field name="request_date" readonly="state != 'draft'"/>
+                            <field name="approval_request_id" readonly="1"/>
+                        </group>
+                        <group>
+                            <field name="company_id" groups="base.group_multi_company" readonly="state != 'draft'"/>
+                            <field name="currency_id" readonly="state != 'draft'"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Products" name="products">
+                            <field name="line_ids" readonly="state != 'draft'">
+                                <list editable="bottom">
+                                    <field name="sequence" widget="handle"/>
+                                    <field name="product_id"/>
+                                    <field name="description" optional="show"/>
+                                    <field name="quantity"/>
+                                    <field name="allowed_uom_ids" column_invisible="True"/>
+                                    <field name="product_uom_id" options="{'no_create': True}"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Purpose / Notes" name="notes">
+                            <field name="purpose" placeholder="Why is this requisition needed?" readonly="state != 'draft'"/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_zc_purchase_requisition_search" model="ir.ui.view">
+        <field name="name">zc.purchase.requisition.search</field>
+        <field name="model">zc.purchase.requisition</field>
+        <field name="arch" type="xml">
+            <search string="Requisitions">
+                <field name="name"/>
+                <field name="requested_by"/>
+                <field name="approval_request_id"/>
+                <filter string="My Requisitions" name="my_requisitions" domain="[('requested_by', '=', uid)]"/>
+                <separator/>
+                <filter string="Draft" name="draft" domain="[('state', '=', 'draft')]"/>
+                <filter string="Sourcing" name="sourcing" domain="[('state', '=', 'sourcing')]"/>
+                <filter string="Done" name="done" domain="[('state', '=', 'done')]"/>
+                <group name="group_by">
+                    <filter string="Status" name="group_state" context="{'group_by': 'state'}"/>
+                    <filter string="Requested By" name="group_user" context="{'group_by': 'requested_by'}"/>
+                    <filter string="Request Date" name="group_date" context="{'group_by': 'request_date'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_zc_purchase_requisition" model="ir.actions.act_window">
+        <field name="name">Requisitions</field>
+        <field name="res_model">zc.purchase.requisition</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_zc_purchase_requisition_search"/>
+    </record>
+</odoo>

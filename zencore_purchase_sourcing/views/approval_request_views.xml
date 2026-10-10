@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Configure the custom requisition category in Odoo 20. -->
+    <record id="approval_category_form_zc_requisition" model="ir.ui.view">
+        <field name="name">approval.category.form.zc.requisition</field>
+        <field name="model">approval.category</field>
+        <field name="inherit_id" ref="approvals.approval_category_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//sheet" position="inside">
+                <group string="Purchase Requisition">
+                    <field name="approval_type"/>
+                </group>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="approval_request_form_zc_requisition" model="ir.ui.view">
+        <field name="name">approval.request.form.zc.requisition</field>
+        <field name="model">approval.request</field>
+        <field name="inherit_id" ref="approvals.approval_request_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='product_line_ids']" position="attributes">
+                <attribute name="readonly">(approval_type != 'zc_requisition' and request_status != 'new') or (approval_type == 'zc_requisition' and zc_requisition_id)</attribute>
+            </xpath>
+            <xpath expr="//header" position="inside">
+                <field name="zc_requisition_id" invisible="1"/>
+                <field name="approval_type" invisible="1"/>
+                <button name="action_create_zc_requisition"
+                        string="Create Requisition"
+                        type="object"
+                        class="btn-primary"
+                        invisible="request_status != 'approved' or zc_requisition_id"/>
+            </xpath>
+            <xpath expr="//div[@name='button_box']" position="inside">
+                <button name="action_view_zc_requisition"
+                        type="object"
+                        class="oe_stat_button"
+                        icon="list_alt"
+                        invisible="not zc_requisition_id">
+                    <div class="o_stat_info">
+                        <span class="o_stat_text">Requisition</span>
+                    </div>
+                </button>
+            </xpath>
+        </field>
+    </record>
+</odoo>

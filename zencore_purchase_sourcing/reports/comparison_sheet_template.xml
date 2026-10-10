@@ -1,0 +1,265 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="report_zc_comparison_sheet">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="doc">
+                <t t-set="comparison" t-value="doc.comparison_ids[:1]"/>
+
+
+                <div class="header" style="font-family: Arial, Helvetica, sans-serif; color:#243244; font-size:10px;">
+                        <style>
+                            /* Executive / presales report theme */
+                            .cs-page { color:#243244; }
+                            .cs-topbar { width:100%; display:table; border:0 !important; border-bottom:2px solid #20364d !important; padding-bottom:8px; }
+                            .cs-topbar-cell { display:table-cell; border:0 !important; outline:0 !important; vertical-align:middle; }
+                            .cs-company { color:#667085; font-size:8.5px; text-transform:uppercase; letter-spacing:.65px; font-weight:700; margin-top:4px; }
+                            .cs-title { color:#1d2f42; font-size:23px; font-weight:700; letter-spacing:.25px; margin:0; line-height:1.05; text-align:center; }
+                            .cs-subtitle { color:#748195; font-size:9.2px; margin-top:4px; text-align:center; }
+                            .cs-req-wrap { text-align:right; }
+                            .cs-req-label { color:#7b8795; font-size:8px; text-transform:uppercase; letter-spacing:.6px; font-weight:700; }
+                            .cs-req-no { color:#1d2f42; font-size:14px; font-weight:700; margin-top:2px; }
+
+                            .cs-meta { width:100%; border-collapse:collapse; margin-top:11px; border:1px solid #dbe2ea; }
+                            .cs-meta td { padding:7px 9px; border-right:1px solid #e4e9ef; border-bottom:1px solid #e4e9ef; vertical-align:top; background:#ffffff; }
+                            .cs-meta tr:last-child td { border-bottom:0; }
+                            .cs-meta td:last-child { border-right:0; }
+                            .cs-label { color:#7b8795; font-size:7.7px; text-transform:uppercase; letter-spacing:.48px; font-weight:700; display:block; margin-bottom:2px; }
+                            .cs-value { color:#243244; font-weight:600; font-size:9.5px; }
+
+                            .cs-summary { width:100%; border-collapse:collapse; margin-top:8px; background:#f6f8fa; border:1px solid #e1e7ed; }
+                            .cs-summary td { padding:6px 9px; border-right:1px solid #e1e7ed; vertical-align:middle; }
+                            .cs-summary td:last-child { border-right:0; }
+                            .cs-summary-value { font-size:12.5px; font-weight:700; color:#20364d; }
+                            .cs-summary-status { color:#285a6b; font-size:9.5px; font-weight:700; letter-spacing:.25px; }
+
+                            .cs-product { margin-top:11px; page-break-inside:avoid; }
+                            .cs-product-head { width:100%; border-collapse:collapse; background:#1f4a70; border:1px solid #1f4a70; border-bottom:0; }
+                            .cs-product-head td { padding:7px 9px; vertical-align:middle; border:0 !important; }
+                            .cs-product-name { color:#ffffff; font-size:10.5px; font-weight:700; }
+                                                        .cs-product-meta { color:#f3f6fa; font-size:9px; text-align:right; white-space:nowrap; font-weight:600; }
+                            .cs-rec-inline { color:#ffffff; font-weight:700; }
+
+                            .cs-table { width:100%; border-collapse:collapse; table-layout:fixed; }
+                            .cs-table th { background:#eaf0f5; color:#244768; border:1px solid #cdd9e4; padding:6px 6px; font-size:7.8px; text-transform:uppercase; letter-spacing:.36px; text-align:left; font-weight:700; }
+                            .cs-table td { border:1px solid #dce3ea; padding:6px 6px; vertical-align:top; line-height:1.35; color:#344054; background:#ffffff; word-wrap:break-word; overflow-wrap:break-word; }
+                            .cs-table tbody tr:nth-child(even) td { background:#fafbfc; }
+                            .cs-table tr.recommended td { background:#eef5f7; border-top-color:#c9dde3; border-bottom-color:#c9dde3; }
+                            .cs-table tr.recommended td:first-child { border-left:3px solid #3f7484; }
+                            .cs-table tr.rejected td { color:#667085; }
+                            .cs-money { text-align:right; white-space:nowrap; font-weight:700; color:#20364d !important; }
+                            .cs-center { text-align:center; }
+                            .cs-vendor { font-weight:700; color:#243244; }
+                            .cs-rfq { color:#667085; font-size:8.7px; }
+
+                            .cs-quality { display:inline-block; padding:2px 0; font-weight:600; color:#435466; }
+                            .cs-decision { display:inline-block; border:1px solid #cfd8e2; border-radius:10px; padding:2px 6px; font-size:7.5px; font-weight:700; text-transform:uppercase; letter-spacing:.2px; white-space:nowrap; background:#f6f8fa; color:#5f6f80; }
+                            .cs-decision-rec { border-color:#b8d0d7; background:#e7f0f3; color:#285a6b; }
+                            .cs-decision-reject { border-color:#d7dde4; background:#f5f6f7; color:#5f6874; }
+                            .cs-decision-cancel { border-color:#dde2e7; background:#f7f8f9; color:#7a8490; }
+                            .cs-decision-pending { border-color:#ccd7e3; background:#f2f5f8; color:#526579; }
+
+                            .cs-note { margin-top:10px; padding:6px 8px; border-top:1px solid #d9e1e8; border-bottom:1px solid #d9e1e8; color:#687587; font-size:8.5px; background:#fbfcfd; }
+                            .cs-note strong { color:#34495e; }
+
+                            .cs-signatures { width:100%; border-collapse:separate; border-spacing:10px 0; margin-top:42px; page-break-inside:avoid; }
+                            .cs-signatures td { width:25%; text-align:left; vertical-align:bottom; padding:0 4px; }
+                            .cs-sign-line { border-top:1px solid #aeb8c3; padding-top:5px; margin-top:38px; }
+                            .cs-sign-title { color:#34495e; font-size:8.5px; font-weight:700; }
+                            .cs-sign-name { color:#7a8795; font-size:7.7px; margin-top:2px; }
+
+                        </style>
+                    <div class="cs-page">
+                            <div class="cs-topbar">
+                                <div class="cs-topbar-cell" style="width:22%; text-align:left;">
+                                    <img t-if="doc.company_id.logo" t-att-src="image_data_uri(doc.company_id.logo)" style="max-height:38px; max-width:145px;"/>
+                                    <div t-else="" style="font-size:13px; font-weight:700; color:#20364d;"><span t-field="doc.company_id.name"/></div>
+                                    <div class="cs-company"><span t-field="doc.company_id.name"/></div>
+                                </div>
+                                <div class="cs-topbar-cell" style="width:56%; text-align:center;">
+                                    <h1 class="cs-title">COMPARISON SHEET</h1>
+                                    <div class="cs-subtitle">Vendor quotation comparison and product-wise sourcing decision</div>
+                                </div>
+                                <div class="cs-topbar-cell cs-req-wrap" style="width:22%;">
+                                    <div class="cs-req-label">Requisition</div>
+                                    <div class="cs-req-no"><span t-field="doc.name"/></div>
+                                </div>
+                            </div>
+                    </div>
+                </div>
+
+                <div class="article" t-att-data-oe-model="doc._name" t-att-data-oe-id="doc.id" style="font-family: Arial, Helvetica, sans-serif; color:#243244; font-size:10px;">
+                        <style>
+                            /* Executive / presales report theme */
+                            .cs-page { color:#243244; }
+                            .cs-topbar { width:100%; display:table; border:0 !important; border-bottom:2px solid #20364d !important; padding-bottom:8px; }
+                            .cs-topbar-cell { display:table-cell; border:0 !important; outline:0 !important; vertical-align:middle; }
+                            .cs-company { color:#667085; font-size:8.5px; text-transform:uppercase; letter-spacing:.65px; font-weight:700; margin-top:4px; }
+                            .cs-title { color:#1d2f42; font-size:23px; font-weight:700; letter-spacing:.25px; margin:0; line-height:1.05; text-align:center; }
+                            .cs-subtitle { color:#748195; font-size:9.2px; margin-top:4px; text-align:center; }
+                            .cs-req-wrap { text-align:right; }
+                            .cs-req-label { color:#7b8795; font-size:8px; text-transform:uppercase; letter-spacing:.6px; font-weight:700; }
+                            .cs-req-no { color:#1d2f42; font-size:14px; font-weight:700; margin-top:2px; }
+
+                            .cs-meta { width:100%; border-collapse:collapse; margin-top:11px; border:1px solid #dbe2ea; }
+                            .cs-meta td { padding:7px 9px; border-right:1px solid #e4e9ef; border-bottom:1px solid #e4e9ef; vertical-align:top; background:#ffffff; }
+                            .cs-meta tr:last-child td { border-bottom:0; }
+                            .cs-meta td:last-child { border-right:0; }
+                            .cs-label { color:#7b8795; font-size:7.7px; text-transform:uppercase; letter-spacing:.48px; font-weight:700; display:block; margin-bottom:2px; }
+                            .cs-value { color:#243244; font-weight:600; font-size:9.5px; }
+
+                            .cs-summary { width:100%; border-collapse:collapse; margin-top:8px; background:#f6f8fa; border:1px solid #e1e7ed; }
+                            .cs-summary td { padding:6px 9px; border-right:1px solid #e1e7ed; vertical-align:middle; }
+                            .cs-summary td:last-child { border-right:0; }
+                            .cs-summary-value { font-size:12.5px; font-weight:700; color:#20364d; }
+                            .cs-summary-status { color:#285a6b; font-size:9.5px; font-weight:700; letter-spacing:.25px; }
+
+                            .cs-product { margin-top:11px; page-break-inside:avoid; }
+                            .cs-product-head { width:100%; border-collapse:collapse; background:#1f4a70; border:1px solid #1f4a70; border-bottom:0; }
+                            .cs-product-head td { padding:7px 9px; vertical-align:middle; border:0 !important; }
+                            .cs-product-name { color:#ffffff; font-size:10.5px; font-weight:700; }
+                                                        .cs-product-meta { color:#f3f6fa; font-size:9px; text-align:right; white-space:nowrap; font-weight:600; }
+                            .cs-rec-inline { color:#ffffff; font-weight:700; }
+
+                            .cs-table { width:100%; border-collapse:collapse; table-layout:fixed; }
+                            .cs-table th { background:#eaf0f5; color:#244768; border:1px solid #cdd9e4; padding:6px 6px; font-size:7.8px; text-transform:uppercase; letter-spacing:.36px; text-align:left; font-weight:700; }
+                            .cs-table td { border:1px solid #dce3ea; padding:6px 6px; vertical-align:top; line-height:1.35; color:#344054; background:#ffffff; word-wrap:break-word; overflow-wrap:break-word; }
+                            .cs-table tbody tr:nth-child(even) td { background:#fafbfc; }
+                            .cs-table tr.recommended td { background:#eef5f7; border-top-color:#c9dde3; border-bottom-color:#c9dde3; }
+                            .cs-table tr.recommended td:first-child { border-left:3px solid #3f7484; }
+                            .cs-table tr.rejected td { color:#667085; }
+                            .cs-money { text-align:right; white-space:nowrap; font-weight:700; color:#20364d !important; }
+                            .cs-center { text-align:center; }
+                            .cs-vendor { font-weight:700; color:#243244; }
+                            .cs-rfq { color:#667085; font-size:8.7px; }
+
+                            .cs-quality { display:inline-block; padding:2px 0; font-weight:600; color:#435466; }
+                            .cs-decision { display:inline-block; border:1px solid #cfd8e2; border-radius:10px; padding:2px 6px; font-size:7.5px; font-weight:700; text-transform:uppercase; letter-spacing:.2px; white-space:nowrap; background:#f6f8fa; color:#5f6f80; }
+                            .cs-decision-rec { border-color:#b8d0d7; background:#e7f0f3; color:#285a6b; }
+                            .cs-decision-reject { border-color:#d7dde4; background:#f5f6f7; color:#5f6874; }
+                            .cs-decision-cancel { border-color:#dde2e7; background:#f7f8f9; color:#7a8490; }
+                            .cs-decision-pending { border-color:#ccd7e3; background:#f2f5f8; color:#526579; }
+
+                            .cs-note { margin-top:10px; padding:6px 8px; border-top:1px solid #d9e1e8; border-bottom:1px solid #d9e1e8; color:#687587; font-size:8.5px; background:#fbfcfd; }
+                            .cs-note strong { color:#34495e; }
+
+                            .cs-signatures { width:100%; border-collapse:separate; border-spacing:10px 0; margin-top:42px; page-break-inside:avoid; }
+                            .cs-signatures td { width:25%; text-align:left; vertical-align:bottom; padding:0 4px; }
+                            .cs-sign-line { border-top:1px solid #aeb8c3; padding-top:5px; margin-top:38px; }
+                            .cs-sign-title { color:#34495e; font-size:8.5px; font-weight:700; }
+                            .cs-sign-name { color:#7a8795; font-size:7.7px; margin-top:2px; }
+
+                        </style>
+                    <div class="page">
+                        <div class="cs-page">
+                            <table class="cs-meta">
+                                <tr>
+                                    <td style="width:25%;"><span class="cs-label">Request Date</span><span class="cs-value" t-field="doc.request_date"/></td>
+                                    <td style="width:25%;"><span class="cs-label">Requested By</span><span class="cs-value" t-field="doc.requested_by"/></td>
+                                    <td style="width:25%;"><span class="cs-label">Approval Request</span><span class="cs-value" t-field="doc.approval_request_id"/></td>
+                                    <td style="width:25%;"><span class="cs-label">Currency</span><span class="cs-value" t-field="doc.currency_id"/></td>
+                                </tr>
+                                <tr>
+                                    <td><span class="cs-label">Comparison No.</span><span class="cs-value" t-field="comparison.name"/></td>
+                                    <td><span class="cs-label">Comparison Date</span><span class="cs-value" t-field="comparison.comparison_date" t-options='{"widget":"datetime"}'/></td>
+                                    <td><span class="cs-label">Compared By</span><span class="cs-value" t-field="comparison.created_by"/></td>
+                                    <td><span class="cs-label">Company</span><span class="cs-value" t-field="doc.company_id"/></td>
+                                </tr>
+                            </table>
+
+                            <table class="cs-summary">
+                                <tr>
+                                    <td style="width:25%;"><span class="cs-label">Products</span><span class="cs-summary-value"><t t-out="len(doc.line_ids)"/></span></td>
+                                    <td style="width:25%;"><span class="cs-label">Received RFQs</span><span class="cs-summary-value"><t t-out="doc.received_rfq_count"/></span></td>
+                                    <td style="width:25%;"><span class="cs-label">Compared Vendors</span><span class="cs-summary-value"><t t-out="len(doc.rfq_ids.filtered(lambda r: r.state == 'received').mapped('partner_id'))"/></span></td>
+                                    <td style="width:25%;"><span class="cs-label">Status</span><span class="cs-summary-status">COMPARISON COMPLETED</span></td>
+                                </tr>
+                            </table>
+
+                            <t t-foreach="doc.line_ids" t-as="req_line">
+                                <t t-set="vendor_lines" t-value="comparison.line_ids.filtered(lambda l: l.requisition_line_id == req_line and l.rfq_id.state == 'received')"/>
+                                <t t-set="recommended" t-value="vendor_lines.filtered(lambda l: l.decision == 'recommended')[:1]"/>
+                                <div class="cs-product">
+                                    <table class="cs-product-head">
+                                        <tr>
+                                            <td style="width:68%;">
+                                                <span class="cs-product-name"><span t-field="req_line.product_id"/></span>
+                                            </td>
+                                            <td style="width:32%;" class="cs-product-meta">
+                                                Qty: <strong><span t-field="req_line.quantity"/> <span t-field="req_line.product_uom_id"/></strong>
+                                                <t t-if="recommended"> &#160; | &#160; Recommended: <span class="cs-rec-inline"><span t-field="recommended.partner_id"/></span></t>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                    <table class="cs-table">
+                                        <thead>
+                                            <tr>
+                                                <th style="width:18%;">Vendor</th>
+                                                <th style="width:11%;">RFQ</th>
+                                                <th style="width:11%; text-align:right;">Unit Price</th>
+                                                <th style="width:9%;">Quality</th>
+                                                <th style="width:11%;">Delivery Date</th>
+                                                <th style="width:12%;">Decision</th>
+                                                <th style="width:28%;">Remarks</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <t t-foreach="vendor_lines" t-as="line">
+                                                <tr t-att-class="'recommended' if line.decision == 'recommended' else ('rejected' if line.decision == 'rejected' else '')">
+                                                    <td><span class="cs-vendor" t-field="line.partner_id"/></td>
+                                                    <td><span class="cs-rfq" t-field="line.rfq_id"/></td>
+                                                    <td class="cs-money"><span t-field="line.price_unit" t-options='{"widget":"monetary", "display_currency": doc.currency_id}'/></td>
+                                                    <td><span class="cs-quality"><t t-if="line.quality == 'good'">Good</t><t t-elif="line.quality == 'average'">Average</t><t t-elif="line.quality == 'poor'">Poor</t></span></td>
+                                                    <td><span t-field="line.delivery_date"/></td>
+                                                    <td>
+                                                        <span t-if="line.decision == 'recommended'" class="cs-decision cs-decision-rec">Recommended</span>
+                                                        <span t-elif="line.decision == 'rejected'" class="cs-decision cs-decision-reject">Rejected</span>
+                                                        <span t-elif="line.decision == 'cancelled'" class="cs-decision cs-decision-cancel">Cancelled</span>
+                                                        <span t-else="" class="cs-decision cs-decision-pending">Pending</span>
+                                                    </td>
+                                                    <td><span t-out="line.remarks or '-'"/></td>
+                                                </tr>
+                                            </t>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </t>
+
+                            <div class="cs-note">
+                                <strong>Note:</strong> Recommended Vendor - To be selected product-wise based on quality, delivery date and price.
+                            </div>
+
+                            <table class="cs-signatures">
+                                <tr>
+                                    <td>
+                                        <div class="cs-sign-line">
+                                            <div class="cs-sign-title">Prepared By</div>
+                                            <div class="cs-sign-name"><span t-field="comparison.created_by"/> &#160; | &#160; <span t-field="comparison.comparison_date" t-options='{"widget":"date"}'/></div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="cs-sign-line">
+                                            <div class="cs-sign-title">Checked By</div>
+                                            <div class="cs-sign-name">Name / Signature / Date</div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="cs-sign-line">
+                                            <div class="cs-sign-title">Procurement Review</div>
+                                            <div class="cs-sign-name">Name / Signature / Date</div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="cs-sign-line">
+                                            <div class="cs-sign-title">Approved By</div>
+                                            <div class="cs-sign-name">Name / Signature / Date</div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </t>
+        </t>
+    </template>
+</odoo>

@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="crm_opportunity_page" name="Zaint Agro CRM Opportunity">
+        <t t-call="website.layout">
+            <t t-set="additional_title">CRM Opportunity</t>
+            <div id="wrap" class="za_crm_page zencore_zaintagro_crm_portal">
+                <div class="container-fluid py-4 px-3 px-lg-5">
+                    <div t-if="request.params.get('success')"
+                         class="alert alert-success alert-dismissible mb-4 js_zzcp_flash"
+                         data-flash-type="success" role="alert">
+                        <span>Opportunity created successfully.</span>
+                        <button type="button" class="btn-close js_zzcp_flash_close" aria-label="Close"/>
+                    </div>
+                    <div t-if="request.params.get('error')"
+                         class="alert alert-danger alert-dismissible mb-4 js_zzcp_flash"
+                         data-flash-type="error" role="alert">
+                        <span t-esc="request.params.get('error')"/>
+                        <button type="button" class="btn-close js_zzcp_flash_close" aria-label="Close"/>
+                    </div>
+                    <form id="za_crm_form" action="/zaintagro/crm/opportunity/create" method="post" class="za_crm_form js_zzcp_form">
+                        <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                        <input type="hidden" name="tag_ids" id="za_tag_ids" class="js_zzcp_tag_ids" value=""/>
+                        <input type="hidden" name="priority" id="za_priority" class="js_zzcp_priority_value" value="0"/>
+
+                        <div class="za_sheet shadow-sm">
+                            <input name="name" class="form-control za_title_input" placeholder="e.g. Product Pricing" required="required"/>
+
+                            <div class="row g-4 mt-3 align-items-end">
+                                <div class="col-lg-6">
+                                    <label class="fw-bold">Expected Revenue</label>
+                                    <div class="d-flex align-items-center gap-2 za_expected_revenue">
+                                        <span class="za_currency">৳</span>
+                                        <input type="number" step="0.01" min="0" name="expected_revenue" class="form-control" value="0"/>
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <label class="fw-bold">Probability <span class="text-warning">AI</span></label>
+                                    <div class="d-flex align-items-center gap-2 za_probability_inline">
+                                        <span>at</span>
+                                        <input type="number" class="form-control" value="0.00" disabled="disabled"/>
+                                        <span>%</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row g-4 mt-2">
+                                <div class="col-lg-6">
+                                    <div class="za_field_row">
+                                        <label>Contact</label>
+                                        <div class="za-autocomplete js_zzcp_autocomplete flex-grow-1" data-kind="partner">
+                                            <input type="hidden" name="partner_id" class="js_zzcp_ac_value"/>
+                                            <input type="text" class="form-control za-ac-input js_zzcp_ac_input" autocomplete="off" placeholder="Select or create a contact..."/>
+                                            <div class="za-ac-menu js_zzcp_ac_menu" role="listbox"/>
+                                        </div>
+                                    </div>
+                                    <div class="za_field_row"><label>Email</label><input type="email" name="email_from" id="za_email" class="form-control js_zzcp_email" placeholder="e.g. john.doe@email.com"/></div>
+                                    <div class="za_field_row"><label>Phone</label><input type="text" name="phone" id="za_phone" class="form-control js_zzcp_phone" placeholder="e.g. (555) 555-0199"/></div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <div class="za_field_row">
+                                        <label>Salesperson</label>
+                                        <div class="za-autocomplete js_zzcp_autocomplete flex-grow-1" data-kind="user">
+                                            <input type="hidden" name="user_id" class="js_zzcp_ac_value" t-att-value="default_user_id or ''"/>
+                                            <input type="text" class="form-control za-ac-input js_zzcp_ac_input" autocomplete="off" t-att-value="default_user_name"/>
+                                            <div class="za-ac-menu js_zzcp_ac_menu" role="listbox"/>
+                                        </div>
+                                    </div>
+                                    <div class="za_field_row">
+                                        <label>Expected Closing</label>
+                                        <div class="d-flex flex-grow-1 gap-3 align-items-center">
+                                            <input type="date" name="date_deadline" class="form-control"/>
+                                            <div class="za_priority" title="Priority"><button type="button" class="za_star js_zzcp_star" data-value="1">★</button><button type="button" class="za_star js_zzcp_star" data-value="2">★</button><button type="button" class="za_star js_zzcp_star" data-value="3">★</button></div>
+                                        </div>
+                                    </div>
+                                    <div class="za_field_row align-items-start">
+                                        <label class="pt-2">Tags</label>
+                                        <div class="flex-grow-1">
+                                            <div id="za_selected_tags" class="za_tags_selected js_zzcp_selected_tags mb-2"/>
+                                            <div class="za-autocomplete js_zzcp_autocomplete" data-kind="tag" data-multiple="1">
+                                                <input type="text" class="form-control za-ac-input js_zzcp_ac_input" autocomplete="off"/>
+                                                <div class="za-ac-menu js_zzcp_ac_menu" role="listbox"/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <ul class="nav nav-tabs za_tabs mt-4" role="tablist">
+                                <li class="nav-item"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#za_notes" type="button">Notes</button></li>
+                                <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#za_extra" type="button">Extra Info</button></li>
+                                <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#za_assigned" type="button">Assigned Partner</button></li>
+                            </ul>
+
+                            <div class="tab-content za_tab_content">
+                                <div class="tab-pane fade show active" id="za_notes">
+                                    <textarea name="description" class="form-control za_notes" rows="9" placeholder="Add a description..."/>
+                                </div>
+                                <div class="tab-pane fade" id="za_extra">
+                                    <div class="row g-5">
+                                        <div class="col-lg-6">
+                                            <div class="za_section_header"><span>Company Information</span></div>
+                                            <div class="za_field_row"><label>Company Name</label><input type="text" name="partner_name" class="form-control js_zzcp_partner_name"/></div>
+                                            <div class="za_field_row align-items-start"><label>Address</label><div class="flex-grow-1">
+                                                <input type="text" name="street" class="form-control mb-2 js_zzcp_street" placeholder="Street..."/>
+                                                <input type="text" name="street2" class="form-control mb-2 js_zzcp_street2" placeholder="Street 2..."/>
+                                                <div class="row g-2 mb-2">
+                                                    <div class="col-md-4"><input type="text" name="city" class="form-control js_zzcp_city" placeholder="City"/></div>
+                                                    <div class="col-md-4"><div class="za-autocomplete js_zzcp_autocomplete" data-kind="state"><input type="hidden" name="state_id" class="js_zzcp_ac_value"/><input type="text" class="form-control za-ac-input js_zzcp_ac_input" autocomplete="off" placeholder="State"/><div class="za-ac-menu js_zzcp_ac_menu" role="listbox"/></div></div>
+                                                    <div class="col-md-4"><input type="text" name="zip" class="form-control js_zzcp_zip" placeholder="ZIP"/></div>
+                                                </div>
+                                                <div class="za-autocomplete js_zzcp_autocomplete" data-kind="country"><input type="hidden" name="country_id" class="js_zzcp_ac_value js_zzcp_country_id"/><input type="text" class="form-control za-ac-input js_zzcp_ac_input" autocomplete="off" placeholder="Country"/><div class="za-ac-menu js_zzcp_ac_menu" role="listbox"/></div>
+                                            </div></div>
+
+                                            <div class="za_section_header mt-5"><span>Marketing</span></div>
+                                            <div class="za_field_row"><label>Campaign</label><div class="za-autocomplete js_zzcp_autocomplete flex-grow-1" data-kind="campaign"><input type="hidden" name="campaign_id" class="js_zzcp_ac_value"/><input type="text" class="form-control za-ac-input js_zzcp_ac_input" autocomplete="off"/><div class="za-ac-menu js_zzcp_ac_menu" role="listbox"/></div></div>
+                                            <div class="za_field_row"><label>Medium</label><div class="za-autocomplete js_zzcp_autocomplete flex-grow-1" data-kind="medium"><input type="hidden" name="medium_id" class="js_zzcp_ac_value"/><input type="text" class="form-control za-ac-input js_zzcp_ac_input" autocomplete="off"/><div class="za-ac-menu js_zzcp_ac_menu" role="listbox"/></div></div>
+                                            <div class="za_field_row"><label>Source</label><div class="za-autocomplete js_zzcp_autocomplete flex-grow-1" data-kind="source"><input type="hidden" name="source_id" class="js_zzcp_ac_value"/><input type="text" class="form-control za-ac-input js_zzcp_ac_input" autocomplete="off"/><div class="za-ac-menu js_zzcp_ac_menu" role="listbox"/></div></div>
+                                            <div class="za_field_row"><label>Referred By</label><input type="text" name="referred" class="form-control"/></div>
+                                        </div>
+                                        <div class="col-lg-6">
+                                            <div class="za_section_header"><span>Contact Information</span></div>
+                                            <div class="za_field_row"><label>Contact Name</label><input type="text" name="contact_name" class="form-control js_zzcp_contact_name"/></div>
+                                            <div class="za_field_row"><label>Job Position</label><input type="text" name="function" class="form-control js_zzcp_function"/></div>
+                                            <div class="za_field_row"><label>Website</label><input type="url" name="website" class="form-control js_zzcp_website" placeholder="e.g. https://www.odoo.com"/></div>
+
+                                            <div class="za_section_header mt-5"><span>Ownership</span></div>
+                                            <div class="za_field_row"><label>Sales Team</label><div class="za-autocomplete js_zzcp_autocomplete flex-grow-1" data-kind="team"><input type="hidden" name="team_id" class="js_zzcp_ac_value"/><input type="text" class="form-control za-ac-input js_zzcp_ac_input" autocomplete="off"/><div class="za-ac-menu js_zzcp_ac_menu" role="listbox"/></div></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="tab-pane fade" id="za_assigned">
+                                    <div class="row g-5">
+                                        <div class="col-lg-6">
+                                            <div class="za_section_header"><span>Geolocation</span></div>
+                                            <div class="za_field_row"><label>Latitude</label><input type="number" step="0.0000001" name="partner_latitude" class="form-control js_zzcp_latitude" value="0.0000000"/></div>
+                                            <div class="za_field_row"><label>Longitude</label><input type="number" step="0.0000001" name="partner_longitude" class="form-control js_zzcp_longitude" value="0.0000000"/></div>
+                                            <div class="za_field_row"><label>Assigned Partner</label><div class="za-autocomplete js_zzcp_autocomplete flex-grow-1" data-kind="assigned_partner"><input type="hidden" name="partner_assigned_id" class="js_zzcp_ac_value"/><input type="text" class="form-control za-ac-input js_zzcp_ac_input" autocomplete="off"/><div class="za-ac-menu js_zzcp_ac_menu" role="listbox"/></div></div>
+                                        </div>
+                                        <div class="col-lg-6">
+                                            <div class="za_section_header"><span>Partner Assignment</span></div>
+                                            <div class="za_assignment_panel">
+                                                <input type="hidden" name="automatic_assignment" id="za_auto_assign" class="js_zzcp_auto_assign" value="0"/>
+                                                <button type="button" id="za_auto_assign_btn" class="btn btn-secondary w-100 js_zzcp_auto_assign_btn">Automatic Assignment</button>
+                                                <div class="za_assignment_status js_zzcp_assignment_status" role="status" aria-live="polite"/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="d-flex justify-content-end pt-4"><button type="submit" class="btn btn-primary px-5">Save</button></div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </t>
+    </template>
+</odoo>

@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_zc_rfq_comparison_list" model="ir.ui.view">
+        <field name="name">zc.rfq.comparison.list</field>
+        <field name="model">zc.rfq.comparison</field>
+        <field name="arch" type="xml">
+            <list string="RFQ Comparisons" create="0" delete="0" default_order="id desc">
+                <field name="name"/>
+                <field name="requisition_id"/>
+                <field name="comparison_date"/>
+                <field name="created_by"/>
+                <field name="line_count" string="Lines"/>
+                <field name="state" widget="badge"/>
+                <field name="company_id" groups="base.group_multi_company"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_zc_rfq_comparison_form" model="ir.ui.view">
+        <field name="name">zc.rfq.comparison.form</field>
+        <field name="model">zc.rfq.comparison</field>
+        <field name="arch" type="xml">
+            <form string="RFQ Comparison" create="0" delete="0">
+                <header>
+                    <button name="action_open_lines" string="Open Comparison" type="object" class="btn-primary"/>
+                    <field name="state" widget="statusbar" statusbar_visible="open,completed"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1><field name="name"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="requisition_id"/>
+                            <field name="comparison_date"/>
+                        </group>
+                        <group>
+                            <field name="created_by"/>
+                            <field name="currency_id"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                        </group>
+                    </group>
+                    <field name="line_ids" nolabel="1">
+                        <list editable="bottom" create="0" delete="0" default_order="requisition_line_id, price_unit">
+                            <field name="requisition_line_id" string="Product" readonly="1" optional="hide"/>
+                            <field name="product_id" readonly="1"/>
+                            <field name="partner_id" readonly="1"/>
+                            <field name="rfq_id" readonly="1"/>
+                            <field name="quantity" readonly="1"/>
+                            <field name="product_uom_id" readonly="1"/>
+                            <field name="price_unit" readonly="1"/>
+                            <field name="currency_id" column_invisible="True"/>
+                            <field name="quality" readonly="1" widget="badge"/>
+                            <field name="delivery_date" readonly="1"/>
+                            <field name="decision" readonly="1" widget="badge"/>
+                            <field name="remarks" placeholder="Enter line remark..."/>
+                            <button name="action_recommend" string="Recommend" type="object" icon="check" invisible="decision == 'recommended' or purchase_order_line_id"/>
+                            <button name="action_reject" string="Reject" type="object" icon="close" invisible="decision == 'rejected' or purchase_order_line_id"/>
+                            <button name="action_cancel_decision" string="Cancel" type="object" icon="block" invisible="decision == 'cancelled' or purchase_order_line_id"/>
+                            <button name="action_reset_decision" string="Reset" type="object" icon="undo" invisible="decision == 'pending' or purchase_order_line_id"/>
+                            <field name="purchase_order_line_id" readonly="1" optional="hide"/>
+                        </list>
+                    </field>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_zc_rfq_comparison_line_list" model="ir.ui.view">
+        <field name="name">zc.rfq.comparison.line.list</field>
+        <field name="model">zc.rfq.comparison.line</field>
+        <field name="arch" type="xml">
+            <list string="RFQ Comparison" editable="bottom" create="0" delete="0" default_order="requisition_line_id, price_unit">
+                <field name="requisition_line_id" string="Product" readonly="1" optional="hide"/>
+                <field name="product_id" readonly="1"/>
+                <field name="partner_id" readonly="1"/>
+                <field name="rfq_id" readonly="1"/>
+                <field name="quantity" readonly="1"/>
+                <field name="product_uom_id" readonly="1"/>
+                <field name="price_unit" readonly="1"/>
+                <field name="currency_id" column_invisible="True"/>
+                <field name="quality" readonly="1" widget="badge"/>
+                <field name="delivery_date" readonly="1"/>
+                <field name="decision" readonly="1" widget="badge"/>
+                <field name="remarks" placeholder="Enter line remark..."/>
+                <button name="action_recommend" string="Recommend" type="object" icon="check" invisible="decision == 'recommended' or purchase_order_line_id"/>
+                <button name="action_reject" string="Reject" type="object" icon="close" invisible="decision == 'rejected' or purchase_order_line_id"/>
+                <button name="action_cancel_decision" string="Cancel" type="object" icon="block" invisible="decision == 'cancelled' or purchase_order_line_id"/>
+                <button name="action_reset_decision" string="Reset" type="object" icon="undo" invisible="decision == 'pending' or purchase_order_line_id"/>
+                <field name="purchase_order_line_id" readonly="1" optional="hide"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="action_zc_rfq_comparison" model="ir.actions.act_window">
+        <field name="name">RFQ Comparisons</field>
+        <field name="res_model">zc.rfq.comparison</field>
+        <field name="view_mode">list,form</field>
+    </record>
+</odoo>

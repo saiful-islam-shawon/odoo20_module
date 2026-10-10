@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- The four multi-company restrictions are migrated to ir.access.csv for Odoo 20. -->
+</odoo>

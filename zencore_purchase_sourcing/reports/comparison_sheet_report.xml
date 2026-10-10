@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="paperformat_zc_comparison_sheet" model="report.paperformat">
+        <field name="name">CS Comparison Sheet - A4 Landscape</field>
+        <field name="default" eval="False"/>
+        <field name="format">A4</field>
+        <field name="page_height">0</field>
+        <field name="page_width">0</field>
+        <field name="orientation">Landscape</field>
+        <field name="margin_top">36</field>
+        <field name="margin_bottom">25.4</field>
+        <field name="margin_left">9</field>
+        <field name="margin_right">9</field>
+        <field name="header_line" eval="False"/>
+        <field name="header_spacing">5</field>
+        <field name="dpi">96</field>
+    </record>
+
+    <record id="action_report_zc_comparison_sheet" model="ir.actions.report">
+        <field name="name">Comparison Sheet</field>
+        <field name="model">zc.purchase.requisition</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">zencore_purchase_sourcing.report_zc_comparison_sheet</field>
+
+        <field name="paperformat_id" ref="paperformat_zc_comparison_sheet"/>
+        <field name="print_report_name">'Comparison Sheet - %s' % (object.name or '')</field>
+        <field name="binding_model_id" eval="False"/>
+        <field name="binding_type">report</field>
+    </record>
+</odoo>

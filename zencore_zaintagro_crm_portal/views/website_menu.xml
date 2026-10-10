@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="website_menu_crm" model="website.menu">
+        <field name="name">CRM</field>
+        <field name="url">/zaintagro/crm</field>
+        <field name="parent_id" ref="website.main_menu"/>
+        <field name="sequence">40</field>
+        <field name="group_ids" eval="[(6, 0, [ref('zencore_zaintagro_crm_portal.group_crm_portal_access')])]"/>
+    </record>
+</odoo>

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <menuitem id="menu_zc_purchase_sourcing_root"
+              name="CS"
+              sequence="45"
+              web_icon="zencore_purchase_sourcing,static/description/icon.png"
+              groups="purchase.group_purchase_user"/>
+
+    <menuitem id="menu_zc_purchase_requisitions"
+              name="Requisitions"
+              parent="menu_zc_purchase_sourcing_root"
+              action="action_zc_purchase_requisition"
+              sequence="10"/>
+
+    <menuitem id="menu_zc_vendor_rfqs"
+              name="Quotations"
+              parent="menu_zc_purchase_sourcing_root"
+              action="action_zc_vendor_rfq"
+              sequence="20"/>
+</odoo>

@@ -1,0 +1,18 @@
+id,name,model_id,group_id/id,operation,domain
+access_zc_purchase_requisition_user,zc.purchase.requisition user,zc.purchase.requisition,purchase.group_purchase_user,cru,
+access_zc_purchase_requisition_manager,zc.purchase.requisition manager,zc.purchase.requisition,purchase.group_purchase_manager,crud,
+access_zc_purchase_requisition_line_user,zc.purchase.requisition.line user,zc.purchase.requisition.line,purchase.group_purchase_user,cru,
+access_zc_purchase_requisition_line_manager,zc.purchase.requisition.line manager,zc.purchase.requisition.line,purchase.group_purchase_manager,crud,
+access_zc_vendor_rfq_user,zc.vendor.rfq user,zc.vendor.rfq,purchase.group_purchase_user,cru,
+access_zc_vendor_rfq_manager,zc.vendor.rfq manager,zc.vendor.rfq,purchase.group_purchase_manager,crud,
+access_zc_vendor_rfq_line_user,zc.vendor.rfq.line user,zc.vendor.rfq.line,purchase.group_purchase_user,cru,
+access_zc_vendor_rfq_line_manager,zc.vendor.rfq.line manager,zc.vendor.rfq.line,purchase.group_purchase_manager,crud,
+access_zc_rfq_create_wizard_user,zc.rfq.create.wizard user,zc.rfq.create.wizard,purchase.group_purchase_user,crud,
+access_zc_rfq_comparison_user,zc.rfq.comparison user,zc.rfq.comparison,purchase.group_purchase_user,cru,
+access_zc_rfq_comparison_manager,zc.rfq.comparison manager,zc.rfq.comparison,purchase.group_purchase_manager,crud,
+access_zc_rfq_comparison_line_user,zc.rfq.comparison.line user,zc.rfq.comparison.line,purchase.group_purchase_user,cru,
+access_zc_rfq_comparison_line_manager,zc.rfq.comparison.line manager,zc.rfq.comparison.line,purchase.group_purchase_manager,crud,
+rule_zc_purchase_requisition_company,Purchase Requisition: multi-company,zc.purchase.requisition,,crud,"[(""company_id"", ""in"", company_ids)]"
+rule_zc_purchase_requisition_line_company,Purchase Requisition Line: multi-company,zc.purchase.requisition.line,,crud,"[(""company_id"", ""in"", company_ids)]"
+rule_zc_vendor_rfq_company,Vendor RFQ: multi-company,zc.vendor.rfq,,crud,"[(""company_id"", ""in"", company_ids)]"
+rule_zc_vendor_rfq_line_company,Vendor RFQ Line: multi-company,zc.vendor.rfq.line,,crud,"[(""company_id"", ""in"", company_ids)]"
