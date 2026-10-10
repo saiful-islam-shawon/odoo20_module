@@ -109,7 +109,7 @@ class FakirCrmSendMailWizard(models.TransientModel):
 
     def _build_opportunity_url(self):
         self.ensure_one()
-        base_url = self.env["ir.config_parameter"].sudo().get_param(
+        base_url = self.env["ir.config_parameter"].sudo().get_str(
             "web.base.url"
         )
         return "%s/my/crm/opportunities/%s" % (

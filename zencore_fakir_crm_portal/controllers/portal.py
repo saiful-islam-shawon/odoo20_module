@@ -17,11 +17,7 @@ from werkzeug.exceptions import Forbidden, NotFound
 from markupsafe import escape, Markup
 
 
-
-
-
 class FakirCustomerPortal(CustomerPortal):
-
 
 
     # =========================================================
@@ -29,7 +25,6 @@ class FakirCustomerPortal(CustomerPortal):
     # PORTAL HOME
 
     # =========================================================
-
 
 
     def _prepare_portal_layout_values(self):
@@ -67,13 +62,10 @@ class FakirCustomerPortal(CustomerPortal):
     # =========================================================
 
 
-
     def _check_crm_portal_access(self):
 
 
-
         user = request.env.user
-
 
 
         has_crm_access = (
@@ -89,13 +81,9 @@ class FakirCustomerPortal(CustomerPortal):
         )
 
 
-
         if not has_crm_access:
 
             raise Forbidden()
-
-
-
 
 
     # =========================================================
@@ -103,7 +91,6 @@ class FakirCustomerPortal(CustomerPortal):
     # CREATE OPPORTUNITY - FORM PAGE
 
     # =========================================================
-
 
 
     @route(
@@ -121,17 +108,13 @@ class FakirCustomerPortal(CustomerPortal):
     def portal_crm_opportunity_create_form(self, **kw):
 
 
-
         self._check_crm_portal_access()
-
 
 
         partner = request.env.user.partner_id
 
 
-
         values = {
-
 
 
             "success": False,
@@ -139,9 +122,7 @@ class FakirCustomerPortal(CustomerPortal):
             "create_error_code": kw.get("error"),
 
 
-
             "partner": partner,
-
 
 
             "partner_phone": (
@@ -155,7 +136,6 @@ class FakirCustomerPortal(CustomerPortal):
             ),
 
 
-
             "crm_tags": (
 
                 request.env["crm.tag"]
@@ -165,7 +145,6 @@ class FakirCustomerPortal(CustomerPortal):
                 .search([], order="name")
 
             ),
-
 
 
             "crm_countries": (
@@ -179,7 +158,6 @@ class FakirCustomerPortal(CustomerPortal):
             ),
 
 
-
             "crm_states": (
 
                 request.env["res.country.state"]
@@ -189,7 +167,6 @@ class FakirCustomerPortal(CustomerPortal):
                 .search([], order="name")
 
             ),
-
 
 
             "crm_campaigns": (
@@ -203,7 +180,6 @@ class FakirCustomerPortal(CustomerPortal):
             ),
 
 
-
             "crm_mediums": (
 
                 request.env["utm.medium"]
@@ -213,7 +189,6 @@ class FakirCustomerPortal(CustomerPortal):
                 .search([], order="name")
 
             ),
-
 
 
             "crm_sources": (
@@ -244,7 +219,6 @@ class FakirCustomerPortal(CustomerPortal):
         }
 
 
-
         return request.render(
 
             "zencore_fakir_crm_portal.crm_opportunity_template",
@@ -254,15 +228,11 @@ class FakirCustomerPortal(CustomerPortal):
         )
 
 
-
-
-
     # =========================================================
 
     # CREATE OPPORTUNITY - FORM SUBMIT
 
     # =========================================================
-
 
 
     @route(
@@ -282,9 +252,7 @@ class FakirCustomerPortal(CustomerPortal):
     def portal_crm_opportunity_submit(self, **kw):
 
 
-
         self._check_crm_portal_access()
-
 
 
         expected_revenue = (
@@ -296,7 +264,6 @@ class FakirCustomerPortal(CustomerPortal):
         )
 
 
-
         try:
 
             expected_revenue = float(expected_revenue)
@@ -304,7 +271,6 @@ class FakirCustomerPortal(CustomerPortal):
         except (TypeError, ValueError):
 
             expected_revenue = 0.0
-
 
 
         def _int_or_false(value):
@@ -318,7 +284,6 @@ class FakirCustomerPortal(CustomerPortal):
                 return False
 
 
-
         tag_ids_raw = (
 
             kw.get("tag_ids")
@@ -326,7 +291,6 @@ class FakirCustomerPortal(CustomerPortal):
             or ""
 
         ).strip()
-
 
 
         tag_ids = [
@@ -338,7 +302,6 @@ class FakirCustomerPortal(CustomerPortal):
             if tag_id.strip().isdigit()
 
         ]
-
 
 
         expected_budget = kw.get("expected_budget") or 0
@@ -398,9 +361,7 @@ class FakirCustomerPortal(CustomerPortal):
         vals = {
 
 
-
             "type": "opportunity",
-
 
 
             "name": (
@@ -410,7 +371,6 @@ class FakirCustomerPortal(CustomerPortal):
                 or "New Opportunity"
 
             ),
-
 
 
             "expected_revenue": expected_revenue,
@@ -424,7 +384,6 @@ class FakirCustomerPortal(CustomerPortal):
             ],
 
 
-
             "date_deadline": (
 
                 kw.get("date_deadline")
@@ -434,9 +393,7 @@ class FakirCustomerPortal(CustomerPortal):
             ),
 
 
-
             "tag_ids": [(6, 0, tag_ids)],
-
 
 
             "contact_name": kw.get("contact_name"),
@@ -452,7 +409,6 @@ class FakirCustomerPortal(CustomerPortal):
             "website": kw.get("website"),
 
 
-
             "street": kw.get("street"),
 
             "street2": kw.get("street2"),
@@ -462,13 +418,11 @@ class FakirCustomerPortal(CustomerPortal):
             "zip": kw.get("zip"),
 
 
-
             "country_id": _int_or_false(
 
                 kw.get("country_id")
 
             ),
-
 
 
             "state_id": _int_or_false(
@@ -478,13 +432,11 @@ class FakirCustomerPortal(CustomerPortal):
             ),
 
 
-
             "campaign_id": _int_or_false(
 
                 kw.get("campaign_id")
 
             ),
-
 
 
             "medium_id": _int_or_false(
@@ -494,7 +446,6 @@ class FakirCustomerPortal(CustomerPortal):
             ),
 
 
-
             "source_id": _int_or_false(
 
                 kw.get("source_id")
@@ -502,9 +453,7 @@ class FakirCustomerPortal(CustomerPortal):
             ),
 
 
-
             "description": kw.get("description"),
-
 
 
             "partner_id": (
@@ -514,7 +463,6 @@ class FakirCustomerPortal(CustomerPortal):
             ),
 
         }
-
 
 
         # Respect portal visibility: external users can only link their own company/contacts.
@@ -547,20 +495,11 @@ class FakirCustomerPortal(CustomerPortal):
         return request.redirect("/my/crm/opportunities/%s?created=1" % opportunity.id)
 
 
-
-
-
-
-
-
-
-
     # =========================================================
 
     # OPPORTUNITY LIST
 
     # =========================================================
-
 
 
     @route(
@@ -596,15 +535,10 @@ class FakirCustomerPortal(CustomerPortal):
     ):
 
 
-
         self._check_crm_portal_access()
 
 
-
         Opportunity = request.env["crm.lead"]
-
-
-
 
 
         # =====================================================
@@ -614,9 +548,7 @@ class FakirCustomerPortal(CustomerPortal):
         # =====================================================
 
 
-
         sortings = {
-
 
 
             "date": {
@@ -628,7 +560,6 @@ class FakirCustomerPortal(CustomerPortal):
             },
 
 
-
             "name": {
 
                 "label": "Opportunity",
@@ -636,7 +567,6 @@ class FakirCustomerPortal(CustomerPortal):
                 "order": "name",
 
             },
-
 
 
             "revenue": {
@@ -650,9 +580,6 @@ class FakirCustomerPortal(CustomerPortal):
         }
 
 
-
-
-
         # =====================================================
 
         # DEFAULT SORTING
@@ -660,17 +587,12 @@ class FakirCustomerPortal(CustomerPortal):
         # =====================================================
 
 
-
         if not sortby or sortby not in sortings:
 
             sortby = "date"
 
 
-
         order = sortings[sortby]["order"]
-
-
-
 
 
         # =====================================================
@@ -680,11 +602,7 @@ class FakirCustomerPortal(CustomerPortal):
         # =====================================================
 
 
-
         search = (search or "").strip()
-
-
-
 
 
         # =====================================================
@@ -694,15 +612,11 @@ class FakirCustomerPortal(CustomerPortal):
         # =====================================================
 
 
-
         domain = [
 
             ("type", "=", "opportunity"),
 
         ]
-
-
-
 
 
         # =====================================================
@@ -736,7 +650,6 @@ class FakirCustomerPortal(CustomerPortal):
         # =====================================================
 
 
-
         if search:
             # All searchable values are alternatives (OR), never requirements
             # to match simultaneously. The opportunity type/permission scope
@@ -760,7 +673,6 @@ class FakirCustomerPortal(CustomerPortal):
         # =====================================================
 
 
-
         opportunity_count = (
 
             Opportunity
@@ -772,9 +684,6 @@ class FakirCustomerPortal(CustomerPortal):
         )
 
 
-
-
-
         # =====================================================
 
         # PAGINATION
@@ -782,15 +691,12 @@ class FakirCustomerPortal(CustomerPortal):
         # =====================================================
 
 
-
         items_per_page = 20
-
 
 
         pager_values = portal_pager(
 
             url="/my/crm/opportunities",
-
 
 
             url_args={
@@ -802,13 +708,10 @@ class FakirCustomerPortal(CustomerPortal):
             },
 
 
-
             total=opportunity_count,
 
 
-
             page=page,
-
 
 
             step=items_per_page,
@@ -816,15 +719,11 @@ class FakirCustomerPortal(CustomerPortal):
         )
 
 
-
-
-
         # =====================================================
 
         # CURRENT PAGE OPPORTUNITIES
 
         # =====================================================
-
 
 
         opportunities = (
@@ -838,13 +737,10 @@ class FakirCustomerPortal(CustomerPortal):
                 domain,
 
 
-
                 order=order,
 
 
-
                 limit=items_per_page,
-
 
 
                 offset=pager_values["offset"],
@@ -852,9 +748,6 @@ class FakirCustomerPortal(CustomerPortal):
             )
 
         )
-
-
-
 
 
         # =====================================================
@@ -874,9 +767,7 @@ class FakirCustomerPortal(CustomerPortal):
         # =====================================================
 
 
-
         if opportunity_count:
-
 
 
             result_start = (
@@ -884,7 +775,6 @@ class FakirCustomerPortal(CustomerPortal):
                 pager_values["offset"] + 1
 
             )
-
 
 
             result_end = (
@@ -896,17 +786,12 @@ class FakirCustomerPortal(CustomerPortal):
             )
 
 
-
         else:
-
 
 
             result_start = 0
 
             result_end = 0
-
-
-
 
 
         # =====================================================
@@ -916,13 +801,9 @@ class FakirCustomerPortal(CustomerPortal):
         # =====================================================
 
 
-
         mail_sent = kw.get("mail_sent") == "1"
 
         mail_error = (kw.get("mail_error") or "").strip()
-
-
-
 
 
         # =====================================================
@@ -932,46 +813,35 @@ class FakirCustomerPortal(CustomerPortal):
         # =====================================================
 
 
-
         values = {
 
 
-
             "opportunities": opportunities,
-
 
 
             "no_breadcrumbs": True,
             "page_name": "crm_opportunity",
 
 
-
             "pager": pager_values,
-
 
 
             "sortby": sortby,
 
 
-
             "sortings": sortings,
-
 
 
             "search": search,
 
 
-
             "opportunity_count": opportunity_count,
-
 
 
             "result_start": result_start,
 
 
-
             "result_end": result_end,
-
 
 
             "default_url": "/my/crm/opportunities",
@@ -979,15 +849,11 @@ class FakirCustomerPortal(CustomerPortal):
         }
 
 
-
-
-
         # =====================================================
 
         # RENDER
 
         # =====================================================
-
 
 
         return request.render(
@@ -1001,9 +867,6 @@ class FakirCustomerPortal(CustomerPortal):
         )
 
 
-
-
-
     # =========================================================
 
     # GET OPPORTUNITY
@@ -1011,9 +874,7 @@ class FakirCustomerPortal(CustomerPortal):
     # =========================================================
 
 
-
     def _get_crm_opportunity(self, opportunity_id):
-
 
 
         opportunity = (
@@ -1027,7 +888,6 @@ class FakirCustomerPortal(CustomerPortal):
         )
 
 
-
         if (
 
             not opportunity.exists()
@@ -1039,11 +899,7 @@ class FakirCustomerPortal(CustomerPortal):
             raise NotFound()
 
 
-
         return opportunity
-
-
-
 
 
     # =========================================================
@@ -1051,7 +907,6 @@ class FakirCustomerPortal(CustomerPortal):
     # OPPORTUNITY DETAIL / EDIT
 
     # =========================================================
-
 
 
     @route("/my/crm/opportunities/<int:opportunity_id>/smart-counts", type="http", auth="user", website=True, methods=["GET"], csrf=False)
@@ -1136,9 +991,7 @@ class FakirCustomerPortal(CustomerPortal):
     ):
 
 
-
         self._check_crm_portal_access()
-
 
 
         opportunity = self._get_crm_opportunity(
@@ -1146,7 +999,6 @@ class FakirCustomerPortal(CustomerPortal):
             opportunity_id
 
         )
-
 
 
         success = False
@@ -1158,9 +1010,6 @@ class FakirCustomerPortal(CustomerPortal):
         mail_error = request.params.get("mail_error")
 
 
-
-
-
         # =====================================================
 
         # UPDATE OPPORTUNITY
@@ -1168,9 +1017,7 @@ class FakirCustomerPortal(CustomerPortal):
         # =====================================================
 
 
-
         if request.httprequest.method == "POST":
-
 
 
             expected_revenue = (
@@ -1182,9 +1029,7 @@ class FakirCustomerPortal(CustomerPortal):
             )
 
 
-
             try:
-
 
 
                 expected_revenue = float(
@@ -1194,9 +1039,7 @@ class FakirCustomerPortal(CustomerPortal):
                 )
 
 
-
             except (TypeError, ValueError):
-
 
 
                 expected_revenue = (
@@ -1204,9 +1047,6 @@ class FakirCustomerPortal(CustomerPortal):
                     opportunity.expected_revenue
 
                 )
-
-
-
 
 
             tag_ids = (
@@ -1218,11 +1058,7 @@ class FakirCustomerPortal(CustomerPortal):
             )
 
 
-
-
-
             def _int_or_false(value):
-
 
 
                 try:
@@ -1230,13 +1066,9 @@ class FakirCustomerPortal(CustomerPortal):
                     return int(value)
 
 
-
                 except (TypeError, ValueError):
 
                     return False
-
-
-
 
 
             # =====================================================
@@ -1246,7 +1078,6 @@ class FakirCustomerPortal(CustomerPortal):
             # =====================================================
 
 
-
             requested_user_id = _int_or_false(
 
                 kw.get("user_id")
@@ -1254,9 +1085,7 @@ class FakirCustomerPortal(CustomerPortal):
             )
 
 
-
             salesperson_id = False
-
 
 
             if requested_user_id:
@@ -1286,13 +1115,9 @@ class FakirCustomerPortal(CustomerPortal):
                 )
 
 
-
                 if salesperson:
 
                     salesperson_id = salesperson.id
-
-
-
 
 
             expected_budget = kw.get("expected_budget")
@@ -1375,13 +1200,11 @@ class FakirCustomerPortal(CustomerPortal):
                 "stage_id": valid_stage_id or opportunity.stage_id.id,
 
 
-
                 # =============================================
 
                 # BASIC / NOTES
 
                 # =============================================
-
 
 
                 "name": (
@@ -1393,13 +1216,11 @@ class FakirCustomerPortal(CustomerPortal):
                 ),
 
 
-
                 "contact_name": kw.get(
 
                     "contact_name"
 
                 ),
-
 
 
                 "email_from": kw.get(
@@ -1409,13 +1230,11 @@ class FakirCustomerPortal(CustomerPortal):
                 ),
 
 
-
                 "phone": kw.get(
 
                     "phone"
 
                 ),
-
 
 
                 "expected_revenue": (
@@ -1429,7 +1248,6 @@ class FakirCustomerPortal(CustomerPortal):
                 "product_line_ids": product_commands,
 
 
-
                 "date_deadline": (
 
                     kw.get("date_deadline")
@@ -1439,13 +1257,11 @@ class FakirCustomerPortal(CustomerPortal):
                 ),
 
 
-
                 "description": kw.get(
 
                     "description"
 
                 ),
-
 
 
                 "tag_ids": [
@@ -1471,15 +1287,11 @@ class FakirCustomerPortal(CustomerPortal):
                 ],
 
 
-
-
-
                 # =============================================
 
                 # COMPANY INFORMATION
 
                 # =============================================
-
 
 
                 "partner_name": kw.get(
@@ -1489,13 +1301,11 @@ class FakirCustomerPortal(CustomerPortal):
                 ),
 
 
-
                 "street": kw.get(
 
                     "street"
 
                 ),
-
 
 
                 "street2": kw.get(
@@ -1505,13 +1315,11 @@ class FakirCustomerPortal(CustomerPortal):
                 ),
 
 
-
                 "city": kw.get(
 
                     "city"
 
                 ),
-
 
 
                 "zip": kw.get(
@@ -1521,13 +1329,11 @@ class FakirCustomerPortal(CustomerPortal):
                 ),
 
 
-
                 "state_id": _int_or_false(
 
                     kw.get("state_id")
 
                 ),
-
 
 
                 "country_id": _int_or_false(
@@ -1537,15 +1343,11 @@ class FakirCustomerPortal(CustomerPortal):
                 ),
 
 
-
-
-
                 # =============================================
 
                 # CONTACT INFORMATION
 
                 # =============================================
-
 
 
                 "function": kw.get(
@@ -1555,15 +1357,11 @@ class FakirCustomerPortal(CustomerPortal):
                 ),
 
 
-
                 "website": kw.get(
 
                     "website"
 
                 ),
-
-
-
 
 
                 # =============================================
@@ -1573,13 +1371,11 @@ class FakirCustomerPortal(CustomerPortal):
                 # =============================================
 
 
-
                 "campaign_id": _int_or_false(
 
                     kw.get("campaign_id")
 
                 ),
-
 
 
                 "medium_id": _int_or_false(
@@ -1589,13 +1385,11 @@ class FakirCustomerPortal(CustomerPortal):
                 ),
 
 
-
                 "source_id": _int_or_false(
 
                     kw.get("source_id")
 
                 ),
-
 
 
                 "referred": kw.get(
@@ -1605,15 +1399,11 @@ class FakirCustomerPortal(CustomerPortal):
                 ),
 
 
-
-
-
                 # =============================================
 
                 # OWNERSHIP
 
                 # =============================================
-
 
 
                 "team_id": _int_or_false(
@@ -1623,13 +1413,9 @@ class FakirCustomerPortal(CustomerPortal):
                 ),
 
 
-
                 "user_id": salesperson_id,
 
             }
-
-
-
 
 
             # Portal form: stage, probability and priority are committed only on Save.
@@ -1664,12 +1450,7 @@ class FakirCustomerPortal(CustomerPortal):
             opportunity.sudo().write(vals)
 
 
-
-
             return request.redirect("/my/crm/opportunities/%s?updated=1" % opportunity.id)
-
-
-
 
 
         # =====================================================
@@ -1677,7 +1458,6 @@ class FakirCustomerPortal(CustomerPortal):
         # ACTIVITY TYPES
 
         # =====================================================
-
 
 
         activity_types = (
@@ -1697,15 +1477,11 @@ class FakirCustomerPortal(CustomerPortal):
         )
 
 
-
-
-
         # =====================================================
 
         # INTERNAL USERS FOR ACTIVITY
 
         # =====================================================
-
 
 
         activity_users = (
@@ -1731,15 +1507,11 @@ class FakirCustomerPortal(CustomerPortal):
         )
 
 
-
-
-
         # =====================================================
 
         # TEMPLATE VALUES
 
         # =====================================================
-
 
 
         # =====================================================
@@ -1806,7 +1578,6 @@ class FakirCustomerPortal(CustomerPortal):
         values = {
 
 
-
             "assignable_partners": request.env["res.partner"].sudo().search([
                 ("active", "=", True), ("grade_id", "!=", False),
                 "|", ("company_id", "=", False), ("company_id", "in", request.env.user.company_ids.ids)
@@ -1816,7 +1587,6 @@ class FakirCustomerPortal(CustomerPortal):
             "opportunity": opportunity,
 
 
-
             "description_plain": description_plain,
 
             "default_mail_subject": default_mail_subject,
@@ -1824,15 +1594,11 @@ class FakirCustomerPortal(CustomerPortal):
             "default_mail_body": default_mail_body,
 
 
-
-
-
             # =============================================
 
             # CRM DATA
 
             # =============================================
-
 
 
             "stages": (
@@ -1852,7 +1618,6 @@ class FakirCustomerPortal(CustomerPortal):
             ),
 
 
-
             "lost_reasons": (
 
                 request.env["crm.lost.reason"]
@@ -1862,7 +1627,6 @@ class FakirCustomerPortal(CustomerPortal):
                 .search([], order="name")
 
             ),
-
 
 
             "all_tags": (
@@ -1882,7 +1646,6 @@ class FakirCustomerPortal(CustomerPortal):
             ),
 
 
-
             "crm_countries": (
 
                 request.env["res.country"]
@@ -1898,7 +1661,6 @@ class FakirCustomerPortal(CustomerPortal):
                 )
 
             ),
-
 
 
             "crm_states": (
@@ -1918,7 +1680,6 @@ class FakirCustomerPortal(CustomerPortal):
             ),
 
 
-
             "crm_campaigns": (
 
                 request.env["utm.campaign"]
@@ -1934,7 +1695,6 @@ class FakirCustomerPortal(CustomerPortal):
                 )
 
             ),
-
 
 
             "crm_mediums": (
@@ -1954,7 +1714,6 @@ class FakirCustomerPortal(CustomerPortal):
             ),
 
 
-
             "crm_sources": (
 
                 request.env["utm.source"]
@@ -1970,7 +1729,6 @@ class FakirCustomerPortal(CustomerPortal):
                 )
 
             ),
-
 
 
             "crm_teams": (
@@ -1990,9 +1748,6 @@ class FakirCustomerPortal(CustomerPortal):
             ),
 
 
-
-
-
             "crm_products": (
                 request.env["product.product"]
                 .sudo()
@@ -2008,14 +1763,10 @@ class FakirCustomerPortal(CustomerPortal):
             # =============================================
 
 
-
             "messages": opportunity.message_ids.filtered(
                 lambda msg: request.env.user._is_internal()
                 or (not msg.is_internal and not msg.subtype_id.internal)
             ),
-
-
-
 
 
             # =============================================
@@ -2025,7 +1776,6 @@ class FakirCustomerPortal(CustomerPortal):
             # =============================================
 
 
-
             "activities": (
 
                 opportunity.activity_ids
@@ -2033,9 +1783,7 @@ class FakirCustomerPortal(CustomerPortal):
             ),
 
 
-
             "activity_types": activity_types,
-
 
 
             "activity_users": activity_users,
@@ -2046,13 +1794,11 @@ class FakirCustomerPortal(CustomerPortal):
             },
 
 
-
             # =============================================
 
             # OTHER
 
             # =============================================
-
 
 
             "success": request.params.get("updated") == "1",
@@ -2065,7 +1811,6 @@ class FakirCustomerPortal(CustomerPortal):
             "mail_error": mail_error,
 
 
-
             "no_breadcrumbs": True,
             "page_name": (
 
@@ -2074,9 +1819,6 @@ class FakirCustomerPortal(CustomerPortal):
             ),
 
         }
-
-
-
 
 
         return request.render(
@@ -2088,9 +1830,6 @@ class FakirCustomerPortal(CustomerPortal):
             values,
 
         )
-
-
-
 
 
     @route(
@@ -2134,7 +1873,6 @@ class FakirCustomerPortal(CustomerPortal):
     # =========================================================
 
 
-
     @route(
 
         ["/my/crm/opportunities/<int:opportunity_id>/won"],
@@ -2152,17 +1890,14 @@ class FakirCustomerPortal(CustomerPortal):
     def portal_crm_opportunity_mark_won(self, opportunity_id, **kw):
 
 
-
         self._check_crm_portal_access()
 
         opportunity = self._get_crm_opportunity(opportunity_id)
 
 
-
         # Odoo 19 standard CRM business logic.
 
         opportunity.sudo().action_set_won_rainbowman()
-
 
 
         return request.redirect(
@@ -2172,15 +1907,11 @@ class FakirCustomerPortal(CustomerPortal):
         )
 
 
-
-
-
     # =========================================================
 
     # OPPORTUNITY - MARK LOST
 
     # =========================================================
-
 
 
     @route(
@@ -2200,17 +1931,14 @@ class FakirCustomerPortal(CustomerPortal):
     def portal_crm_opportunity_mark_lost(self, opportunity_id, **kw):
 
 
-
         self._check_crm_portal_access()
 
         opportunity = self._get_crm_opportunity(opportunity_id)
 
 
-
         lost_reason_id = kw.get("lost_reason_id")
 
         closing_note = (kw.get("closing_note") or "").strip()
-
 
 
         try:
@@ -2220,7 +1948,6 @@ class FakirCustomerPortal(CustomerPortal):
         except (TypeError, ValueError):
 
             lost_reason_id = False
-
 
 
         if lost_reason_id:
@@ -2244,11 +1971,9 @@ class FakirCustomerPortal(CustomerPortal):
                 })
 
 
-
         # Odoo 19 standard CRM lost logic.
 
         opportunity.sudo().action_set_lost()
-
 
 
         if closing_note:
@@ -2264,15 +1989,11 @@ class FakirCustomerPortal(CustomerPortal):
             )
 
 
-
         return request.redirect(
 
             "/my/crm/opportunities/%s" % opportunity.id
 
         )
-
-
-
 
 
     # =========================================================
@@ -2370,7 +2091,7 @@ class FakirCustomerPortal(CustomerPortal):
         base_url = (
             request.env["ir.config_parameter"]
             .sudo()
-            .get_param("web.base.url")
+            .get_str("web.base.url")
         )
 
         opportunity_url = (
@@ -2547,7 +2268,6 @@ class FakirCustomerPortal(CustomerPortal):
     # =========================================================
 
 
-
     @route(
 
         [
@@ -2581,19 +2301,15 @@ class FakirCustomerPortal(CustomerPortal):
     ):
 
 
-
         self._check_crm_portal_access()
-
 
 
         opportunity = self._get_crm_opportunity(opportunity_id)
 
 
-
         message_body = (kw.get("message_body") or "").strip()
 
         message_mode = (kw.get("message_mode") or "message").strip()
-
 
 
         if message_body:
@@ -2609,7 +2325,6 @@ class FakirCustomerPortal(CustomerPortal):
             )
 
 
-
             opportunity.sudo().message_post(
 
                 body=message_body,
@@ -2621,15 +2336,11 @@ class FakirCustomerPortal(CustomerPortal):
             )
 
 
-
         return request.redirect(
 
             "/my/crm/opportunities/%s" % opportunity.id
 
         )
-
-
-
 
 
     # =========================================================
@@ -2724,7 +2435,6 @@ class FakirCustomerPortal(CustomerPortal):
     # =========================================================
 
 
-
     @route(
 
         [
@@ -2756,9 +2466,7 @@ class FakirCustomerPortal(CustomerPortal):
     ):
 
 
-
         self._check_crm_portal_access()
-
 
 
         opportunity = (
@@ -2772,9 +2480,6 @@ class FakirCustomerPortal(CustomerPortal):
         )
 
 
-
-
-
         # =====================================================
 
         # FORM VALUES
@@ -2782,13 +2487,11 @@ class FakirCustomerPortal(CustomerPortal):
         # =====================================================
 
 
-
         activity_type_id = kw.get(
 
             "activity_type_id"
 
         )
-
 
 
         summary = (
@@ -2800,7 +2503,6 @@ class FakirCustomerPortal(CustomerPortal):
         ).strip()
 
 
-
         note = (
 
             kw.get("note")
@@ -2810,7 +2512,6 @@ class FakirCustomerPortal(CustomerPortal):
         ).strip()
 
 
-
         date_deadline = kw.get(
 
             "date_deadline"
@@ -2818,13 +2519,11 @@ class FakirCustomerPortal(CustomerPortal):
         )
 
 
-
         user_id = kw.get(
 
             "user_id"
 
         )
-
 
 
         action = (
@@ -2836,9 +2535,6 @@ class FakirCustomerPortal(CustomerPortal):
         )
 
 
-
-
-
         # =====================================================
 
         # CONVERT ACTIVITY TYPE
@@ -2846,9 +2542,7 @@ class FakirCustomerPortal(CustomerPortal):
         # =====================================================
 
 
-
         try:
-
 
 
             activity_type_id = int(
@@ -2858,15 +2552,10 @@ class FakirCustomerPortal(CustomerPortal):
             )
 
 
-
         except (TypeError, ValueError):
 
 
-
             activity_type_id = False
-
-
-
 
 
         # =====================================================
@@ -2876,9 +2565,7 @@ class FakirCustomerPortal(CustomerPortal):
         # =====================================================
 
 
-
         try:
-
 
 
             user_id = int(
@@ -2888,15 +2575,10 @@ class FakirCustomerPortal(CustomerPortal):
             )
 
 
-
         except (TypeError, ValueError):
 
 
-
             user_id = False
-
-
-
 
 
         # =====================================================
@@ -2906,9 +2588,7 @@ class FakirCustomerPortal(CustomerPortal):
         # =====================================================
 
 
-
         if not activity_type_id:
-
 
 
             return request.redirect(
@@ -2918,9 +2598,6 @@ class FakirCustomerPortal(CustomerPortal):
                 % opportunity.id
 
             )
-
-
-
 
 
         activity_type = (
@@ -2934,9 +2611,7 @@ class FakirCustomerPortal(CustomerPortal):
         )
 
 
-
         if not activity_type.exists():
-
 
 
             return request.redirect(
@@ -2946,9 +2621,6 @@ class FakirCustomerPortal(CustomerPortal):
                 % opportunity.id
 
             )
-
-
-
 
 
         # =====================================================
@@ -2958,9 +2630,7 @@ class FakirCustomerPortal(CustomerPortal):
         # =====================================================
 
 
-
         if not date_deadline:
-
 
 
             return request.redirect(
@@ -2972,9 +2642,6 @@ class FakirCustomerPortal(CustomerPortal):
             )
 
 
-
-
-
         # =====================================================
 
         # ASSIGNED USER
@@ -2982,15 +2649,10 @@ class FakirCustomerPortal(CustomerPortal):
         # =====================================================
 
 
-
         assigned_user = False
 
 
-
-
-
         if user_id:
-
 
 
             assigned_user = (
@@ -3018,15 +2680,10 @@ class FakirCustomerPortal(CustomerPortal):
             )
 
 
-
-
-
         # Opportunity salesperson
 
 
-
         if not assigned_user and opportunity.user_id:
-
 
 
             if (
@@ -3038,7 +2695,6 @@ class FakirCustomerPortal(CustomerPortal):
             ):
 
 
-
                 assigned_user = (
 
                     opportunity.user_id
@@ -3046,15 +2702,10 @@ class FakirCustomerPortal(CustomerPortal):
                 )
 
 
-
-
-
         # Any internal user as fallback
 
 
-
         if not assigned_user:
-
 
 
             assigned_user = (
@@ -3082,11 +2733,7 @@ class FakirCustomerPortal(CustomerPortal):
             )
 
 
-
-
-
         if not assigned_user:
-
 
 
             return request.redirect(
@@ -3098,15 +2745,11 @@ class FakirCustomerPortal(CustomerPortal):
             )
 
 
-
-
-
         # =====================================================
 
         # CREATE ACTIVITY
 
         # =====================================================
-
 
 
         activity = (
@@ -3132,9 +2775,6 @@ class FakirCustomerPortal(CustomerPortal):
         )
 
 
-
-
-
         # =====================================================
 
         # MARK DONE
@@ -3142,9 +2782,7 @@ class FakirCustomerPortal(CustomerPortal):
         # =====================================================
 
 
-
         if action == "done":
-
 
 
             activity.sudo().action_feedback(
@@ -3154,15 +2792,11 @@ class FakirCustomerPortal(CustomerPortal):
             )
 
 
-
-
-
         # =====================================================
 
         # REDIRECT
 
         # =====================================================
-
 
 
         return request.redirect(
