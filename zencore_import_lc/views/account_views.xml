@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_move_form_inherit_lc" model="ir.ui.view">
+        <field name="name">account.move.form.inherit.lc</field>
+        <field name="model">account.move</field>
+        <field name="inherit_id" ref="account.view_move_form"/>
+        <field name="arch" type="xml">
+            
+            <!-- Add LC fields after company_id in the second group -->
+            <xpath expr="//page[@id='other_tab_entry']//field[@name='company_id']" position="after">
+                <field name="is_miscellaneous_journal" invisible="1"/>
+                <!-- <field name="journal_type_display" readonly="1" string="Journal Type"/> -->
+                <field name="import_lc_id" 
+                       string="LC NO"
+                       options="{'no_create': True}"
+                       invisible="not is_miscellaneous_journal"/>
+                <!-- <field name="lc_number"  -->
+                       <!-- readonly="1" 
+                       invisible="not import_lc_id or not is_miscellaneous_journal"/>
+                <field name="lc_type" 
+                       readonly="1"
+                       invisible="not import_lc_id or not is_miscellaneous_journal"/> -->
+            </xpath>
+            
+        </field>
+    </record>
+</odoo>

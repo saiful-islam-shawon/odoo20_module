@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="action_import_lc_port" model="ir.actions.act_window">
+        <field name="name">Ports</field>
+        <field name="res_model">import.lc.port</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <record id="view_import_lc_port_list" model="ir.ui.view">
+        <field name="name">import.lc.port.list</field>
+        <field name="model">import.lc.port</field>
+        <field name="arch" type="xml">
+            <list string="Ports" default_order="country_id,name">
+                <field name="name"/>
+                <field name="code"/>
+                <field name="country_id"/>
+                <field name="port_type" widget="badge"/>
+                <field name="active" widget="boolean_toggle" optional="hide"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_import_lc_port_form" model="ir.ui.view">
+        <field name="name">import.lc.port.form</field>
+        <field name="model">import.lc.port</field>
+        <field name="arch" type="xml">
+            <form string="Port">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="code"/>
+                            <field name="country_id" options="{'no_create': True}"/>
+                        </group>
+                        <group>
+                            <field name="port_type"/>
+                            <field name="active"/>
+                        </group>
+                    </group>
+                    <group string="Notes">
+                        <field name="notes" nolabel="1"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_import_lc_container_type" model="ir.actions.act_window">
+        <field name="name">Container Types</field>
+        <field name="res_model">import.lc.container.type</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <record id="view_import_lc_container_type_list" model="ir.ui.view">
+        <field name="name">import.lc.container.type.list</field>
+        <field name="model">import.lc.container.type</field>
+        <field name="arch" type="xml">
+            <list string="Container Types" default_order="sequence,name">
+                <field name="sequence" widget="handle"/>
+                <field name="code"/>
+                <field name="name"/>
+                <field name="length_ft"/>
+                <field name="refrigerated"/>
+                <field name="active" widget="boolean_toggle" optional="hide"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_import_lc_container_type_form" model="ir.ui.view">
+        <field name="name">import.lc.container.type.form</field>
+        <field name="model">import.lc.container.type</field>
+        <field name="arch" type="xml">
+            <form string="Container Type">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="code"/>
+                            <field name="name"/>
+                            <field name="sequence"/>
+                        </group>
+                        <group>
+                            <field name="length_ft"/>
+                            <field name="refrigerated"/>
+                            <field name="active"/>
+                        </group>
+                    </group>
+                    <group string="Notes">
+                        <field name="notes" nolabel="1"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_import_lc_container" model="ir.actions.act_window">
+        <field name="name">Containers</field>
+        <field name="res_model">import.lc.container</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <record id="view_import_lc_container_list" model="ir.ui.view">
+        <field name="name">import.lc.container.list</field>
+        <field name="model">import.lc.container</field>
+        <field name="arch" type="xml">
+            <list string="Containers" default_order="name">
+                <field name="name"/>
+                <field name="container_type_id"/>
+                <field name="active" widget="boolean_toggle" optional="hide"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_import_lc_container_form" model="ir.ui.view">
+        <field name="name">import.lc.container.form</field>
+        <field name="model">import.lc.container</field>
+        <field name="arch" type="xml">
+            <form string="Container">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name" placeholder="e.g. MSKU1234567"/>
+                            <field name="container_type_id" options="{'no_create': True}"/>
+                        </group>
+                        <group>
+                            <field name="active"/>
+                        </group>
+                    </group>
+                    <group string="Notes">
+                        <field name="notes" nolabel="1"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <menuitem id="menu_import_lc_configuration" name="Configuration" parent="menu_lc_management" sequence="90" groups="purchase.group_purchase_manager,base.group_system"/>
+    <menuitem id="menu_import_lc_ports" name="Ports" parent="menu_import_lc_configuration" action="action_import_lc_port" sequence="10"/>
+    <menuitem id="menu_import_lc_container_types" name="Container Types" parent="menu_import_lc_configuration" action="action_import_lc_container_type" sequence="20"/>
+    <menuitem id="menu_import_lc_containers" name="Containers" parent="menu_import_lc_configuration" action="action_import_lc_container" sequence="30"/>
+</odoo>

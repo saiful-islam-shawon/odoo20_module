@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_stock_landed_cost_form_inherit_import_lc" model="ir.ui.view">
+        <field name="name">stock.landed.cost.form.inherit.import.lc</field>
+        <field name="model">stock.landed.cost</field>
+        <field name="inherit_id" ref="stock_landed_costs.view_stock_landed_cost_form"/>
+        <field name="arch" type="xml">
+
+            <!-- Required by child-list domains even for a newly created LC landed cost. -->
+            <xpath expr="//form/field[@name='company_id']" position="after">
+                <field name="import_lc_id" invisible="1"/>
+                <field name="import_lc_state" invisible="1"/>
+            </xpath>
+
+            <!-- Landed costs remain editable while the LC is open, but become
+                 read-only once the linked Import LC is closed. -->
+            <xpath expr="//form//field" position="attributes">
+                <attribute name="readonly">state == 'done' or import_lc_state == 'done'</attribute>
+            </xpath>
+
+            <!-- Select one of this Import LC's other-charge journal entries. -->
+            <xpath expr="//field[@name='vendor_bill_id']" position="after">
+                <field name="lc_journal_entry_id"
+                       readonly="state == 'done' or import_lc_state == 'done'"
+                       options="{'no_create': True, 'no_create_edit': True}"
+                       domain="[
+                           ('move_type', '=', 'entry'),
+                           ('state', '!=', 'cancel'),
+                           ('company_id', '=', company_id),
+                           ('import_lc_id', '=', import_lc_id)
+                       ]"/>
+            </xpath>
+
+            <!-- Capitalize only the selected debit items; unselected charges remain outside COGS. -->
+            <xpath expr="//field[@name='cost_lines']/list/field[@name='name']" position="after">
+                <field name="journal_item_id"
+                       readonly="parent.state == 'done' or parent.import_lc_state == 'done'"
+                       options="{'no_create': True, 'no_create_edit': True}"
+                       domain="[
+                           ('move_id', '=', parent.lc_journal_entry_id),
+                           ('company_id', '=', parent.company_id),
+                           ('debit', '>', 0)
+                       ]"/>
+                <field name="journal_item_debit" optional="hide"/>
+                <field name="journal_item_credit" column_invisible="True"/>
+            </xpath>
+
+            <!-- Keep the same feature available when a cost line is opened in form mode. -->
+            <xpath expr="//field[@name='cost_lines']/form//field[@name='product_id']" position="after">
+                <field name="journal_item_id"
+                       readonly="parent.state == 'done' or parent.import_lc_state == 'done'"
+                       options="{'no_create': True, 'no_create_edit': True}"
+                       domain="[
+                           ('move_id', '=', parent.lc_journal_entry_id),
+                           ('company_id', '=', parent.company_id),
+                           ('debit', '>', 0)
+                       ]"/>
+                <field name="journal_item_debit" readonly="1"/>
+            </xpath>
+
+        </field>
+    </record>
+</odoo>

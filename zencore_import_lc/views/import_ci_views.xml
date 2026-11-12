@@ -1,0 +1,156 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<odoo>
+    
+    <!-- Action -->
+    <record id="action_import_ci" model="ir.actions.act_window">
+        <field name="name">Commercial Invoices</field>
+        <field name="res_model">import.ci</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <!-- Menu Item -->
+    <menuitem id="menu_import_ci" name="Commercial Invoices" parent="menu_lc_management" action="action_import_ci" sequence="20"/>
+    
+    <!-- List View -->
+    <record id="view_import_ci_list" model="ir.ui.view">
+        <field name="name">import.ci.list</field>
+        <field name="model">import.ci</field>
+        <field name="arch" type="xml">
+            <list default_order="id desc" decoration-success="state == 'paid'" decoration-muted="state == 'cancel'">
+            
+                <field name="ci_number"/>
+                <field name="import_lc_id"/>
+                <field name="pi_number"/>
+                <field name="amendment_id" optional="show"/>
+                <field name="ci_date"/>
+                <field name="cnf_agent_id"/>
+                <field name="po_number"/>
+                <field name="work_order"/>
+                <field name="bl_number"/>
+                <field name="bl_date"/>
+                <field name="bill_of_entry_number"/>
+                <field name="bill_of_entry_date"/>
+                <field name="shipping_line"/>
+            <field name="state" widget="badge" decoration-success="state == 'paid'" decoration-muted="state == 'cancel'"/></list>
+        </field>
+    </record>
+
+    <!-- Form View -->
+    <record id="view_import_ci_form" model="ir.ui.view">
+        <field name="name">import.ci.form</field>
+        <field name="model">import.ci</field>
+        <field name="arch" type="xml">
+            <form string="Commercial Invoice">
+                <header>
+                    <field name="is_current_user_approver" invisible="1"/><!-- Cancel Button (without states attribute) -->
+                    <button name="action_confirm" string="Confirm" type="object" class="btn-primary" invisible="state != 'draft' or not is_current_user_approver"/>
+                    <button name="action_create_vendor_bill" string="Create Vendor Bill" type="object" class="btn-primary" invisible="state != 'confirmed' or bill_count &gt; 0"/>
+                    <button name="action_cancel" string="Cancel" type="object" class="btn-danger" confirm="Are you sure you want to cancel this CI?" invisible="state == 'cancel' or not is_current_user_approver or bill_count &gt; 0"/>
+                    
+                    <!-- Status field with widget -->
+                    <field name="state" widget="statusbar" statusbar_visible="draft,confirmed,paid,cancel"/>
+                </header>
+                <sheet class="o_lc_management_sheet">
+                    <div class="oe_button_box" name="button_box">
+        <button class="oe_stat_button" type="object" name="action_view_vendor_bills" icon="fa-money" invisible="bill_count == 0">
+            <field name="bill_count" widget="statinfo" string="Vendor Bills"/>
+        </button>
+        <button class="oe_stat_button" type="object" name="action_view_receipts" icon="fa-truck" invisible="receipt_count == 0">
+            <field name="receipt_count" widget="statinfo" string="Receipts"/>
+        </button>
+    </div><div class="o_lc_brand_header">
+        <img src="/zencore_import_lc/static/description/icon.png" alt="Import LC"/>
+        <div class="o_lc_brand_copy">
+            <div class="o_lc_brand_title">Commercial Invoice</div>
+            <div class="o_lc_brand_subtitle">Shipment quantities, bill of lading and vendor-bill traceability</div>
+        </div>
+                    </div>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="ci_number" readonly="state != 'draft'"/>
+                        </h1>
+                    </div>
+                    <group string="LC / CI COMMERCIAL DETAILS" col="2">
+                        <group>
+                            <field name="import_lc_id" options="{'no_create': True}" readonly="state != 'draft'"/>
+                            <field name="lc_order_id" string="PI Number" readonly="1" force_save="1"/>
+                            <field name="pi_number" invisible="1"/>
+                            <field name="amendment_id" domain="[('import_lc_id', '=', import_lc_id), ('state', '=', 'approved')]" options="{'no_create': True, 'no_open': True}" placeholder="Select approved amendment (if any)" readonly="state != 'draft'"/>
+                            <field name="supplier_id" readonly="1" force_save="1"/>
+                            <field name="ci_date" readonly="state != 'draft'"/>
+                            <field name="currency_id" readonly="1" options="{'no_create': True, 'no_open': True}"/>
+                        </group>
+                        <group>
+                            <field name="cnf_agent_id" readonly="state != 'draft'"/>
+                            <field name="purchase_order_id" readonly="1"/>
+                            <field name="po_number" invisible="1"/>
+                            <field name="bl_number" readonly="state != 'draft'"/>
+                            <field name="bl_date" readonly="state != 'draft'"/>
+                            <field name="bill_of_entry_number" readonly="state != 'draft'"/>
+                            <field name="bill_of_entry_date" readonly="state != 'draft'"/>
+                        </group>
+                    </group>
+                    
+                    <group string="SHIPMENT &amp; LOGISTICS" col="2">
+                        <group>
+                            <field name="departure_port_id" options="{'no_create': True}" readonly="state != 'draft'"/>
+                            <field name="departure_port" invisible="1"/>
+                            <field name="departure_date" readonly="state != 'draft'"/>
+                            <field name="shipping_line" readonly="state != 'draft'"/>
+                            <field name="container_id" options="{'no_create': True, 'no_create_edit': True}" readonly="state != 'draft'"/>
+                        </group>
+                        <group>
+                            <field name="arrival_port_id" options="{'no_create': True}" readonly="state != 'draft'"/>
+                            <field name="arrival_port" invisible="1"/>
+                            <field name="arrival_date" readonly="state != 'draft'"/>
+                            <field name="container_type_id" options="{'no_create': True}" readonly="state != 'draft'"/>
+                            <field name="container_reference" readonly="state != 'draft'"/>
+                        </group>
+                    </group>
+                    
+                    <notebook>
+                        <page string="Product Information">
+                            <field name="product_line_ids" nolabel="1" readonly="state != 'draft'">
+                                <list editable="bottom" create="0" delete="0" decoration-danger="ci_quantity &gt; available_quantity" decoration-warning="ci_quantity == 0">
+                                    
+                                    <!-- Category -->
+                                    <field name="lc_order_line_id" string="PI Line" readonly="1" optional="hide"/>
+                                    <field name="po_line_id" string="PO Line" readonly="1" optional="hide"/>
+                                    <field name="product_category_id" readonly="1" force_save="1"/>
+                                    
+                                    <!-- Product -->
+                                    <field name="product_id" readonly="1" force_save="1"/>
+                                    <field name="uom_id" string="UOM" readonly="1" force_save="1"/>
+                                    
+                                    <!-- Product Name -->
+                                    <field name="product_name" readonly="1" optional="hide" force_save="1"/>
+                                    
+                                    <!-- LC Quantity (Total from LC) -->
+                                    <field name="lc_quantity" string="LC Qty" readonly="1" force_save="1" sum="Total LC Qty"/>
+                                    
+                                    <!-- Available Quantity (Remaining after other CIs) -->
+                                    <field name="available_quantity" string="Available Qty" readonly="1" decoration-success="available_quantity &gt; 0" decoration-warning="available_quantity == 0" decoration-danger="available_quantity &lt; 0" sum="Total Available"/>
+                                    
+                                    <!-- CI Quantity (USER MUST ENTER) -->
+                                    <field name="ci_quantity" string="CI Qty" force_save="1" readonly="parent.state != 'draft'" decoration-bf="ci_quantity &gt; 0" sum="Total CI Qty"/>
+                                    
+                                    <!-- Unit Price -->
+                                    <field name="currency_id" column_invisible="1"/>
+                                    <field name="unit_price" readonly="1" force_save="1" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                                    
+                                    <!-- Total Cost -->
+                                    <field name="total_cost" readonly="1" force_save="1" widget="monetary" options="{'currency_field': 'currency_id'}" sum="Total Cost"/>
+                                    
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+                <!-- Chatter Widget -->
+                <chatter/>
+            </form>
+        </field>
+    </record>
+    <!-- Search View -->
+
+</odoo>

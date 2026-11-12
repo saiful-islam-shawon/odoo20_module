@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+    <record id="container_20gp" model="import.lc.container.type">
+        <field name="sequence">10</field><field name="code">20GP</field><field name="name">20' General Purpose</field><field name="length_ft">20</field>
+    </record>
+    <record id="container_40gp" model="import.lc.container.type">
+        <field name="sequence">20</field><field name="code">40GP</field><field name="name">40' General Purpose</field><field name="length_ft">40</field>
+    </record>
+    <record id="container_40hc" model="import.lc.container.type">
+        <field name="sequence">30</field><field name="code">40HC</field><field name="name">40' High Cube</field><field name="length_ft">40</field>
+    </record>
+    <record id="container_20rf" model="import.lc.container.type">
+        <field name="sequence">40</field><field name="code">20RF</field><field name="name">20' Reefer</field><field name="length_ft">20</field><field name="refrigerated">1</field>
+    </record>
+    <record id="container_40rf" model="import.lc.container.type">
+        <field name="sequence">50</field><field name="code">40RF</field><field name="name">40' Reefer</field><field name="length_ft">40</field><field name="refrigerated">1</field>
+    </record>
+    <record id="container_lcl" model="import.lc.container.type">
+        <field name="sequence">60</field><field name="code">LCL</field><field name="name">Less than Container Load</field>
+    </record>
+</odoo>

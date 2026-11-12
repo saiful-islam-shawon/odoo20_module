@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_purchase_order_form_inherit" model="ir.ui.view">
+        <field name="name">purchase.order.form.import.lc.enterprise</field>
+        <field name="model">purchase.order</field>
+        <field name="inherit_id" ref="purchase.purchase_order_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='partner_id']" position="after">
+                <field name="purchase_type" readonly="state not in ('draft', 'sent')"/>
+                <field name="lc_required" widget="boolean_toggle" readonly="1" invisible="purchase_type != 'import'"/>
+            </xpath>
+            <xpath expr="//header" position="inside">
+                <button name="action_create_proforma_invoice" string="Create Proforma Invoice" type="object" class="btn-secondary" invisible="not lc_required or state == 'cancel' or pi_count &gt; 0"/>
+            </xpath>
+            <xpath expr="//header/field[@name='state']" position="attributes">
+                <attribute name="statusbar_visible">draft,sent,proforma,purchase,done,cancel</attribute>
+                <attribute name="invisible">purchase_type != 'import'</attribute>
+            </xpath>
+            <!-- Local purchases use Odoo's native milestones only.  The
+                 duplicate state field keeps the Import-only PI milestone out
+                 of the local purchase status bar while retaining it for
+                 Import Purchase RFQs. -->
+            <xpath expr="//header/field[@name='state']" position="after">
+                <field name="state" widget="statusbar"
+                       statusbar_visible="draft,sent,purchase,done,cancel"
+                       invisible="purchase_type == 'import'"/>
+            </xpath>
+
+            <xpath expr="//div[@name='button_box']" position="inside">
+                <button class="oe_stat_button" type="object" name="action_view_proforma_invoices" icon="fa-file-text-o" invisible="not lc_required or pi_count == 0">
+                    <field name="pi_count" widget="statinfo" string="Proforma Invoices"/>
+                </button>
+                <button class="oe_stat_button" type="object" name="action_view_import_lcs" icon="fa-university" invisible="not lc_required or import_lc_count == 0">
+                    <div class="o_stat_info">
+                        <span class="o_stat_text">Import LC</span>
+                        <span class="o_stat_value"><field name="lc_number_display"/></span>
+                    </div>
+                </button>
+            </xpath>
+
+            <xpath expr="//notebook" position="inside">
+                <page string="Import Purchase" name="import_lc_pi_setup" invisible="not lc_required">
+                    <div class="alert alert-info" role="alert">
+                        Enter the expected/preferred commercial and logistics terms here once. When this RFQ/PO is selected in a Proforma Invoice, these values flow to the PI and linked LC as planning defaults; actual shipment information is recorded later in the shipment flow.
+                    </div>
+                    <group>
+                        <group string="Bank &amp; Commercial">
+                            <field name="lc_advising_bank_id"/>
+                            <field name="lc_payment_terms"/>
+                            <field name="lc_pi_term_id"/>
+                            <field name="lc_expected_opening_date"/>
+                            <field name="lc_sc_number"/>
+                        </group>
+                        <group string="Expected Logistics">
+                            <field name="lc_port_of_shipment_id" string="Preferred Port of Shipment" options="{'no_create': True}"/>
+                            <field name="lc_destination_port_id" options="{'no_create': True}"/>
+                            <field name="lc_expected_shipment_date"/>
+                            <field name="lc_container_type_id" options="{'no_create': True}"/>
+                            <field name="lc_partial_shipment" string="Partial Shipment Allowed"/>
+                            <field name="lc_transshipment" string="Transshipment Allowed"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group string="Agents">
+                            <field name="lc_indent_agent_id"/>
+                            <field name="lc_indent_commission_percent" invisible="not lc_indent_agent_id"/>
+                            <field name="lc_indent_commission_amount" invisible="not lc_indent_agent_id"/>
+                            <field name="lc_cnf_agent_id"/>
+                        </group>
+                    </group>
+                </page>
+            </xpath>
+
+            <!-- The old single LC reference is retained technically but no longer shown as the workflow source. -->
+            <xpath expr="//field[@name='date_order']/.." position="after">
+                <field name="lc_order_id" invisible="1"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>

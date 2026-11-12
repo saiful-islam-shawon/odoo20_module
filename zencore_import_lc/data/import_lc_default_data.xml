@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+    <!-- Standard ports. Users may edit, archive, or add ports in Import LC / Configuration. -->
+    <record id="port_chattogram" model="import.lc.port">
+        <field name="name">Chattogram Port</field>
+        <field name="code">BDCGP</field>
+        <field name="country_id" ref="base.bd"/>
+        <field name="port_type">sea</field>
+        <field name="notes">Default Bangladesh sea destination port.</field>
+    </record>
+    <record id="port_mongla" model="import.lc.port">
+        <field name="name">Mongla Port</field>
+        <field name="code">BDMGL</field>
+        <field name="country_id" ref="base.bd"/>
+        <field name="port_type">sea</field>
+    </record>
+    <record id="port_shah_amanat" model="import.lc.port">
+        <field name="name">Shah Amanat International Airport</field>
+        <field name="code">CGP</field>
+        <field name="country_id" ref="base.bd"/>
+        <field name="port_type">air</field>
+    </record>
+    <record id="port_shanghai" model="import.lc.port">
+        <field name="name">Port of Shanghai</field>
+        <field name="code">CNSHA</field>
+        <field name="country_id" ref="base.cn"/>
+        <field name="port_type">sea</field>
+    </record>
+    <record id="port_ningbo" model="import.lc.port">
+        <field name="name">Port of Ningbo-Zhoushan</field>
+        <field name="code">CNNGB</field>
+        <field name="country_id" ref="base.cn"/>
+        <field name="port_type">sea</field>
+    </record>
+    <record id="port_shenzhen" model="import.lc.port">
+        <field name="name">Port of Shenzhen</field>
+        <field name="code">CNSZX</field>
+        <field name="country_id" ref="base.cn"/>
+        <field name="port_type">sea</field>
+    </record>
+    <record id="port_singapore" model="import.lc.port">
+        <field name="name">Port of Singapore</field>
+        <field name="code">SGSIN</field>
+        <field name="country_id" ref="base.sg"/>
+        <field name="port_type">sea</field>
+    </record>
+    <record id="port_jebel_ali" model="import.lc.port">
+        <field name="name">Jebel Ali Port</field>
+        <field name="code">AEJEA</field>
+        <field name="country_id" ref="base.ae"/>
+        <field name="port_type">sea</field>
+    </record>
+
+    <!-- Generic reusable shipment/container references. Replace with actual
+         carrier container numbers when those become available. -->
+    <record id="container_general_20gp" model="import.lc.container">
+        <field name="name">20GP - General Container</field>
+        <field name="container_type_id" ref="container_20gp"/>
+        <field name="notes">Generic 20-foot general-purpose container reference.</field>
+    </record>
+    <record id="container_general_40gp" model="import.lc.container">
+        <field name="name">40GP - General Container</field>
+        <field name="container_type_id" ref="container_40gp"/>
+        <field name="notes">Generic 40-foot general-purpose container reference.</field>
+    </record>
+    <record id="container_general_40hc" model="import.lc.container">
+        <field name="name">40HC - High Cube Container</field>
+        <field name="container_type_id" ref="container_40hc"/>
+        <field name="notes">Generic 40-foot high-cube container reference.</field>
+    </record>
+    <record id="container_general_20rf" model="import.lc.container">
+        <field name="name">20RF - Reefer Container</field>
+        <field name="container_type_id" ref="container_20rf"/>
+        <field name="notes">Generic 20-foot refrigerated container reference.</field>
+    </record>
+    <record id="container_general_40rf" model="import.lc.container">
+        <field name="name">40RF - Reefer Container</field>
+        <field name="container_type_id" ref="container_40rf"/>
+        <field name="notes">Generic 40-foot refrigerated container reference.</field>
+    </record>
+    <record id="container_general_lcl" model="import.lc.container">
+        <field name="name">LCL - Consolidated Shipment</field>
+        <field name="container_type_id" ref="container_lcl"/>
+        <field name="notes">Generic less-than-container-load shipment reference.</field>
+    </record>
+
+    <!-- Reusable PI commercial-term templates. -->
+    <record id="pi_term_cif_chattogram" model="lc.pi.term">
+        <field name="name">CIF Chattogram</field>
+    </record>
+    <record id="pi_term_cif_chattogram_incoterm" model="lc.pi.term.description">
+        <field name="pi_term_id" ref="pi_term_cif_chattogram"/>
+        <field name="title">Incoterm</field>
+        <field name="description">CIF Chattogram, Bangladesh (Incoterms 2020).</field>
+    </record>
+    <record id="pi_term_cif_chattogram_documents" model="lc.pi.term.description">
+        <field name="pi_term_id" ref="pi_term_cif_chattogram"/>
+        <field name="title">Documents</field>
+        <field name="description">Commercial invoice, packing list, bill of lading, certificate of origin and insurance documents as applicable.</field>
+    </record>
+
+    <record id="pi_term_cfr_chattogram" model="lc.pi.term">
+        <field name="name">CFR Chattogram</field>
+    </record>
+    <record id="pi_term_cfr_chattogram_incoterm" model="lc.pi.term.description">
+        <field name="pi_term_id" ref="pi_term_cfr_chattogram"/>
+        <field name="title">Incoterm</field>
+        <field name="description">CFR Chattogram, Bangladesh (Incoterms 2020).</field>
+    </record>
+
+    <record id="pi_term_fob" model="lc.pi.term">
+        <field name="name">FOB Origin Port</field>
+    </record>
+    <record id="pi_term_fob_incoterm" model="lc.pi.term.description">
+        <field name="pi_term_id" ref="pi_term_fob"/>
+        <field name="title">Incoterm</field>
+        <field name="description">FOB named port of shipment (Incoterms 2020).</field>
+    </record>
+
+    <record id="pi_term_exw" model="lc.pi.term">
+        <field name="name">EXW Supplier Facility</field>
+    </record>
+    <record id="pi_term_exw_incoterm" model="lc.pi.term.description">
+        <field name="pi_term_id" ref="pi_term_exw"/>
+        <field name="title">Incoterm</field>
+        <field name="description">EXW supplier facility (Incoterms 2020).</field>
+    </record>
+
+    <!-- Standard purchase payment terms for RFQs and the linked PI. -->
+    <record id="payment_term_at_sight" model="account.payment.term">
+        <field name="name">At Sight</field>
+    </record>
+    <record id="payment_term_at_sight_line" model="account.payment.term.line">
+        <field name="payment_id" ref="payment_term_at_sight"/>
+        <field name="value">percent</field>
+        <field name="value_amount">100</field>
+        <field name="delay_type">days_after</field>
+        <field name="nb_days">0</field>
+    </record>
+    <record id="payment_term_60_days" model="account.payment.term">
+        <field name="name">60 Days</field>
+    </record>
+    <record id="payment_term_60_days_line" model="account.payment.term.line">
+        <field name="payment_id" ref="payment_term_60_days"/>
+        <field name="value">percent</field>
+        <field name="value_amount">100</field>
+        <field name="delay_type">days_after</field>
+        <field name="nb_days">60</field>
+    </record>
+    <record id="payment_term_90_days" model="account.payment.term">
+        <field name="name">90 Days</field>
+    </record>
+    <record id="payment_term_90_days_line" model="account.payment.term.line">
+        <field name="payment_id" ref="payment_term_90_days"/>
+        <field name="value">percent</field>
+        <field name="value_amount">100</field>
+        <field name="delay_type">days_after</field>
+        <field name="nb_days">90</field>
+    </record>
+    <record id="payment_term_120_days" model="account.payment.term">
+        <field name="name">120 Days</field>
+    </record>
+    <record id="payment_term_120_days_line" model="account.payment.term.line">
+        <field name="payment_id" ref="payment_term_120_days"/>
+        <field name="value">percent</field>
+        <field name="value_amount">100</field>
+        <field name="delay_type">days_after</field>
+        <field name="nb_days">120</field>
+    </record>
+    <record id="payment_term_150_days" model="account.payment.term">
+        <field name="name">150 Days</field>
+    </record>
+    <record id="payment_term_150_days_line" model="account.payment.term.line">
+        <field name="payment_id" ref="payment_term_150_days"/>
+        <field name="value">percent</field>
+        <field name="value_amount">100</field>
+        <field name="delay_type">days_after</field>
+        <field name="nb_days">150</field>
+    </record>
+</odoo>

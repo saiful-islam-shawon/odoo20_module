@@ -1,0 +1,217 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<odoo>
+    
+    <!-- ============================================ -->
+    <!-- AMENDMENT VIEWS - ODOO 19                   -->
+    <!-- ============================================ -->
+    
+    <!-- Amendment Action -->
+    <record id="action_import_lc_amendment" model="ir.actions.act_window">
+        <field name="name">LC Amendments</field>
+        <field name="res_model">import.lc.amendment</field>
+        <field name="view_mode">list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create your first LC Amendment
+            </p>
+            <p>
+                Track and manage amendments to your Import LCs.
+            </p>
+        </field>
+    </record>
+    
+    <!-- Amendment Menu -->
+    <menuitem id="menu_import_lc_amendment" name="LC Amendments" parent="menu_lc_management" action="action_import_lc_amendment" sequence="25"/>
+    
+    <!-- ============================================ -->
+    <!-- AMENDMENT LIST VIEW                         -->
+    <!-- ============================================ -->
+    <record id="view_import_lc_amendment_list" model="ir.ui.view">
+        <field name="name">import.lc.amendment.list</field>
+        <field name="model">import.lc.amendment</field>
+        <field name="arch" type="xml">
+            <list string="LC Amendments" decoration-success="state == 'approved'" decoration-info="state == 'submitted'" decoration-danger="state == 'rejected'" decoration-muted="state == 'cancelled'">
+                <field name="amendment_number"/>
+                <field name="import_lc_id"/>
+                <field name="amendment_type"/>
+                <field name="amendment_date"/>
+                <field name="supplier_id" optional="show"/>
+                <field name="reason" optional="hide"/>
+                <!-- <field name="approved_by" optional="hide"/> -->
+                <field name="approved_date" optional="hide"/>
+                <field name="state" widget="badge" decoration-success="state == 'approved'" decoration-info="state == 'submitted'" decoration-danger="state == 'rejected'" decoration-muted="state == 'cancelled'"/>
+            </list>
+        </field>
+    </record>
+    
+    <!-- ============================================ -->
+    <!-- AMENDMENT FORM VIEW                         -->
+    <!-- ============================================ -->
+    <record id="view_import_lc_amendment_form" model="ir.ui.view">
+        <field name="name">import.lc.amendment.form</field>
+        <field name="model">import.lc.amendment</field>
+        <field name="arch" type="xml">
+            <form string="LC Amendment">
+                <header>
+                    <field name="is_current_user_approver" invisible="1"/>
+                    <!-- Submit Button -->
+                    <button name="action_submit" string="Submit for Approval" type="object" class="btn-primary" invisible="state != 'draft'" data-hotkey="q"/>
+                    
+                    <!-- Approve Button (Admin Only) -->
+                   <!-- <button name="action_approve"
+                           string="Approve"
+                           type="object"
+                           class="btn-success"
+                           invisible="state != 'submitted' or not is_current_user_approver"
+                           data-hotkey="a"/> -->
+
+                     <button name="action_approve" string="Approve" type="object" class="btn-success" invisible="state != 'submitted' or not is_current_user_approver" data-hotkey="a"/>
+                
+                <!-- Reject Button - Only visible to approvers -->
+                <button name="action_reject" string="Reject" type="object" class="btn-danger" invisible="state != 'submitted' or not is_current_user_approver" data-hotkey="z"/>
+                    
+                    <!-- Cancel Button -->
+                    <button name="action_cancel" string="Cancel" type="object" class="btn-secondary" invisible="state in ['approved', 'cancelled']" confirm="Are you sure you want to cancel this amendment?" data-hotkey="x"/>
+                    
+                    <!-- Status Bar -->
+                    <field name="state" widget="statusbar" statusbar_visible="draft,submitted,approved,rejected,cancelled"/>
+                </header>
+                
+                <sheet class="o_lc_management_sheet">
+                    <div class="o_lc_brand_header">
+        <img src="/zencore_import_lc/static/description/icon.png" alt="Import LC"/>
+        <div class="o_lc_brand_copy">
+            <div class="o_lc_brand_title">LC Amendment</div>
+            <div class="o_lc_brand_subtitle">Controlled changes with approval, audit trail and impact visibility</div>
+        </div>
+    </div><!-- Title -->
+                    <div class="oe_title">
+                        <h1>
+                            <field name="amendment_number" readonly="1" class="o_text_overflow"/>
+                        </h1>
+                    </div>
+                    
+                    <!-- Main Information -->
+                    <group>
+                        <group string="Amendment Information">
+                            <field name="import_lc_id" required="1" domain="[('state', '!=', 'reject')]" options="{'no_create': True, 'no_create_edit': True}" readonly="state != 'draft'" placeholder="Select the Import LC to amend"/>
+                            <field name="pi_number" readonly="1"/>
+                            <field name="supplier_id" readonly="1"/>
+                            <field name="amendment_date" readonly="state != 'draft'"/>
+                            <field name="amendment_type" readonly="state != 'draft'" widget="radio"/>
+                        </group>
+                        
+                        <group string="Status &amp; Approval">
+                            <field name="approved_by" readonly="1"/><!-- <field name="approved_by" readonly="1"/> -->
+                            <field name="approved_date" readonly="1"/>
+                            <field name="currency_id" invisible="1"/>
+                            <field name="company_id" groups="base.group_multi_company" readonly="1"/>
+                        </group>
+                    </group>
+                    
+                    <!-- Shipment Date Changes -->
+                    <!-- <group string="Shipment Date Changes" 
+                           invisible="amendment_type != 'shipment_date'">
+                        <group>
+                            <label for="old_shipment_date" string="Current Date"/>
+                            <field name="old_shipment_date" readonly="1" class="fw-bold"/>
+                        </group> -->
+                        <!-- <group>
+                            <label for="new_shipment_date" string="New Date"/>
+                            <field name="new_shipment_date" 
+                                   readonly="state != 'draft'"
+                                   required="amendment_type == 'shipment_date'"
+                                   class="fw-bold text-primary"/>
+                        </group>
+                    </group> -->
+                    
+                    <!-- LC Value Changes -->
+                    <group string="Shipment Date Changes" invisible="amendment_type != 'shipment_date'">
+        <group>
+            <field name="old_shipment_date" readonly="1"/>
+        </group>
+        <group>
+            <field name="new_shipment_date" readonly="state != 'draft'" required="amendment_type == 'shipment_date'"/>
+        </group>
+    </group><group string="LC Amount Change" invisible="amendment_type != 'value'">
+                        <group>
+                            <label for="old_lc_value" string="Current LC Amount"/>
+                            <div class="o_row">
+                                <field name="old_lc_value" readonly="1" class="fw-bold"/>
+                                <field name="currency_id" readonly="1" options="{'no_open': True}"/>
+                            </div>
+                        </group>
+                        <group>
+                            <label for="new_lc_value" string="New LC Amount"/>
+                            <div class="o_row">
+                                <field name="new_lc_value" readonly="state != 'draft'" required="amendment_type == 'value'" class="fw-bold text-primary"/>
+                                <field name="currency_id" readonly="1" options="{'no_open': True}"/>
+                            </div>
+                        </group>
+                    </group>
+                    
+                    <!-- Reason for Amendment -->
+                    <group string="Reason for Amendment">
+                        <field name="reason" nolabel="1" placeholder="Enter detailed reason for this amendment..." readonly="state != 'draft'" widget="text"/>
+                    </group>
+                    
+                    <!-- Rejection Reason (Only visible when rejected) -->
+                    <group string="Rejection Reason" invisible="state != 'rejected'">
+                        <div class="alert alert-danger" role="alert">
+                            <strong>This amendment was rejected</strong>
+                            <p><field name="rejection_reason" nolabel="1" readonly="1"/></p>
+                        </div>
+                    </group>
+                    
+                    <!-- Product Lines Notebook -->
+                    <notebook>
+                        <page string="Product Quantity Changes" name="product_lines" invisible="amendment_type != 'quantity'">
+                            <field name="product_line_ids" readonly="state != 'draft'">
+                                <list editable="bottom" decoration-danger="quantity_change &lt; 0" decoration-success="quantity_change == 0">
+                                    <field name="lc_order_id" string="Source PI" readonly="1"/>
+                                    <field name="product_id" options="{'no_create': True}" readonly="1"/>
+                                    <field name="product_name" readonly="1"/>
+                                    <field name="original_quantity" readonly="1" string="Current Qty"/>
+                                    <field name="new_quantity" string="New Qty" required="1"/>
+                                    <field name="unit_price" readonly="1" optional="show"/>
+                                    <field name="quantity_change" readonly="1" string="Change" decoration-danger="quantity_change &lt; 0" decoration-success="quantity_change == 0"/>
+                                </list>
+                            </field>
+                            
+                            <div class="alert alert-warning mt-3" role="alert">
+                                <i class="fa fa-warning"/> <strong>Important:</strong> Quantities can only be <strong>decreased</strong> in amendments. Any increase will be rejected.
+                            </div>
+                        </page>
+                    </notebook>
+                    
+                </sheet>
+                
+                <!-- Chatter -->
+                <chatter/>
+            </form>
+        </field>
+    </record>
+    
+   
+    
+    <!-- ============================================ -->
+    <!-- REJECTION WIZARD                            -->
+    <!-- ============================================ -->
+    <record id="view_import_lc_amendment_reject_wizard" model="ir.ui.view">
+        <field name="name">import.lc.amendment.reject.wizard</field>
+        <field name="model">import.lc.amendment.reject.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Reject Amendment">
+                <group>
+                    <field name="amendment_id" invisible="1"/>
+                    <field name="rejection_reason" nolabel="1" placeholder="Please provide a detailed reason for rejecting this amendment..." widget="text"/>
+                </group>
+                <footer>
+                    <button string="Confirm Rejection" name="action_confirm_reject" type="object" class="btn-danger"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+    
+</odoo>

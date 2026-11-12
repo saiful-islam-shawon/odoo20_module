@@ -1,0 +1,34 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_lc_order,lc.order,model_lc_order,base.group_user,1,1,1,0
+access_lc_order_line,lc.order.line,model_lc_order_line,base.group_user,1,1,1,1
+access_lc_order_document,lc.order.document,model_lc_order_document,base.group_user,1,1,1,1
+access_lc_payment_term,lc.payment.term,model_lc_pi_term,base.group_user,1,1,1,1
+access_lc_payment_term_line,lc.payment.term.line,model_lc_pi_term_line,base.group_user,1,1,1,1
+access_lc_payment_term_description_user,lc.payment.term.description.user,model_lc_pi_term_description,base.group_user,1,0,0,0
+access_lc_payment_term_description_purchase_user,lc.payment.term.description.purchase.user,model_lc_pi_term_description,purchase.group_purchase_user,1,1,1,0
+access_import_lc_user,import.lc.user,model_import_lc,base.group_user,1,1,1,0
+access_import_lc_manager,import.lc.manager,model_import_lc,base.group_system,1,1,1,1
+access_import_lc_product_line_user,import.lc.product.line.user,model_import_lc_product_line,base.group_user,1,1,1,0
+access_import_lc_product_line_manager,import.lc.product.line.manager,model_import_lc_product_line,base.group_system,1,1,1,1
+access_import_lc_document_user,import.lc.document.user,model_import_lc_document,base.group_user,1,1,1,0
+access_import_lc_document_manager,import.lc.document.manager,model_import_lc_document,base.group_system,1,1,1,1
+access_res_company_branch_user,res.company.branch.user,model_res_company_branch,base.group_user,1,0,0,0
+access_res_company_branch_manager,res.company.branch.manager,model_res_company_branch,base.group_system,1,1,1,1
+access_import_ci_user,access.import.ci.user,model_import_ci,base.group_user,1,1,1,0
+access_import_ci_product_line_user,access.import.ci.product.line.user,model_import_ci_product_line,base.group_user,1,1,1,1
+access_import_lc_amendment_user,import.lc.amendment.user,model_import_lc_amendment,base.group_user,1,1,1,0
+access_import_lc_amendment_line_user,import.lc.amendment.line.user,model_import_lc_amendment_line,base.group_user,1,1,1,1
+access_import_lc_amendment_reject_wizard,import.lc.amendment.reject.wizard,model_import_lc_amendment_reject_wizard,zencore_import_lc.group_lc_approver,1,1,1,1
+access_lc_order_approver,lc.order approver,model_lc_order,zencore_import_lc.group_lc_approver,1,1,1,1
+access_import_lc_approver,import.lc approver,model_import_lc,zencore_import_lc.group_lc_approver,1,1,1,1
+access_import_ci_approver,import.ci approver,model_import_ci,zencore_import_lc.group_lc_approver,1,1,1,1
+access_import_lc_amendment_approver,import.lc.amendment approver,model_import_lc_amendment,zencore_import_lc.group_lc_approver,1,1,1,1
+access_import_lc_port_user,import.lc.port user,model_import_lc_port,base.group_user,1,0,0,0
+access_import_lc_port_manager,import.lc.port manager,model_import_lc_port,purchase.group_purchase_manager,1,1,1,1
+access_import_lc_port_admin,import.lc.port admin,model_import_lc_port,base.group_system,1,1,1,1
+access_import_lc_container_type_user,import.lc.container.type user,model_import_lc_container_type,base.group_user,1,0,0,0
+access_import_lc_container_type_manager,import.lc.container.type manager,model_import_lc_container_type,purchase.group_purchase_manager,1,1,1,1
+access_import_lc_container_type_admin,import.lc.container.type admin,model_import_lc_container_type,base.group_system,1,1,1,1
+access_import_lc_container_user,import.lc.container user,model_import_lc_container,base.group_user,1,0,0,0
+access_import_lc_container_manager,import.lc.container manager,model_import_lc_container,purchase.group_purchase_manager,1,1,1,1
+access_import_lc_container_admin,import.lc.container admin,model_import_lc_container,base.group_system,1,1,1,1

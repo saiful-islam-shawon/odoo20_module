@@ -1,0 +1,69 @@
+.o_form_view {
+    .o_lc_management_sheet {
+        max-width: 1500px;
+
+        .o_lc_brand_header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin: 0 0 1.25rem;
+            padding: 1rem 1.25rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 16px;
+            background: linear-gradient(135deg, #f8fafc 0%, #f0fdfa 100%);
+            box-shadow: 0 8px 24px rgba(15, 23, 42, 0.05);
+
+            img {
+                width: 58px;
+                height: 58px;
+                border-radius: 14px;
+                box-shadow: 0 6px 16px rgba(15, 23, 42, 0.14);
+            }
+
+            .o_lc_brand_copy {
+                min-width: 0;
+            }
+
+            .o_lc_brand_title {
+                margin: 0;
+                color: #0f172a;
+                font-size: 1.25rem;
+                font-weight: 700;
+                line-height: 1.2;
+            }
+
+            .o_lc_brand_subtitle {
+                margin-top: 0.2rem;
+                color: #64748b;
+                font-size: 0.9rem;
+            }
+        }
+
+        .o_group .o_group_name {
+            color: #0f172a;
+            font-weight: 700;
+        }
+
+        .o_notebook_headers .nav-link.active {
+            font-weight: 700;
+        }
+
+        .o_lc_hint {
+            border: 0;
+            border-left: 4px solid #2dd4bf;
+            border-radius: 10px;
+            background: #f0fdfa;
+            color: #334155;
+        }
+    }
+
+    .oe_stat_button .o_stat_value {
+        font-weight: 700;
+    }
+}
+
+.o_list_view {
+    .o_data_row.text-success td {
+        font-weight: 500;
+    }
+}
