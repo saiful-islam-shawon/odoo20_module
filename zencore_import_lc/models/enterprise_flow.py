@@ -816,6 +816,15 @@ class ImportLC(models.Model):
         return commands
 
     @staticmethod
+    def _product_commands_total_cost(commands):
+        """Return the summed total cost of (0, 0, vals) product line commands."""
+        return sum(
+            (cmd[2].get('quantity', 0.0) or 0.0) * (cmd[2].get('unit_price', 0.0) or 0.0)
+            for cmd in (commands or [])
+            if isinstance(cmd, (list, tuple)) and len(cmd) == 3 and cmd[0] == 0 and isinstance(cmd[2], dict)
+        )
+
+    @staticmethod
     def _resolve_legacy_pi_commands(commands, current_ids=None):
         ids = set(current_ids or [])
         if not commands:
@@ -842,6 +851,7 @@ class ImportLC(models.Model):
         if not self.lc_order_id:
             self.lc_order_ids = [(5, 0, 0)]
             self.product_line_ids = [(5, 0, 0)]
+            self.lc_amount = 0.0
             return
         try:
             pi = self._validate_single_pi(self.lc_order_id)
@@ -852,7 +862,9 @@ class ImportLC(models.Model):
         for key, value in defaults.items():
             setattr(self, key, value)
         self.lc_order_ids = [(6, 0, [pi.id])]
-        self.product_line_ids = self._product_commands_from_pi(pi, clear=True)
+        product_commands = self._product_commands_from_pi(pi, clear=True)
+        self.product_line_ids = product_commands
+        self.lc_amount = self._product_commands_total_cost(product_commands)
 
     @api.constrains('lc_order_id', 'company_id')
     def _check_lc_order_consistency(self):
@@ -909,8 +921,10 @@ class ImportLC(models.Model):
             vals['lc_order_ids'] = [(6, 0, [pi.id])]
             for key, value in self._single_pi_defaults(pi).items():
                 vals.setdefault(key, value)
-            vals['product_line_ids'] = self._product_commands_from_pi(pi, clear=True)
-            vals.setdefault('lc_amount', sum(pi.lc_line_ids.mapped('subtotal')))
+            product_commands = self._product_commands_from_pi(pi, clear=True)
+            vals['product_line_ids'] = product_commands
+            if 'lc_amount' not in vals or vals.get('lc_amount') in (False, None, 0, 0.0):
+                vals['lc_amount'] = self._product_commands_total_cost(product_commands)
             prepared.append(vals)
         return super().create(prepared)
 
@@ -958,7 +972,10 @@ class ImportLC(models.Model):
                 local_vals['lc_order_ids'] = [(6, 0, [pi.id])]
                 for key, value in record._single_pi_defaults(pi).items():
                     local_vals.setdefault(key, value)
-                local_vals['product_line_ids'] = record._product_commands_from_pi(pi, clear=True)
+                product_commands = record._product_commands_from_pi(pi, clear=True)
+                local_vals['product_line_ids'] = product_commands
+                if 'lc_amount' not in vals or vals.get('lc_amount') in (False, None, 0, 0.0):
+                    local_vals['lc_amount'] = record._product_commands_total_cost(product_commands)
                 super(ImportLC, record).write(local_vals)
             return True
         return super().write(vals)

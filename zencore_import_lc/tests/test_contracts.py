@@ -284,3 +284,91 @@ class TestLCModuleContracts(TransactionCase):
         self.assertFalse(lc._has_available_ci_quantity())
         ci.product_line_ids.write({'ci_quantity': 9.0})
         self.assertTrue(lc._has_available_ci_quantity())
+
+    def test_import_lc_amount_auto_calculation_and_option_a(self):
+        """LC Amount auto-populates from product lines while keeping draft override and connected formulas."""
+        supplier = self.env['res.partner'].create({'name': 'LC Amount Auto Supplier', 'supplier_rank': 1})
+        product = self.env['product.product'].create({'name': 'LC Amount Auto Product', 'purchase_ok': True})
+        bank = self.env['res.bank'].sudo().create({'name': 'LC Amount Test Bank', 'bic': 'LCAMBDDH'})
+
+        def _make_approved_pi(pi_num, qty, price, conv_rate=120.0):
+            po = self.env['purchase.order'].create({
+                'partner_id': supplier.id,
+                'purchase_type': 'import',
+                'order_line': [(0, 0, {
+                    'product_id': product.id,
+                    'name': f'Line {pi_num}',
+                    'product_qty': qty,
+                    'price_unit': price,
+                    'uom_id': product.uom_id.id,
+                })],
+            })
+            po_line = po.order_line.filtered('product_id')
+            pi = self.env['lc.order'].create({
+                'po_number': po.id,
+                'pi_number': pi_num,
+                'port_of_shipment': 'Chattogram',
+                'destination_port': 'CGP',
+                'conversion_rate': conv_rate,
+                'lc_line_ids': [(0, 0, {
+                    'po_line_id': po_line.id,
+                    'product_id': product.id,
+                    'quantity': qty,
+                    'unit_price': price,
+                    'product_uom_id': po_line.uom_id.id,
+                })],
+            })
+            pi.action_confirm()
+            return pi
+
+        pi_main = _make_approved_pi('PI-AMT-001', 20.0, 3.0)
+        pi_alt = _make_approved_pi('PI-AMT-002', 10.0, 5.0)
+
+        # AC-1a: Onchange on PI selection auto-populates lc_amount and clearing resets it
+        lc_form = self.env['import.lc'].new({'lc_order_id': pi_main.id})
+        lc_form._onchange_lc_order_id_enterprise()
+        self.assertEqual(lc_form.lc_amount, 60.0)
+        lc_form.lc_order_id = False
+        lc_form._onchange_lc_order_id_enterprise()
+        self.assertEqual(lc_form.lc_amount, 0.0)
+
+        # AC-1b & AC-3: Creating with UI default 0.0 auto-populates lc_amount & preserves connected formulas
+        lc = self.env['import.lc'].create({
+            'lc_order_id': pi_main.id,
+            'lc_number': 'LC-AMT-001',
+            'lc_type': 'foreign',
+            'applicant_bank_id': bank.id,
+            'lc_amount': 0.0,
+            'lc_tolerance_percent': 10.0,
+            'margin_rate': 1.0,
+        })
+        self.assertEqual(lc.lc_amount, 60.0)
+        self.assertEqual(sum(lc.product_line_ids.mapped('total_cost')), 60.0)
+        self.assertEqual(lc.lc_tolerance_amount, 6.0)
+        self.assertEqual(lc.lc_utilized_amount, 0.0)
+        self.assertEqual(lc.lc_available_amount, 66.0)
+        self.assertEqual(lc.lc_amount_bdt, 7200.0)
+        self.assertEqual(lc.total_lc_cost, 7200.0)
+        self.assertEqual(lc.margin_value, 72.0)
+
+        # AC-2: Draft manual override preserved even after editing HS code on product lines
+        lc.write({'lc_amount': 65.0})
+        lc.product_line_ids.write({'hs_code': '080450'})
+        self.assertEqual(lc.lc_amount, 65.0)
+
+        # AC-1c: Changing PI on draft LC without specifying lc_amount updates lc_amount
+        lc.write({'lc_order_id': pi_alt.id})
+        self.assertEqual(lc.lc_amount, 50.0)
+
+        # AC-4: Confirm LC and verify Value Amendment updates lc_amount without being overwritten
+        lc.action_confirm()
+        self.assertEqual(lc.lc_amount, 50.0)
+        amendment = self.env['import.lc.amendment'].create({
+            'import_lc_id': lc.id,
+            'amendment_type': 'value',
+            'reason': 'Bank value increase',
+            'new_lc_value': 80.0,
+        })
+        amendment.action_submit()
+        amendment.action_approve()
+        self.assertEqual(lc.lc_amount, 80.0)
