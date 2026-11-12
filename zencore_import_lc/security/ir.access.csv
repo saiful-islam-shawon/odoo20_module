@@ -1,0 +1,49 @@
+id,name,model_id,group_id/id,operation,domain
+access_lc_order,lc.order,lc.order,base.group_user,cru,
+access_lc_order_line,lc.order.line,lc.order.line,base.group_user,crud,
+access_lc_order_document,lc.order.document,lc.order.document,base.group_user,crud,
+access_lc_payment_term,lc.payment.term,lc.pi.term,base.group_user,crud,
+access_lc_payment_term_line,lc.payment.term.line,lc.pi.term.line,base.group_user,crud,
+access_lc_payment_term_description_user,lc.payment.term.description.user,lc.pi.term.description,base.group_user,r,
+access_lc_payment_term_description_purchase_user,lc.payment.term.description.purchase.user,lc.pi.term.description,purchase.group_purchase_user,cru,
+access_import_lc_user,import.lc.user,import.lc,base.group_user,cru,
+access_import_lc_manager,import.lc.manager,import.lc,base.group_system,crud,
+access_import_lc_product_line_user,import.lc.product.line.user,import.lc.product.line,base.group_user,cru,
+access_import_lc_product_line_manager,import.lc.product.line.manager,import.lc.product.line,base.group_system,crud,
+access_import_lc_document_user,import.lc.document.user,import.lc.document,base.group_user,cru,
+access_import_lc_document_manager,import.lc.document.manager,import.lc.document,base.group_system,crud,
+access_res_company_branch_user,res.company.branch.user,res.company.branch,base.group_user,r,
+access_res_company_branch_manager,res.company.branch.manager,res.company.branch,base.group_system,crud,
+access_import_ci_user,access.import.ci.user,import.ci,base.group_user,cru,
+access_import_ci_product_line_user,access.import.ci.product.line.user,import.ci.product.line,base.group_user,crud,
+access_import_lc_amendment_user,import.lc.amendment.user,import.lc.amendment,base.group_user,cru,
+access_import_lc_amendment_line_user,import.lc.amendment.line.user,import.lc.amendment.line,base.group_user,crud,
+access_import_lc_amendment_reject_wizard,import.lc.amendment.reject.wizard,import.lc.amendment.reject.wizard,zencore_import_lc.group_lc_approver,crud,
+access_lc_order_approver,lc.order approver,lc.order,zencore_import_lc.group_lc_approver,crud,
+access_import_lc_approver,import.lc approver,import.lc,zencore_import_lc.group_lc_approver,crud,
+access_import_ci_approver,import.ci approver,import.ci,zencore_import_lc.group_lc_approver,crud,
+access_import_lc_amendment_approver,import.lc.amendment approver,import.lc.amendment,zencore_import_lc.group_lc_approver,crud,
+access_import_lc_port_user,import.lc.port user,import.lc.port,base.group_user,r,
+access_import_lc_port_manager,import.lc.port manager,import.lc.port,purchase.group_purchase_manager,crud,
+access_import_lc_port_admin,import.lc.port admin,import.lc.port,base.group_system,crud,
+access_import_lc_container_type_user,import.lc.container.type user,import.lc.container.type,base.group_user,r,
+access_import_lc_container_type_manager,import.lc.container.type manager,import.lc.container.type,purchase.group_purchase_manager,crud,
+access_import_lc_container_type_admin,import.lc.container.type admin,import.lc.container.type,base.group_system,crud,
+access_import_lc_container_user,import.lc.container user,import.lc.container,base.group_user,r,
+access_import_lc_container_manager,import.lc.container manager,import.lc.container,purchase.group_purchase_manager,crud,
+access_import_lc_container_admin,import.lc.container admin,import.lc.container,base.group_system,crud,
+access_import_lc_bank_user,import.lc.bank user,import.lc.bank,base.group_user,r,
+access_import_lc_bank_manager,import.lc.bank manager,import.lc.bank,purchase.group_purchase_manager,crud,
+access_import_lc_bank_admin,import.lc.bank admin,import.lc.bank,base.group_system,crud,
+lc_order_company_rule,LC Order: company isolation,lc.order,,crud,"[('company_id', 'in', company_ids)]"
+lc_order_line_company_rule,LC Order Line: company isolation,lc.order.line,,crud,"[('company_id', 'in', company_ids)]"
+import_lc_company_rule,Import LC: company isolation,import.lc,,crud,"[('company_id', 'in', company_ids)]"
+import_lc_product_line_company_rule,Import LC Product Line: company isolation,import.lc.product.line,,crud,"[('company_id', 'in', company_ids)]"
+import_lc_document_company_rule,Import LC Document: company isolation,import.lc.document,,crud,"[('company_id', 'in', company_ids)]"
+lc_order_document_company_rule,LC Order Document: company isolation,lc.order.document,,crud,"[('company_id', 'in', company_ids)]"
+import_ci_company_rule,Commercial Invoice: company isolation,import.ci,,crud,"[('company_id', 'in', company_ids)]"
+import_ci_product_line_company_rule,Commercial Invoice Line: company isolation,import.ci.product.line,,crud,"[('company_id', 'in', company_ids)]"
+import_lc_amendment_company_rule,LC Amendment: company isolation,import.lc.amendment,,crud,"[('company_id', 'in', company_ids)]"
+import_lc_amendment_line_company_rule,LC Amendment Line: company isolation,import.lc.amendment.line,,crud,"[('company_id', 'in', company_ids)]"
+company_branch_company_rule,Company Branch: company isolation,res.company.branch,,crud,"[('company_id', 'in', company_ids)]"
+

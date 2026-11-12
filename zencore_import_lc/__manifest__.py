@@ -1,9 +1,9 @@
 {
     'name': 'Import LC',
-    'version': '19.0.3.0.5',
+    'version': '20.0.3.0.5',
     'summary': 'Import Letter of Credit workflow for Purchase Orders',
     'description': """
-        Enterprise Import Letter of Credit workflow for Odoo 19.
+        Enterprise Import Letter of Credit workflow for Odoo 20.
         ========================================================
 
         Features:
@@ -23,7 +23,7 @@
     
     'data': [
         'security/lc_security.xml',
-        'security/ir.model.access.csv',
+        'security/ir.access.csv',
         'data/lc_sequence.xml',
         'data/container_type_data.xml',
         'data/import_lc_default_data.xml',

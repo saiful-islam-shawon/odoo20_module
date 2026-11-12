@@ -1000,13 +1000,11 @@ class ImportCIProductLine(models.Model):
     # UTILITY METHODS
     # ============================================
     
-    def name_get(self):
+    @api.depends('product_name', 'ci_quantity')
+    def _compute_display_name(self):
         """Custom display name"""
-        result = []
         for line in self:
-            name = f"{line.product_name or 'Product'} - CI Qty: {line.ci_quantity}"
-            result.append((line.id, name))
-        return result
+            line.display_name = f"{line.product_name or 'Product'} - CI Qty: {line.ci_quantity}"
 
 
 class AccountMove(models.Model):

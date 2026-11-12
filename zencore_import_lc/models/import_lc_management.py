@@ -69,8 +69,8 @@ class ImportLC(models.Model):
     supplier_id = fields.Many2one('res.partner', string='Supplier', required=True, domain=[('supplier_rank', '>', 0)])
     buyer_id = fields.Many2one('res.partner', string='Buyer', domain=[('customer_rank', '>', 0)])
     indent_agent_id = fields.Many2one('res.partner', string='Indent Agent')
-    applicant_bank_id = fields.Many2one('res.bank', string='Applicant Bank', required=True)
-    advising_bank_id = fields.Many2one('res.bank', string='Advising Bank')
+    applicant_bank_id = fields.Many2one('import.lc.bank', string='Applicant Bank', required=True)
+    advising_bank_id = fields.Many2one('import.lc.bank', string='Advising Bank')
     lc_product_type = fields.Char(string='LC Product Type')
     lc_tolerance_percent = fields.Float(string='LC Tolerance (%)', digits=(5, 2))
     margin_rate = fields.Float(string='Margin Rate (%)', digits=(5, 2))
@@ -1237,10 +1237,10 @@ class ImportLC(models.Model):
                     if work_orders:
                         lines.append(f"  │")
                         for wo_idx, wo in enumerate(work_orders, 1):
-                            prefix = "  └─" if wo_idx == len(work_orders) and not grn.move_ids_without_package else "  ├─"
+                            prefix = "  └─" if wo_idx == len(work_orders) and not grn.move_ids else "  ├─"
                             lines.append(f"{prefix} WO       : {wo.name}")
                             lines.append(f"  │  Product : {wo.product_id.name if wo.product_id else 'N/A'}")
-                            lines.append(f"  │  Qty     : {wo.product_qty} {wo.product_uom_id.name if wo.product_uom_id else ''}")
+                            lines.append(f"  │  Qty     : {wo.product_qty} {wo.uom_id.name if wo.uom_id else ''}")
                             lines.append(f"  │  Status  : {dict(wo._fields['state'].selection).get(wo.state, wo.state).upper()}")
                             if wo_idx < len(work_orders):
                                 lines.append(f"  │")
@@ -1254,7 +1254,7 @@ class ImportLC(models.Model):
                         for move_idx, move in enumerate(grn.move_ids[:5], 1):
                             qty_info = f"{move.quantity}/{move.product_uom_qty}" if move.state == 'done' else f"{move.product_uom_qty}"
                             status_icon = "✓" if move.state == 'done' else "○"
-                            lines.append(f"     {status_icon} {move.product_id.name}: {qty_info} {move.product_uom.name}")
+                            lines.append(f"     {status_icon} {move.product_id.name}: {qty_info} {move.uom_id.name}")
                         
                         if product_count > 5:
                             lines.append(f"     ... and {product_count - 5} more items")
@@ -1727,7 +1727,7 @@ class StockPicking(models.Model):
                 for idx, wo in enumerate(work_orders, 1):
                     lines.append(f"    [{idx}] WO Number    : {wo.name}")
                     lines.append(f"        Product      : {wo.product_id.name if wo.product_id else 'N/A'}")
-                    lines.append(f"        Quantity     : {wo.product_qty} {wo.product_uom_id.name if wo.product_uom_id else ''}")
+                    lines.append(f"        Quantity     : {wo.product_qty} {wo.uom_id.name if wo.uom_id else ''}")
                     lines.append(f"        Status       : {dict(wo._fields['state'].selection).get(wo.state, wo.state).upper()}")
                     if idx < len(work_orders):
                         lines.append("")
@@ -1744,7 +1744,7 @@ class StockPicking(models.Model):
                 for idx, move in enumerate(picking.move_ids[:10], 1):
                     qty_done = f"{move.quantity}/{move.product_uom_qty}" if move.state == 'done' else f"0/{move.product_uom_qty}"
                     lines.append(f"    [{idx}] {move.product_id.name}")
-                    lines.append(f"        Qty (Done/Expected) : {qty_done} {move.product_uom.name}")
+                    lines.append(f"        Qty (Done/Expected) : {qty_done} {move.uom_id.name}")
                     if move.state == 'done':
                         lines.append(f"        Status              : RECEIVED ✓")
                     else:

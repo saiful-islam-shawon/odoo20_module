@@ -81,6 +81,36 @@ class ImportLCContainer(models.Model):
     )
 
 
+class ImportLCBank(models.Model):
+    """Bank master for Import LC issuing and advising banks (Odoo 20 removed res.bank)."""
+
+    _name = 'import.lc.bank'
+    _description = 'Import LC Bank'
+    _order = 'name'
+
+    name = fields.Char(string='Bank Name', required=True, index=True)
+    bic = fields.Char(string='SWIFT / BIC', index=True)
+    street = fields.Char()
+    street2 = fields.Char()
+    city = fields.Char()
+    state_id = fields.Many2one(
+        'res.country.state',
+        string='State',
+        domain="[('country_id', '=?', country_id)]",
+    )
+    zip = fields.Char(string='ZIP')
+    country_id = fields.Many2one('res.country', string='Country')
+    phone = fields.Char()
+    email = fields.Char()
+    active = fields.Boolean(default=True)
+    notes = fields.Text()
+
+    @api.depends('name', 'bic')
+    def _compute_display_name(self):
+        for bank in self:
+            bank.display_name = f"{bank.name} - {bank.bic}" if bank.bic else (bank.name or '')
+
+
 class PurchaseOrder(models.Model):
     _inherit = 'purchase.order'
 
@@ -112,7 +142,7 @@ class PurchaseOrder(models.Model):
         for order in self:
             order.lc_required = order.purchase_type == 'import'
 
-    lc_advising_bank_id = fields.Many2one('res.bank', string='Advising Bank', tracking=True)
+    lc_advising_bank_id = fields.Many2one('import.lc.bank', string='Advising Bank', tracking=True)
     lc_payment_terms = fields.Selection([
         ('sight_draft', 'Sight Draft'),
         ('deferred_payment', 'Deferred Payment'),
@@ -237,10 +267,9 @@ class PurchaseOrder(models.Model):
                 'product_category_id': po_line.product_id.categ_id.id,
                 'quantity': po_line.product_qty,
                 'unit_price': po_line.price_unit,
-                # Odoo 19 exposes the purchase-line UOM as ``product_uom_id``.
-                # ``product_uom`` was used by older versions and raises an
-                # AttributeError on current purchase.order.line records.
-                'product_uom_id': (po_line.product_uom_id or po_line.product_id.uom_id).id,
+                # Odoo 20 exposes the purchase-line UOM as ``uom_id``
+                # (renamed from ``product_uom_id`` in Odoo 19).
+                'product_uom_id': (po_line.uom_id or po_line.product_id.uom_id).id,
                 'po_line_id': po_line.id,
             }))
         return {
@@ -406,7 +435,7 @@ class LCOrder(models.Model):
                 'product_category_id': po_line.product_id.categ_id.id,
                 'quantity': po_line.product_qty,
                 'unit_price': po_line.price_unit,
-                'product_uom_id': (po_line.product_uom_id or po_line.product_id.uom_id).id,
+                'product_uom_id': (po_line.uom_id or po_line.product_id.uom_id).id,
                 'po_line_id': po_line.id,
             }))
         return commands
@@ -577,7 +606,7 @@ class ImportLC(models.Model):
         readonly=True, required=False,
     )
     buyer_id = fields.Many2one('res.partner', string='Buyer / Applicant', default=lambda self: self.env.company.partner_id, tracking=True)
-    applicant_bank_id = fields.Many2one('res.bank', string='Issuing Bank', required=True, tracking=True)
+    applicant_bank_id = fields.Many2one('import.lc.bank', string='Issuing Bank', required=True, tracking=True)
 
     rfq_no = fields.Char(
         string='RFQ No', compute='_compute_basic_purchase_information', readonly=True,
@@ -1570,7 +1599,7 @@ class StockPicking(models.Model):
     def button_validate(self):
         for picking in self.filtered(lambda p: p.import_ci_id and p.picking_type_code == 'incoming'):
             ci = picking.import_ci_id
-            precision = self.env['decimal.precision'].precision_get('Product Unit of Measure') or 2
+            precision = self.env['decimal.precision'].precision_get('Product Unit') or 2
             active_moves = picking.move_ids.filtered(lambda m: m.state != 'cancel')
             move_po_line_ids = set(active_moves.mapped('purchase_line_id').ids)
             move_product_ids = set(active_moves.mapped('product_id').ids)
@@ -1640,10 +1669,6 @@ class AccountMoveEnterprise(models.Model):
         self._check_closed_import_lc()
         return super().write(vals)
 
-    def unlink(self):
-        self._check_closed_import_lc()
-        return super().unlink()
-
     @api.depends(
         'ref', 'narration', 'move_type', 'company_id', 'import_ci_id',
         'purchase_id',
@@ -1708,6 +1733,7 @@ class AccountMoveEnterprise(models.Model):
             commercial_invoices._sync_payment_stage()
 
     def unlink(self):
+        self._check_closed_import_lc()
         commercial_invoices = self.filtered('import_ci_id').mapped('import_ci_id')
         result = super().unlink()
         if commercial_invoices:

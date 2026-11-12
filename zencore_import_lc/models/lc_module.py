@@ -60,7 +60,7 @@ class LCOrder(models.Model):
         tracking=True,
         help='Import LCs linked to this LC Order'
     )
-    bank_id = fields.Many2one('res.bank', string='Advising Bank', tracking=True)
+    bank_id = fields.Many2one('import.lc.bank', string='Advising Bank', tracking=True)
     pi_date = fields.Date(string='PI Date', default=fields.Date.today, tracking=True)
     expected_lc_opening_date = fields.Date(string='Expected LC Opening Date', default=fields.Date.today, tracking=True)
     
@@ -459,7 +459,7 @@ class LCOrder(models.Model):
             target_state = vals.get('state')
             allowed_states = {'draft', 'done', 'cancel'}
             if target_state not in allowed_states:
-                raise UserError(_('A Proforma Invoice can only be Draft, Confirmed, or Cancelled.'))
+                raise UserError(('A Proforma Invoice can only be Draft, Confirmed, or Cancelled.'))
 
         _logger.info(f"=== LCOrder.write called for {self.ids} ===")
         _logger.info(f"Write vals keys: {vals.keys()}")
