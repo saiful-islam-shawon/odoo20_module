@@ -700,8 +700,11 @@ class ImportLC(models.Model):
                 if line.po_line_id
                 else used_by_product.get(line.product_id.id, 0.0)
             )
-            rounding = line.uom_id.rounding if line.uom_id else 0.01
-            if float_compare(line.quantity - used_quantity, 0.0, precision_rounding=rounding) > 0:
+            remaining_quantity = line.quantity - used_quantity
+            if line.uom_id:
+                if line.uom_id.compare(remaining_quantity, 0.0) > 0:
+                    return True
+            elif float_compare(remaining_quantity, 0.0, precision_rounding=0.01) > 0:
                 return True
         return False
 

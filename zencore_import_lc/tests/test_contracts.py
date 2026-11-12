@@ -212,3 +212,75 @@ class TestLCModuleContracts(TransactionCase):
         self.assertIn('move_ids', self.env['stock.picking']._fields)
         self.assertNotIn('move_ids_without_package', self.env['stock.picking']._fields)
         self.assertIn('product_uom_id', self.env['account.move.line']._fields)
+
+    def test_import_lc_confirm_and_ci_quantity_availability_odoo20_uom(self):
+        """Confirming an Import LC and computing CI availability must work with Odoo 20 UoMs."""
+        supplier = self.env['res.partner'].create({'name': 'LC Confirm UoM Supplier', 'supplier_rank': 1})
+        product = self.env['product.product'].create({'name': 'LC Confirm UoM Product', 'purchase_ok': True})
+        bank = self.env['res.bank'].sudo().create({'name': 'LC Confirm Test Bank', 'bic': 'LCCNBBDD'})
+        order = self.env['purchase.order'].create({
+            'partner_id': supplier.id,
+            'purchase_type': 'import',
+            'order_line': [(0, 0, {
+                'product_id': product.id,
+                'name': 'LC Confirm UoM Line',
+                'product_qty': 10.0,
+                'price_unit': 25.0,
+                'uom_id': product.uom_id.id,
+            })],
+        })
+        po_line = order.order_line.filtered('product_id')
+        pi = self.env['lc.order'].create({
+            'po_number': order.id,
+            'pi_number': 'PI-UOM-20-001',
+            'port_of_shipment': 'Shanghai',
+            'destination_port': 'Chittagong',
+            'lc_line_ids': [(0, 0, {
+                'po_line_id': po_line.id,
+                'product_id': product.id,
+                'quantity': 10.0,
+                'unit_price': 25.0,
+                'product_uom_id': po_line.uom_id.id,
+            })],
+        })
+        pi.action_confirm()
+        self.assertEqual(pi.state, 'done')
+
+        lc = self.env['import.lc'].create({
+            'lc_order_id': pi.id,
+            'lc_number': 'LC-UOM-20-001',
+            'lc_type': 'foreign',
+            'applicant_bank_id': bank.id,
+            'lc_amount': 250.0,
+        })
+        self.assertEqual(lc.state, 'draft')
+        self.assertFalse(lc.can_create_commercial_invoice)
+
+        # AC-1: Confirm and read computed workflow actions (simulates web_read after Confirm)
+        lc.action_confirm()
+        self.assertEqual(lc.state, 'confirmed')
+        read_data = lc.read(['state', 'can_create_commercial_invoice', 'can_close_lc'])
+        self.assertTrue(read_data[0]['can_create_commercial_invoice'])
+        self.assertTrue(lc._has_available_ci_quantity())
+
+        # AC-2: Partial CI still leaves available quantity
+        ci = self.env['import.ci'].create({
+            'import_lc_id': lc.id,
+            'ci_number': 'CI-UOM-20-001',
+        })
+        ci.product_line_ids.write({'ci_quantity': 4.0})
+        lc.invalidate_recordset(['can_create_commercial_invoice'])
+        self.assertTrue(lc._has_available_ci_quantity())
+        self.assertTrue(lc.can_create_commercial_invoice)
+
+        # AC-3: Full CI coverage leaves no available quantity
+        ci.product_line_ids.write({'ci_quantity': 10.0})
+        lc.invalidate_recordset(['can_create_commercial_invoice'])
+        self.assertFalse(lc._has_available_ci_quantity())
+        self.assertFalse(lc.can_create_commercial_invoice)
+
+        # AC-4: Empty uom_id fallback uses 0.01 precision cleanly
+        lc.product_line_ids.write({'uom_id': False})
+        self.assertFalse(lc._has_available_ci_quantity())
+        ci.product_line_ids.write({'ci_quantity': 9.0})
+        self.assertTrue(lc._has_available_ci_quantity())
