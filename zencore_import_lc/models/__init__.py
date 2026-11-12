@@ -1,3 +1,4 @@
+from . import res_bank_compat
 from . import lc_module
 from . import import_lc_management
 from . import import_ci

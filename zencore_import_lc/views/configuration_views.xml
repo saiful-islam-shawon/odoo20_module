@@ -133,23 +133,22 @@
         </field>
     </record>
 
-    <record id="action_import_lc_bank" model="ir.actions.act_window">
+    <!-- Odoo 20 removed the general bank master; keep LC bank selection independent of bank-account numbers. -->
+    <record id="action_import_lc_banks" model="ir.actions.act_window">
         <field name="name">Banks</field>
-        <field name="res_model">import.lc.bank</field>
+        <field name="res_model">res.bank</field>
         <field name="view_mode">list,form</field>
     </record>
 
     <record id="view_import_lc_bank_list" model="ir.ui.view">
         <field name="name">import.lc.bank.list</field>
-        <field name="model">import.lc.bank</field>
+        <field name="model">res.bank</field>
         <field name="arch" type="xml">
             <list string="Banks" default_order="name">
                 <field name="name"/>
                 <field name="bic"/>
-                <field name="city" optional="show"/>
-                <field name="country_id" optional="show"/>
-                <field name="phone" optional="hide"/>
-                <field name="email" optional="hide"/>
+                <field name="country"/>
+                <field name="city"/>
                 <field name="active" widget="boolean_toggle" optional="hide"/>
             </list>
         </field>
@@ -157,32 +156,30 @@
 
     <record id="view_import_lc_bank_form" model="ir.ui.view">
         <field name="name">import.lc.bank.form</field>
-        <field name="model">import.lc.bank</field>
+        <field name="model">res.bank</field>
         <field name="arch" type="xml">
             <form string="Bank">
                 <sheet>
                     <group>
                         <group>
-                            <field name="name" placeholder="e.g. Standard Chartered Bank"/>
-                            <field name="bic" placeholder="e.g. SCBLBDDX"/>
-                            <field name="phone"/>
-                            <field name="email" widget="email"/>
-                        </group>
-                        <group>
-                            <label for="street" string="Address"/>
-                            <div class="o_address_format">
-                                <field name="street" placeholder="Street..." class="o_address_street"/>
-                                <field name="street2" placeholder="Street 2..." class="o_address_street"/>
-                                <field name="city" placeholder="City" class="o_address_city"/>
-                                <field name="state_id" class="o_address_state" placeholder="State" options="{'no_open': True}"/>
-                                <field name="zip" placeholder="ZIP" class="o_address_zip"/>
-                                <field name="country_id" placeholder="Country" class="o_address_country" options="{'no_open': True, 'no_create': True}"/>
-                            </div>
+                            <field name="name"/>
+                            <field name="bic"/>
                             <field name="active"/>
                         </group>
+                        <group>
+                            <field name="country"/>
+                            <field name="state"/>
+                            <field name="city"/>
+                        </group>
                     </group>
-                    <group string="Notes">
-                        <field name="notes" nolabel="1"/>
+                    <group string="Address">
+                        <field name="street"/>
+                        <field name="street2"/>
+                        <field name="zip"/>
+                    </group>
+                    <group string="Contact">
+                        <field name="phone"/>
+                        <field name="email"/>
                     </group>
                 </sheet>
             </form>
@@ -190,8 +187,8 @@
     </record>
 
     <menuitem id="menu_import_lc_configuration" name="Configuration" parent="menu_lc_management" sequence="90" groups="purchase.group_purchase_manager,base.group_system"/>
+    <menuitem id="menu_import_lc_banks" name="Banks" parent="menu_import_lc_configuration" action="action_import_lc_banks" sequence="5"/>
     <menuitem id="menu_import_lc_ports" name="Ports" parent="menu_import_lc_configuration" action="action_import_lc_port" sequence="10"/>
     <menuitem id="menu_import_lc_container_types" name="Container Types" parent="menu_import_lc_configuration" action="action_import_lc_container_type" sequence="20"/>
     <menuitem id="menu_import_lc_containers" name="Containers" parent="menu_import_lc_configuration" action="action_import_lc_container" sequence="30"/>
-    <menuitem id="menu_import_lc_banks" name="Banks" parent="menu_import_lc_configuration" action="action_import_lc_bank" sequence="40"/>
 </odoo>

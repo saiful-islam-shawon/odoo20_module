@@ -5,7 +5,7 @@ from odoo.exceptions import ValidationError
 
 @tagged('-at_install', 'post_install')
 class TestLCModuleContracts(TransactionCase):
-    """Low-cost regression checks for Odoo 19 integration contracts."""
+    """Low-cost regression checks for Odoo 20 integration contracts."""
 
     def test_import_lc_contracts(self):
         lc_model = self.env['import.lc']
@@ -114,3 +114,101 @@ class TestLCModuleContracts(TransactionCase):
     def test_purchase_stock_contract(self):
         self.assertIn('purchase_id', self.env['stock.picking']._fields)
         self.assertIn('purchase_line_id', self.env['stock.move']._fields)
+
+    def test_odoo20_unified_access_rights(self):
+        """Odoo 20 company isolation must remain a global restriction."""
+        restriction_ids = (
+            'lc_order_company_rule',
+            'lc_order_line_company_rule',
+            'import_lc_company_rule',
+            'import_lc_product_line_company_rule',
+            'import_lc_document_company_rule',
+            'lc_order_document_company_rule',
+            'import_ci_company_rule',
+            'import_ci_product_line_company_rule',
+            'import_lc_amendment_company_rule',
+            'import_lc_amendment_line_company_rule',
+            'company_branch_company_rule',
+        )
+        for xml_id in restriction_ids:
+            access = self.env.ref('zencore_import_lc.' + xml_id)
+            self.assertEqual(access._name, 'ir.access')
+            self.assertFalse(access.group_id)
+            self.assertEqual(access.operation, 'crud')
+            self.assertEqual(access.domain, "[('company_id', 'in', company_ids)]")
+
+        user_access = self.env.ref('zencore_import_lc.access_import_lc_user')
+        self.assertEqual(user_access._name, 'ir.access')
+        self.assertEqual(user_access.operation, 'cru')
+        self.assertEqual(user_access.group_id, self.env.ref('base.group_user'))
+        approver_access = self.env.ref('zencore_import_lc.access_import_lc_approver')
+        self.assertEqual(approver_access.operation, 'crud')
+
+    def test_odoo20_standalone_bank_compatibility(self):
+        """LC bank fields must still select institutions, not bank accounts."""
+        bank_model = self.env['res.bank']
+        self.assertIn('bic', bank_model._fields)
+        self.assertIn('country', bank_model._fields)
+        refs = (
+            ('purchase.order', 'lc_advising_bank_id'),
+            ('lc.order', 'bank_id'),
+            ('import.lc', 'applicant_bank_id'),
+            ('import.lc', 'advising_bank_id'),
+        )
+        for model, field in refs:
+            self.assertEqual(self.env[model]._fields[field].comodel_name, 'res.bank')
+        # The separate Import LC bank register must remain usable without
+        # creating a partner's bank account or an account number.
+        bank = bank_model.sudo().create({'name': 'LC Test Bank', 'bic': 'LCTBBDDH'})
+        self.assertEqual(bank.display_name, 'LC Test Bank - LCTBBDDH')
+
+    def test_odoo20_purchase_line_uom_to_pi_mapping(self):
+        """RFQ selection and the Create PI action share Odoo 20's UoM field."""
+        po_line_model = self.env['purchase.order.line']
+        self.assertIn('uom_id', po_line_model._fields)
+        self.assertNotIn('product_uom_id', po_line_model._fields)
+        self.assertIn('product_uom_id', self.env['lc.order.line']._fields)
+
+        supplier = self.env['res.partner'].create({'name': 'Odoo 20 PI UoM regression supplier'})
+        product = self.env['product.product'].create({'name': 'Odoo 20 PI UoM regression product', 'purchase_ok': True})
+        order = self.env['purchase.order'].create({
+            'partner_id': supplier.id,
+            'purchase_type': 'import',
+            'order_line': [(0, 0, {
+                'product_id': product.id,
+                'name': 'Regression product',
+                'product_qty': 4.0,
+                'price_unit': 12.50,
+                'uom_id': product.uom_id.id,
+            })],
+        })
+        po_line = order.order_line.filtered('product_id')
+        self.assertEqual(len(po_line), 1)
+
+        pi_model = self.env['lc.order']
+        po_commands = pi_model._po_line_commands(order)
+        self.assertEqual(po_commands[0], (5, 0, 0))
+        self.assertEqual(po_commands[1][2]['product_uom_id'], po_line.uom_id.id)
+        self.assertEqual(po_commands[1][2]['po_line_id'], po_line.id)
+
+        action = order.action_create_proforma_invoice()
+        action_lines = action['context']['default_lc_line_ids']
+        self.assertEqual(action_lines[0][2]['product_uom_id'], po_line.uom_id.id)
+        self.assertEqual(action_lines[0][2]['quantity'], po_line.product_qty)
+        self.assertEqual(action_lines[0][2]['unit_price'], po_line.price_unit)
+
+        pi = pi_model.new({'po_number': order.id})
+        pi._onchange_po_number()
+        self.assertEqual(len(pi.lc_line_ids), 1)
+        self.assertEqual(pi.lc_line_ids.product_uom_id.id, po_line.uom_id.id)
+
+    def test_odoo20_related_stock_and_mrp_uom_fields(self):
+        """Traceability uses current UoM fields, not renamed Odoo 19 ones."""
+        self.assertIn('uom_id', self.env['stock.move']._fields)
+        self.assertNotIn('product_uom', self.env['stock.move']._fields)
+        self.assertIn('product_uom_qty', self.env['stock.move']._fields)
+        self.assertIn('uom_id', self.env['mrp.production']._fields)
+        self.assertNotIn('product_uom_id', self.env['mrp.production']._fields)
+        self.assertIn('move_ids', self.env['stock.picking']._fields)
+        self.assertNotIn('move_ids_without_package', self.env['stock.picking']._fields)
+        self.assertIn('product_uom_id', self.env['account.move.line']._fields)

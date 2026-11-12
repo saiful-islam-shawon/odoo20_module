@@ -27,10 +27,10 @@
             </xpath>
 
             <xpath expr="//div[@name='button_box']" position="inside">
-                <button class="oe_stat_button" type="object" name="action_view_proforma_invoices" icon="fa-file-text-o" invisible="not lc_required or pi_count == 0">
+                <button class="oe_stat_button" type="object" name="action_view_proforma_invoices" icon="description" invisible="not lc_required or pi_count == 0">
                     <field name="pi_count" widget="statinfo" string="Proforma Invoices"/>
                 </button>
-                <button class="oe_stat_button" type="object" name="action_view_import_lcs" icon="fa-university" invisible="not lc_required or import_lc_count == 0">
+                <button class="oe_stat_button" type="object" name="action_view_import_lcs" icon="account_balance" invisible="not lc_required or import_lc_count == 0">
                     <div class="o_stat_info">
                         <span class="o_stat_text">Import LC</span>
                         <span class="o_stat_value"><field name="lc_number_display"/></span>

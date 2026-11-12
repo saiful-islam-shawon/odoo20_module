@@ -52,10 +52,10 @@
                 </header>
                 <sheet class="o_lc_management_sheet">
                     <div class="oe_button_box" name="button_box">
-        <button class="oe_stat_button" type="object" name="action_view_vendor_bills" icon="fa-money" invisible="bill_count == 0">
+        <button class="oe_stat_button" type="object" name="action_view_vendor_bills" icon="payments" invisible="bill_count == 0">
             <field name="bill_count" widget="statinfo" string="Vendor Bills"/>
         </button>
-        <button class="oe_stat_button" type="object" name="action_view_receipts" icon="fa-truck" invisible="receipt_count == 0">
+        <button class="oe_stat_button" type="object" name="action_view_receipts" icon="local_shipping" invisible="receipt_count == 0">
             <field name="receipt_count" widget="statinfo" string="Receipts"/>
         </button>
     </div><div class="o_lc_brand_header">

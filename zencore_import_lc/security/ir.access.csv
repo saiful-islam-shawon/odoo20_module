@@ -32,9 +32,6 @@ access_import_lc_container_type_admin,import.lc.container.type admin,import.lc.c
 access_import_lc_container_user,import.lc.container user,import.lc.container,base.group_user,r,
 access_import_lc_container_manager,import.lc.container manager,import.lc.container,purchase.group_purchase_manager,crud,
 access_import_lc_container_admin,import.lc.container admin,import.lc.container,base.group_system,crud,
-access_import_lc_bank_user,import.lc.bank user,import.lc.bank,base.group_user,r,
-access_import_lc_bank_manager,import.lc.bank manager,import.lc.bank,purchase.group_purchase_manager,crud,
-access_import_lc_bank_admin,import.lc.bank admin,import.lc.bank,base.group_system,crud,
 lc_order_company_rule,LC Order: company isolation,lc.order,,crud,"[('company_id', 'in', company_ids)]"
 lc_order_line_company_rule,LC Order Line: company isolation,lc.order.line,,crud,"[('company_id', 'in', company_ids)]"
 import_lc_company_rule,Import LC: company isolation,import.lc,,crud,"[('company_id', 'in', company_ids)]"
@@ -46,4 +43,6 @@ import_ci_product_line_company_rule,Commercial Invoice Line: company isolation,i
 import_lc_amendment_company_rule,LC Amendment: company isolation,import.lc.amendment,,crud,"[('company_id', 'in', company_ids)]"
 import_lc_amendment_line_company_rule,LC Amendment Line: company isolation,import.lc.amendment.line,,crud,"[('company_id', 'in', company_ids)]"
 company_branch_company_rule,Company Branch: company isolation,res.company.branch,,crud,"[('company_id', 'in', company_ids)]"
-
+access_res_bank_import_lc_user,LC bank user,res.bank,base.group_user,r,
+access_res_bank_import_lc_manager,LC bank purchase manager,res.bank,purchase.group_purchase_manager,crud,
+access_res_bank_import_lc_admin,LC bank administrator,res.bank,base.group_system,crud,

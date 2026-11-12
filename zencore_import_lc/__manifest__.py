@@ -1,6 +1,6 @@
 {
     'name': 'Import LC',
-    'version': '20.0.3.0.5',
+    'version': '20.0.3.0.7',
     'summary': 'Import Letter of Credit workflow for Purchase Orders',
     'description': """
         Enterprise Import Letter of Credit workflow for Odoo 20.

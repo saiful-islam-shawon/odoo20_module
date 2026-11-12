@@ -1002,7 +1002,7 @@ class ImportCIProductLine(models.Model):
     
     @api.depends('product_name', 'ci_quantity')
     def _compute_display_name(self):
-        """Custom display name"""
+        """Preserve the commercial-invoice line label in Odoo 20."""
         for line in self:
             line.display_name = f"{line.product_name or 'Product'} - CI Qty: {line.ci_quantity}"
 

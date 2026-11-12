@@ -1,6 +1,6 @@
 # Import LC
 
-Odoo 19 Import LC with company-safe document linking and approval controls.
+Odoo 20 Import LC with company-safe document linking and approval controls.
 
 - Technical name: `zencore_import_lc`
 - Author: Mehedi Hasan
@@ -14,10 +14,10 @@ Odoo 19 Import LC with company-safe document linking and approval controls.
 - dedicated LC Approver group with server-side transition checks
 - LC/CI number uniqueness per company
 - amendment support for quantity, conversion rate and shipment dates
-- Odoo 19 list-view/action compatibility
+- Odoo 20 list-view/action compatibility
 - polished backend forms and branded application icon
 
-See the package-level `README.md` for upgrade instructions.
+See `MIGRATION_20.md` for installation, upgrade and verification instructions.
 
 ### 19.0.3.0.2 single-PI LC update
 

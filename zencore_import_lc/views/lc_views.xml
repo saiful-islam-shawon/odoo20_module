@@ -94,7 +94,7 @@
         </header>
                 <sheet class="o_lc_management_sheet">
                     <div class="oe_button_box" name="button_box">
-                        <button class="oe_stat_button" type="object" name="action_view_pi_documents" icon="fa-paperclip" invisible="attachment_count == 0">
+                        <button class="oe_stat_button" type="object" name="action_view_pi_documents" icon="attach_file" invisible="attachment_count == 0">
                             <field name="attachment_count" widget="statinfo" string="Documents"/>
                         </button>
                     </div>
@@ -185,7 +185,7 @@
                             
                             <!-- Info message -->
                             <div class="alert alert-info mt-3 o_lc_hint" role="alert">
-                                <i class="fa fa-info-circle"/> <strong>Note:</strong> 
+                                <i class="oi" data-icon="info"/> <strong>Note:</strong> 
                                 Product lines are automatically loaded from the selected Work Order (PO). 
                                 To modify products, please change the Work Order selection above.
                             </div>

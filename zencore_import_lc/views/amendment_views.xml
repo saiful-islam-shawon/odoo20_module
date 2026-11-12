@@ -179,7 +179,7 @@
                             </field>
                             
                             <div class="alert alert-warning mt-3" role="alert">
-                                <i class="fa fa-warning"/> <strong>Important:</strong> Quantities can only be <strong>decreased</strong> in amendments. Any increase will be rejected.
+                                <i class="oi" data-icon="warning"/> <strong>Important:</strong> Quantities can only be <strong>decreased</strong> in amendments. Any increase will be rejected.
                             </div>
                         </page>
                     </notebook>

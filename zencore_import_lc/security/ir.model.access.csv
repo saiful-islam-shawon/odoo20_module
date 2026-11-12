@@ -32,6 +32,3 @@ access_import_lc_container_type_admin,import.lc.container.type admin,model_impor
 access_import_lc_container_user,import.lc.container user,model_import_lc_container,base.group_user,1,0,0,0
 access_import_lc_container_manager,import.lc.container manager,model_import_lc_container,purchase.group_purchase_manager,1,1,1,1
 access_import_lc_container_admin,import.lc.container admin,model_import_lc_container,base.group_system,1,1,1,1
-access_import_lc_bank_user,import.lc.bank user,model_import_lc_bank,base.group_user,1,0,0,0
-access_import_lc_bank_manager,import.lc.bank manager,model_import_lc_bank,purchase.group_purchase_manager,1,1,1,1
-access_import_lc_bank_admin,import.lc.bank admin,model_import_lc_bank,base.group_system,1,1,1,1

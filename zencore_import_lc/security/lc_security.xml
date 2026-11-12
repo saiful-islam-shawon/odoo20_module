@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version='1.0' encoding='UTF-8'?>
 <odoo>
     <record id="module_category_bdcalling_lc" model="ir.module.category">
         <field name="name">BD Calling</field>
@@ -19,4 +19,6 @@
         <field name="implied_ids" eval="[Command.link(ref('base.group_user'))]"/>
         <field name="comment">Can confirm, reject, cancel, reopen and approve LC workflow documents.</field>
     </record>
+
+    <!-- Company isolation is defined as global restrictions in ir.access.csv. -->
 </odoo>

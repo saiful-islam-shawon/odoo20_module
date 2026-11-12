@@ -56,16 +56,16 @@
                 </header>
                 <sheet class="o_lc_management_sheet">
                     <div class="oe_button_box" name="button_box">
-        <button class="oe_stat_button" type="object" name="action_view_commercial_invoices" icon="fa-file-text-o" invisible="ci_count == 0">
+        <button class="oe_stat_button" type="object" name="action_view_commercial_invoices" icon="description" invisible="ci_count == 0">
             <field name="ci_count" widget="statinfo" string="Commercial Invoices"/>
         </button>
-        <button class="oe_stat_button" type="object" name="action_view_vendor_bills" icon="fa-money" invisible="invoice_count == 0">
+        <button class="oe_stat_button" type="object" name="action_view_vendor_bills" icon="payments" invisible="invoice_count == 0">
             <field name="invoice_count" widget="statinfo" string="Vendor Bills"/>
         </button>
-        <button class="oe_stat_button" type="object" name="action_view_grn" icon="fa-truck" invisible="grn_count == 0">
+        <button class="oe_stat_button" type="object" name="action_view_grn" icon="local_shipping" invisible="grn_count == 0">
             <field name="grn_count" widget="statinfo" string="GRNs"/>
         </button>
-        <button class="oe_stat_button" type="object" name="action_view_landed_costs" icon="fa-calculator">
+        <button class="oe_stat_button" type="object" name="action_view_landed_costs" icon="calculate">
             <field name="landed_cost_count" widget="statinfo" string="Landed Costs"/>
         </button>
     </div><div class="o_lc_brand_header">
@@ -179,7 +179,7 @@
                             
                             <!-- Info message -->
                             <div class="alert alert-info mt-3 o_lc_hint" role="alert">
-                                <i class="fa fa-info-circle"/> <strong>Note:</strong> 
+                                <i class="oi" data-icon="info"/> <strong>Note:</strong> 
                                 Product lines are automatically loaded from the selected PI. HS Code is optional and can be completed before or after LC confirmation.
                             </div>
                         </page>
