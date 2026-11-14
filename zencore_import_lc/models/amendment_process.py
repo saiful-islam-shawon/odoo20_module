@@ -977,6 +977,24 @@ class ImportLCAmendment(models.Model):
             lc.product_line_ids.flush_recordset()
             _logger.info(f"✓ LC {lc.lc_number} amount updated from quantity amendment to {new_amount}")
 
+            # Synchronize amended quantities to linked GRNs (Demand and Quantity)
+            for amd_line in self.product_line_ids.filtered('product_id'):
+                for grn in lc.grn_ids.filtered(lambda p: p.state != 'cancel'):
+                    matching_moves = grn.move_ids.filtered(
+                        lambda m: m.state != 'cancel' and (
+                            (amd_line.po_line_id and m.purchase_line_id == amd_line.po_line_id) or
+                            (m.product_id == amd_line.product_id)
+                        )
+                    )
+                    for move in matching_moves:
+                        move.write({
+                            'product_uom_qty': amd_line.new_quantity,
+                            'quantity': amd_line.new_quantity,
+                        })
+                        move.flush_recordset()
+                    grn.flush_recordset()
+            _logger.info(f"✓ Synchronized amended quantities to linked GRNs for LC {lc.lc_number}")
+
         self.flush_recordset()
         _logger.info(f"✓ Amendment {self.amendment_number} approved by {self.env.user.name}")
         _logger.info(f"✓ LC product lines preserved - no changes made")

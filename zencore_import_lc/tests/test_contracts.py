@@ -607,3 +607,105 @@ class TestLCModuleContracts(TransactionCase):
         self.assertEqual(lc.product_line_ids[0].amended_quantity, 15.0)
         self.assertEqual(lc.product_line_ids[0].total_cost, 75.0)  # 15 * 5.0
         self.assertEqual(lc.lc_amount, 75.0)
+
+    def test_amendment_sync_to_grn_demand_and_quantity(self):
+        """Test that quantity amendment updates GRN Demand and Quantity even if Done, keeping PO intact."""
+        supplier = self.env['res.partner'].create({'name': 'GRN Sync Supplier', 'supplier_rank': 1})
+        product = self.env['product.product'].create({'name': 'GRN Sync Mango', 'purchase_ok': True})
+        bank = self.env['res.bank'].sudo().create({'name': 'GRN Sync Bank', 'bic': 'GRNSYNCB'})
+
+        order = self.env['purchase.order'].create({
+            'partner_id': supplier.id,
+            'purchase_type': 'import',
+            'order_line': [(0, 0, {
+                'product_id': product.id,
+                'name': 'GRN Sync Mango Line',
+                'product_qty': 20.0,
+                'price_unit': 3.0,
+                'uom_id': product.uom_id.id,
+            })],
+        })
+        po_line = order.order_line.filtered('product_id')
+        self.assertEqual(po_line.product_qty, 20.0)
+
+        pi = self.env['lc.order'].create({
+            'po_number': order.id,
+            'pi_number': 'PI-GRN-001',
+            'port_of_shipment': 'Chattogram Port',
+            'destination_port': 'Shah Amanat Airport',
+            'conversion_rate': 120.0,
+            'lc_line_ids': [(0, 0, {
+                'po_line_id': po_line.id,
+                'product_id': product.id,
+                'quantity': 20.0,
+                'unit_price': 3.0,
+                'product_uom_id': po_line.uom_id.id,
+            })],
+        })
+        pi.action_confirm()
+
+        lc = self.env['import.lc'].create({
+            'lc_order_id': pi.id,
+            'lc_number': 'LC-GRN-001',
+            'lc_type': 'foreign',
+            'applicant_bank_id': bank.id,
+            'lc_amount': 0.0,
+        })
+        lc.action_confirm()
+        self.assertEqual(lc.state, 'confirmed')
+        self.assertEqual(order.state, 'purchase')
+        self.assertTrue(bool(lc.grn_ids))
+
+        # Validate GRN to 'done' state
+        picking = lc.grn_ids[0]
+        self.assertEqual(picking.move_ids[0].product_uom_qty, 20.0)
+        for move in picking.move_ids:
+            move.quantity = 20.0
+            for move_line in move.move_line_ids:
+                move_line.quantity = 20.0
+        picking.button_validate()
+        self.assertEqual(picking.state, 'done')
+        self.assertEqual(picking.move_ids[0].product_uom_qty, 20.0)
+        self.assertEqual(picking.move_ids[0].quantity, 20.0)
+
+        # Create Quantity Increase Amendment (20.0 -> 25.0)
+        amd_inc = self.env['import.lc.amendment'].create({
+            'import_lc_id': lc.id,
+            'amendment_type': 'quantity',
+            'reason': 'Increase mango order volume',
+        })
+        amd_inc._onchange_import_lc_id()
+        self.assertEqual(len(amd_inc.product_line_ids), 1)
+        amd_inc.product_line_ids[0].write({'new_quantity': 25.0})
+        amd_inc.action_submit()
+        amd_inc.action_approve()
+
+        # AC-1 & AC-2: Verify Done GRN Demand and Quantity updated to 25.0
+        picking.invalidate_recordset()
+        move = picking.move_ids[0]
+        self.assertEqual(move.product_uom_qty, 25.0)
+        self.assertEqual(move.quantity, 25.0)
+
+        # AC-3: Verify Purchase Order line remains strictly unchanged at 20.0
+        po_line.invalidate_recordset()
+        self.assertEqual(po_line.product_qty, 20.0)
+
+        # AC-4: Create Quantity Decrease Amendment (25.0 -> 22.0)
+        amd_dec = self.env['import.lc.amendment'].create({
+            'import_lc_id': lc.id,
+            'amendment_type': 'quantity',
+            'reason': 'Decrease mango order volume',
+        })
+        amd_dec._onchange_import_lc_id()
+        amd_dec.product_line_ids[0].write({'new_quantity': 22.0})
+        amd_dec.action_submit()
+        amd_dec.action_approve()
+
+        picking.invalidate_recordset()
+        move.invalidate_recordset()
+        self.assertEqual(move.product_uom_qty, 22.0)
+        self.assertEqual(move.quantity, 22.0)
+
+        # PO line still unchanged
+        po_line.invalidate_recordset()
+        self.assertEqual(po_line.product_qty, 20.0)
