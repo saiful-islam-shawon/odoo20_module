@@ -688,10 +688,21 @@ class ImportLC(models.Model):
             lines = record.product_line_ids.filtered('product_id')
             record.hs_code_required = bool(lines) and all(line.hs_code for line in lines)
 
-    @api.depends('landed_cost_ids')
+    @api.depends('landed_cost_ids', 'lc_order_id.po_number.picking_ids')
     def _compute_landed_cost_count(self):
+        Cost = self.env['stock.landed.cost']
         for record in self:
-            record.landed_cost_count = len(record.landed_cost_ids)
+            if not record.id:
+                record.landed_cost_count = 0
+                continue
+            active_grn_ids = record.grn_ids.filtered(lambda p: p.state != 'cancel').ids
+            if active_grn_ids:
+                record.landed_cost_count = Cost.search_count([
+                    '|', ('import_lc_id', '=', record.id),
+                    ('picking_ids', 'in', active_grn_ids)
+                ])
+            else:
+                record.landed_cost_count = Cost.search_count([('import_lc_id', '=', record.id)])
 
     def _has_available_ci_quantity(self):
         self.ensure_one()
@@ -1108,17 +1119,21 @@ class ImportLC(models.Model):
 
     def action_view_landed_costs(self):
         self.ensure_one()
+        active_grn_ids = self.grn_ids.filtered(lambda p: p.state != 'cancel').ids
+        if active_grn_ids:
+            domain = ['|', ('import_lc_id', '=', self.id), ('picking_ids', 'in', active_grn_ids)]
+        else:
+            domain = [('import_lc_id', '=', self.id)]
         return {
             'name': _('Landed Costs'),
             'type': 'ir.actions.act_window',
             'res_model': 'stock.landed.cost',
             'view_mode': 'list,form',
-            'domain': [('import_lc_id', '=', self.id)],
+            'domain': domain,
             'context': {
+                'create': False,
                 'default_import_lc_id': self.id,
                 'default_company_id': self.company_id.id,
-                'create': self.state != 'done',
-                'edit': self.state != 'done',
             },
         }
 

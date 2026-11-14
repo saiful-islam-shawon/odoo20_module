@@ -973,8 +973,11 @@ class ImportLCAmendment(models.Model):
             lc.product_line_ids.invalidate_recordset(['amended_quantity', 'total_cost'])
             new_amount = sum(line.total_cost for line in lc.product_line_ids)
             lc.with_context(allow_approved_amendment=True).write({'lc_amount': new_amount})
+            lc.flush_recordset()
+            lc.product_line_ids.flush_recordset()
             _logger.info(f"✓ LC {lc.lc_number} amount updated from quantity amendment to {new_amount}")
-        
+
+        self.flush_recordset()
         _logger.info(f"✓ Amendment {self.amendment_number} approved by {self.env.user.name}")
         _logger.info(f"✓ LC product lines preserved - no changes made")
         
@@ -999,7 +1002,11 @@ class ImportLCAmendment(models.Model):
                 'title': _('✓ Approved'),
                 'message': message,
                 'type': 'success',
-                'sticky': True,  # Keep visible so user sees the message
+                'sticky': False,
+                'next': {
+                    'type': 'ir.actions.client',
+                    'tag': 'reload',
+                }
             }
         }
 
@@ -1054,6 +1061,7 @@ class ImportLCAmendment(models.Model):
             raise ValidationError(_('Cannot cancel approved amendments.'))
         
         self.write({'state': 'cancelled'})
+        self.flush_recordset()
         
         return {
             'type': 'ir.actions.client',
@@ -1063,6 +1071,10 @@ class ImportLCAmendment(models.Model):
                 'message': _('Amendment cancelled.'),
                 'type': 'warning',
                 'sticky': False,
+                'next': {
+                    'type': 'ir.actions.client',
+                    'tag': 'reload',
+                }
             }
         }
     
@@ -1073,6 +1085,7 @@ class ImportLCAmendment(models.Model):
             raise ValidationError(_('Only submitted or rejected amendments can be reset to draft.'))
         
         self.write({'state': 'draft'})
+        self.flush_recordset()
         
         return {
             'type': 'ir.actions.client',
@@ -1082,6 +1095,10 @@ class ImportLCAmendment(models.Model):
                 'message': _('Amendment reset to draft.'),
                 'type': 'info',
                 'sticky': False,
+                'next': {
+                    'type': 'ir.actions.client',
+                    'tag': 'reload',
+                }
             }
         }
 
@@ -1220,6 +1237,7 @@ class ImportLCAmendmentRejectWizard(models.TransientModel):
             'state': 'rejected',
             'rejection_reason': self.rejection_reason
         })
+        self.amendment_id.flush_recordset()
         
         return {
             'type': 'ir.actions.client',
@@ -1229,5 +1247,9 @@ class ImportLCAmendmentRejectWizard(models.TransientModel):
                 'message': _('Amendment has been rejected.'),
                 'type': 'warning',
                 'sticky': False,
+                'next': {
+                    'type': 'ir.actions.client',
+                    'tag': 'reload',
+                }
             }
         }

@@ -481,3 +481,129 @@ class TestLCModuleContracts(TransactionCase):
         self.assertEqual(line.amended_quantity, 22.0)
         self.assertEqual(line.total_cost, 66.0)  # 22 * 3.0
         self.assertEqual(lc.lc_amount, 66.0)
+
+    def test_amendment_ui_realtime_reload_and_landed_costs_by_transfer(self):
+        """Test real-time reload actions and Landed Costs smart button transfer matching."""
+        supplier = self.env['res.partner'].create({'name': 'Reload Test Supplier', 'supplier_rank': 1})
+        product = self.env['product.product'].create({'name': 'Reload Test Product', 'purchase_ok': True})
+        bank = self.env['res.bank'].sudo().create({'name': 'Reload Test Bank', 'bic': 'RLDTESTB'})
+
+        order = self.env['purchase.order'].create({
+            'partner_id': supplier.id,
+            'purchase_type': 'import',
+            'order_line': [(0, 0, {
+                'product_id': product.id,
+                'name': 'Reload Line',
+                'product_qty': 10.0,
+                'price_unit': 5.0,
+                'uom_id': product.uom_id.id,
+            })],
+        })
+        po_line = order.order_line.filtered('product_id')
+        pi = self.env['lc.order'].create({
+            'po_number': order.id,
+            'pi_number': 'PI-RLD-001',
+            'port_of_shipment': 'Singapore',
+            'destination_port': 'Chittagong',
+            'conversion_rate': 120.0,
+            'lc_line_ids': [(0, 0, {
+                'po_line_id': po_line.id,
+                'product_id': product.id,
+                'quantity': 10.0,
+                'unit_price': 5.0,
+                'product_uom_id': po_line.uom_id.id,
+            })],
+        })
+        pi.action_confirm()
+
+        lc = self.env['import.lc'].create({
+            'lc_order_id': pi.id,
+            'lc_number': 'LC-RLD-001',
+            'lc_type': 'foreign',
+            'applicant_bank_id': bank.id,
+            'lc_amount': 0.0,
+        })
+        lc.action_confirm()
+        self.assertEqual(lc.state, 'confirmed')
+        self.assertTrue(bool(lc.grn_ids))
+
+        # Test AC-5 & AC-6: Landed Costs smart button via Transfers
+        self.assertEqual(lc.landed_cost_count, 0)
+        cost = self.env['stock.landed.cost'].create({
+            'picking_ids': [(6, 0, lc.grn_ids.ids)],
+        })
+        lc.invalidate_recordset(['landed_cost_count'])
+        self.assertEqual(lc.landed_cost_count, 1)
+
+        action = lc.action_view_landed_costs()
+        self.assertFalse(action['context'].get('create'))
+        self.assertEqual(action['res_model'], 'stock.landed.cost')
+        self.assertEqual(action['view_mode'], 'list,form')
+
+        # Test AC-1, AC-2, AC-3: Amendment real-time reload on actions
+        amd = self.env['import.lc.amendment'].create({
+            'import_lc_id': lc.id,
+            'amendment_type': 'quantity',
+            'reason': 'Reload UI Test',
+        })
+        amd._onchange_import_lc_id()
+        self.assertEqual(len(amd.product_line_ids), 1)
+        amd.product_line_ids[0].write({'new_quantity': 15.0})
+
+        # Submit and test reset to draft returns reload
+        amd.action_submit()
+        self.assertEqual(amd.state, 'submitted')
+        draft_action = amd.action_draft()
+        self.assertEqual(draft_action.get('type'), 'ir.actions.client')
+        self.assertEqual(draft_action.get('tag'), 'display_notification')
+        self.assertEqual(draft_action.get('params', {}).get('next', {}).get('tag'), 'reload')
+        self.assertEqual(amd.state, 'draft')
+
+        # Cancel action on draft returns reload
+        cancel_action = amd.action_cancel()
+        self.assertEqual(cancel_action.get('type'), 'ir.actions.client')
+        self.assertEqual(cancel_action.get('tag'), 'display_notification')
+        self.assertEqual(cancel_action.get('params', {}).get('next', {}).get('tag'), 'reload')
+        self.assertEqual(amd.state, 'cancelled')
+
+        # Test Rejection Wizard and Approval on a new amendment
+        amd2 = self.env['import.lc.amendment'].create({
+            'import_lc_id': lc.id,
+            'amendment_type': 'quantity',
+            'reason': 'Reload UI Test 2',
+        })
+        amd2._onchange_import_lc_id()
+        amd2.product_line_ids[0].write({'new_quantity': 15.0})
+        amd2.action_submit()
+        self.assertEqual(amd2.state, 'submitted')
+
+        wizard = self.env['import.lc.amendment.reject.wizard'].create({
+            'amendment_id': amd2.id,
+            'rejection_reason': 'Testing rejection reload',
+        })
+        reject_action = wizard.action_confirm_reject()
+        self.assertEqual(reject_action.get('type'), 'ir.actions.client')
+        self.assertEqual(reject_action.get('tag'), 'display_notification')
+        self.assertEqual(reject_action.get('params', {}).get('next', {}).get('tag'), 'reload')
+        self.assertEqual(amd2.state, 'rejected')
+
+        # Reset to draft -> Submit -> Approve
+        draft_action2 = amd2.action_draft()
+        self.assertEqual(draft_action2.get('params', {}).get('next', {}).get('tag'), 'reload')
+        self.assertEqual(amd2.state, 'draft')
+
+        amd2.action_submit()
+        approve_action = amd2.action_approve()
+        self.assertEqual(approve_action.get('type'), 'ir.actions.client')
+        self.assertEqual(approve_action.get('tag'), 'display_notification')
+        self.assertEqual(approve_action.get('params', {}).get('next', {}).get('tag'), 'reload')
+        self.assertEqual(amd2.state, 'approved')
+        self.assertTrue(bool(amd2.approved_by))
+        self.assertTrue(bool(amd2.approved_date))
+
+        # AC-4: Dynamic sync to parent Import LC
+        lc.invalidate_recordset()
+        self.assertTrue(lc.has_quantity_amendment)
+        self.assertEqual(lc.product_line_ids[0].amended_quantity, 15.0)
+        self.assertEqual(lc.product_line_ids[0].total_cost, 75.0)  # 15 * 5.0
+        self.assertEqual(lc.lc_amount, 75.0)

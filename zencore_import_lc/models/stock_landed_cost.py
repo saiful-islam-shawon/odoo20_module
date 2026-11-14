@@ -23,13 +23,57 @@ class StockLandedCost(models.Model):
         ),
     )
 
+    def _find_import_lc_from_pickings(self, pickings):
+        for picking in pickings:
+            if hasattr(picking, 'import_ci_id') and picking.import_ci_id and picking.import_ci_id.import_lc_id:
+                return picking.import_ci_id.import_lc_id
+            if picking.purchase_id:
+                lc = self.env['import.lc'].search([
+                    ('lc_order_id.po_number', '=', picking.purchase_id.id),
+                    ('state', '!=', 'cancel'),
+                ], limit=1)
+                if lc:
+                    return lc
+        return False
+
+    @api.onchange('picking_ids')
+    def _onchange_picking_ids_auto_link_import_lc(self):
+        if not self.import_lc_id and self.picking_ids:
+            lc = self._find_import_lc_from_pickings(self.picking_ids)
+            if lc:
+                self.import_lc_id = lc.id
+
+    @api.model_create_multi
+    def create(self, vals_list):
+        for vals in vals_list:
+            if not vals.get('import_lc_id') and vals.get('picking_ids'):
+                picking_ids = []
+                for cmd in vals['picking_ids']:
+                    if isinstance(cmd, (list, tuple)) and len(cmd) == 3 and cmd[0] == 6:
+                        picking_ids.extend(cmd[2])
+                    elif isinstance(cmd, (list, tuple)) and len(cmd) == 3 and cmd[0] == 4:
+                        picking_ids.append(cmd[1])
+                if picking_ids:
+                    pickings = self.env['stock.picking'].browse(picking_ids)
+                    lc = self._find_import_lc_from_pickings(pickings)
+                    if lc:
+                        vals['import_lc_id'] = lc.id
+        return super().create(vals_list)
+
     def _check_import_lc_editable(self):
         if any(cost.import_lc_id.state == 'done' for cost in self.filtered('import_lc_id')):
             raise ValidationError(_('A closed Import LC and its landed costs are read-only.'))
 
     def write(self, vals):
         self._check_import_lc_editable()
-        return super().write(vals)
+        res = super().write(vals)
+        if 'picking_ids' in vals or ('import_lc_id' in vals and not vals.get('import_lc_id')):
+            for cost in self:
+                if not cost.import_lc_id and cost.picking_ids:
+                    lc = cost._find_import_lc_from_pickings(cost.picking_ids)
+                    if lc:
+                        super(StockLandedCost, cost.with_context(tracking_disable=True)).write({'import_lc_id': lc.id})
+        return res
 
     def unlink(self):
         self._check_import_lc_editable()
