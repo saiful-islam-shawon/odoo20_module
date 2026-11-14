@@ -174,12 +174,12 @@
                                     <field name="original_quantity" readonly="1" string="Current Qty"/>
                                     <field name="new_quantity" string="New Qty" required="1"/>
                                     <field name="unit_price" readonly="1" optional="show"/>
-                                    <field name="quantity_change" readonly="1" string="Change" decoration-danger="quantity_change &lt; 0" decoration-success="quantity_change == 0"/>
+                                    <field name="quantity_change" readonly="1" string="Change" decoration-danger="quantity_change &lt; 0" decoration-success="quantity_change &gt; 0"/>
                                 </list>
                             </field>
                             
-                            <div class="alert alert-warning mt-3" role="alert">
-                                <i class="oi" data-icon="warning"/> <strong>Important:</strong> Quantities can only be <strong>decreased</strong> in amendments. Any increase will be rejected.
+                            <div class="alert alert-info mt-3" role="alert">
+                                <i class="oi" data-icon="info"/> <strong>Note:</strong> Quantities can be <strong>increased or decreased</strong> in this amendment.
                             </div>
                         </page>
                     </notebook>

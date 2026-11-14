@@ -45,7 +45,7 @@ class ImportLCAmendment(models.Model):
     
     # Amendment Type
     amendment_type = fields.Selection([
-        ('quantity', 'Quantity Decrease'),
+        ('quantity', 'Quantity Increase / Decrease'),
         ('value', 'LC Amount Change'),
         ('shipment_date', 'Shipment Date Change'),
     ], string='Amendment Type', required=True, tracking=True)
@@ -829,90 +829,56 @@ class ImportLCAmendment(models.Model):
                     'Please save the amendment again to reload complete data.'
                 ) % '\n'.join(invalid_lines))
             
-            # CRITICAL VALIDATION: Check quantity changes
-            decreased_products = []
+            # Check quantity changes
+            changed_products = []
             unchanged_products = []
-            increased_products = []
-            
+
             for line in self.product_line_ids:
                 product_name = line.product_name or (line.product_id.name if line.product_id else 'Unknown Product')
-                
-                if line.new_quantity < line.original_quantity:
-                    # Quantity decreased - this is OK
-                    decreased_products.append({
+                if line.new_quantity <= 0:
+                    raise ValidationError(_('New quantity must be greater than zero for %s.') % product_name)
+
+                if line.new_quantity != line.original_quantity:
+                    changed_products.append({
                         'name': product_name,
                         'old': line.original_quantity,
                         'new': line.new_quantity,
-                        'change': line.original_quantity - line.new_quantity
+                        'change': line.new_quantity - line.original_quantity
                     })
-                elif line.new_quantity == line.original_quantity:
-                    # Quantity unchanged
+                else:
                     unchanged_products.append({
                         'name': product_name,
                         'qty': line.original_quantity
                     })
-                else:  # line.new_quantity > line.original_quantity
-                    # Quantity increased - NOT ALLOWED!
-                    increased_products.append({
-                        'name': product_name,
-                        'old': line.original_quantity,
-                        'new': line.new_quantity,
-                        'increase': line.new_quantity - line.original_quantity
-                    })
-            
-            # Validation 1: Cannot increase any quantities
-            if increased_products:
-                error_message = _('❌ QUANTITY INCREASE NOT ALLOWED!\n\n')
-                error_message += _('This is a "Quantity Decrease" amendment. You cannot increase quantities.\n\n')
-                error_message += _('Products with INCREASED quantities:\n')
-                for prod in increased_products:
-                    error_message += _('• %s: %s → %s (increased by %s) ❌\n') % (
-                        prod['name'], prod['old'], prod['new'], prod['increase']
-                    )
-                error_message += _('\n⚠️ Please decrease the "New Qty" to be LESS than "Current Qty" for these products.')
-                raise ValidationError(error_message)
-            
-            # Validation 2: At least ONE product must be decreased
-            if not decreased_products:
-                error_message = _('⚠️ NO QUANTITY CHANGES DETECTED!\n\n')
-                error_message += _('For a Quantity Decrease amendment, at least ONE product quantity must be decreased.\n\n')
-                
-                if unchanged_products:
-                    error_message += _('All products have unchanged quantities:\n')
-                    for prod in unchanged_products[:5]:  # Show first 5
-                        error_message += _('• %s: %s (unchanged)\n') % (prod['name'], prod['qty'])
-                    if len(unchanged_products) > 5:
-                        error_message += _('• ... and %d more products\n') % (len(unchanged_products) - 5)
-                
-                error_message += _('\n✏️ Please decrease at least one product\'s "New Qty" to be LESS than "Current Qty".')
-                raise ValidationError(error_message)
-            
-            # Success message in logs
-            _logger.info(f"Quantity validation passed for {self.amendment_number}:")
-            _logger.info(f"  - {len(decreased_products)} products decreased ✓")
-            if unchanged_products:
-                _logger.info(f"  - {len(unchanged_products)} products unchanged (will be removed from LC)")
-        
+
+            if not changed_products:
+                raise ValidationError(_(
+                    '⚠️ NO QUANTITY CHANGES DETECTED!\n\n'
+                    'For a Quantity Increase / Decrease amendment, at least ONE product quantity must be changed.'
+                ))
+
+            _logger.info(f"Quantity validation passed for {self.amendment_number}: {len(changed_products)} products changed ✓")
+
         elif self.amendment_type == 'value':
             if not self.new_lc_value:
                 raise ValidationError(_('Please specify the new LC amount.'))
             if self.new_lc_value == self.old_lc_value:
                 raise ValidationError(_('New LC amount must be different from the current amount.'))
-        
+
         # Submit
         self.write({'state': 'submitted'})
-        
+
         # Success notification with summary
-        if self.amendment_type == 'quantity' and decreased_products:
-            summary = _('Amendment submitted successfully!\n\n')
-            summary += _('Quantity decreases:\n')
-            for prod in decreased_products[:3]:  # Show first 3
-                summary += _('• %s: %s → %s (-%s)\n') % (
-                    prod['name'], prod['old'], prod['new'], prod['change']
+        if self.amendment_type == 'quantity' and changed_products:
+            summary = _('Amendment submitted successfully!\n\nQuantity changes:\n')
+            for prod in changed_products[:3]:  # Show first 3
+                sign = '+' if prod['change'] > 0 else ''
+                summary += _('• %s: %s → %s (%s%s)\n') % (
+                    prod['name'], prod['old'], prod['new'], sign, prod['change']
                 )
-            if len(decreased_products) > 3:
-                summary += _('• ... and %d more products\n') % (len(decreased_products) - 3)
-            
+            if len(changed_products) > 3:
+                summary += _('• ... and %d more products\n') % (len(changed_products) - 3)
+
             message = summary
         else:
             message = _('Amendment %s submitted for approval.') % self.amendment_number
@@ -1000,6 +966,14 @@ class ImportLCAmendment(models.Model):
             'approved_by': self.env.user.id,
             'approved_date': fields.Date.today()
         })
+
+        if self.amendment_type == 'quantity' and self.import_lc_id:
+            lc = self.import_lc_id
+            lc.invalidate_recordset(['has_quantity_amendment'])
+            lc.product_line_ids.invalidate_recordset(['amended_quantity', 'total_cost'])
+            new_amount = sum(line.total_cost for line in lc.product_line_ids)
+            lc.with_context(allow_approved_amendment=True).write({'lc_amount': new_amount})
+            _logger.info(f"✓ LC {lc.lc_number} amount updated from quantity amendment to {new_amount}")
         
         _logger.info(f"✓ Amendment {self.amendment_number} approved by {self.env.user.name}")
         _logger.info(f"✓ LC product lines preserved - no changes made")
@@ -1188,98 +1162,34 @@ class ImportLCAmendmentLine(models.Model):
                 line.change_percentage = 0.0
     
     @api.constrains('new_quantity', 'original_quantity')
-    def _check_quantity_decrease(self):
-        """Ensure quantity only decreases for quantity amendments"""
+    def _check_quantity_value(self):
+        """Ensure quantity is strictly positive for quantity amendments"""
         for line in self:
             if line.amendment_id and line.amendment_id.amendment_type == 'quantity':
                 product_display = line.product_name or (line.product_id.name if line.product_id else 'Unknown Product')
-                
-                # Check 1: Cannot increase quantity
-                if line.original_quantity > 0 and line.new_quantity > line.original_quantity:
+                if line.new_quantity <= 0:
                     raise ValidationError(_(
-                        '❌ QUANTITY INCREASE NOT ALLOWED!\n\n'
-                        'Product: %s\n'
-                        'Current Qty: %s\n'
-                        'New Qty: %s\n'
-                        'Increase: +%s\n\n'
-                        '⚠️ This is a "Quantity Decrease" amendment.\n'
-                        'New quantity must be LESS than current quantity.\n\n'
-                        '✏️ Please enter a value less than %s'
-                    ) % (
-                        product_display,
-                        line.original_quantity,
-                        line.new_quantity,
-                        line.new_quantity - line.original_quantity,
-                        line.original_quantity
-                    ))
-                
-                # Check 2: Cannot be negative
-                if line.new_quantity < 0:
-                    raise ValidationError(_(
-                        '❌ NEGATIVE QUANTITY NOT ALLOWED!\n\n'
+                        '❌ INVALID QUANTITY!\n\n'
                         'Product: %s\n'
                         'New Qty: %s\n\n'
-                        '✏️ Please enter a value between 0 and %s'
-                    ) % (product_display, line.new_quantity, line.original_quantity))
-                
-                # Warning if quantity equals original (allow but log)
-                if line.original_quantity > 0 and line.new_quantity == line.original_quantity:
-                    _logger.info(f"Product '{product_display}' has unchanged quantity: {line.original_quantity}")
-    
+                        '✏️ Please enter a value greater than 0.'
+                    ) % (product_display, line.new_quantity))
+
     @api.onchange('new_quantity')
     def _onchange_new_quantity(self):
         """Real-time validation when user changes New Qty"""
         if self.amendment_id and self.amendment_id.amendment_type == 'quantity':
-            if self.original_quantity > 0:
+            if self.new_quantity <= 0:
                 product_display = self.product_name or (self.product_id.name if self.product_id else 'Product')
-                
-                # Warning if trying to increase
-                if self.new_quantity > self.original_quantity:
-                    return {
-                        'warning': {
-                            'title': _('⚠️ Quantity Cannot Increase'),
-                            'message': _(
-                                'Product: %s\n\n'
-                                'Current Qty: %s\n'
-                                'You entered: %s (increase of +%s)\n\n'
-                                'This is a "Quantity Decrease" amendment.\n'
-                                'Please enter a value LESS than %s'
-                            ) % (
-                                product_display,
-                                self.original_quantity,
-                                self.new_quantity,
-                                self.new_quantity - self.original_quantity,
-                                self.original_quantity
-                            )
-                        }
+                return {
+                    'warning': {
+                        'title': _('❌ Invalid Quantity'),
+                        'message': _(
+                            'Product: %s\n\n'
+                            'Quantity must be greater than zero.'
+                        ) % product_display
                     }
-                
-                # Warning if unchanged
-                elif self.new_quantity == self.original_quantity:
-                    return {
-                        'warning': {
-                            'title': _('ℹ️ No Change'),
-                            'message': _(
-                                'Product: %s\n\n'
-                                'The quantity is unchanged (%s).\n\n'
-                                'For a decrease amendment, at least one product\n'
-                                'must have reduced quantity.'
-                            ) % (product_display, self.original_quantity)
-                        }
-                    }
-                
-                # Warning if negative
-                elif self.new_quantity < 0:
-                    return {
-                        'warning': {
-                            'title': _('❌ Invalid Quantity'),
-                            'message': _(
-                                'Product: %s\n\n'
-                                'Quantity cannot be negative.\n'
-                                'Please enter a value between 0 and %s'
-                            ) % (product_display, self.original_quantity)
-                        }
-                    }
+                }
 
 
 # ============================================

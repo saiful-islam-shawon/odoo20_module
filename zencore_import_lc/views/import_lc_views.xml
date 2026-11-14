@@ -42,6 +42,7 @@
                     <field name="is_current_user_approver" invisible="1"/>
                     <field name="can_create_commercial_invoice" invisible="1"/>
                     <field name="can_close_lc" invisible="1"/>
+                    <field name="has_quantity_amendment" invisible="1"/>
                    <!-- <button name="action_confirm"
                         string="Confirm Order"
                         type="object"
@@ -170,6 +171,7 @@
                                     <field name="product_name" readonly="1"/>
                                     <field name="quantity" readonly="1"/>
                                     <field name="uom_id" string="UOM" readonly="1"/>
+                                    <field name="amended_quantity" string="Amended QTY" readonly="1" column_invisible="not parent.has_quantity_amendment"/>
                                     <field name="hs_code" string="HS Code" readonly="parent.state != 'draft'"/>
                                     <field name="currency_id" column_invisible="1"/>
                                     <field name="unit_price" readonly="1" widget="monetary" options="{'currency_field': 'currency_id'}"/>

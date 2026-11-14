@@ -372,3 +372,112 @@ class TestLCModuleContracts(TransactionCase):
         amendment.action_submit()
         amendment.action_approve()
         self.assertEqual(lc.lc_amount, 80.0)
+
+    def test_import_lc_amendment_quantity_increase_decrease_and_reflection(self):
+        """Quantity Increase/Decrease amendments update LC product lines and LC Amount."""
+        supplier = self.env['res.partner'].create({'name': 'AMD Qty Test Supplier', 'supplier_rank': 1})
+        product = self.env['product.product'].create({'name': 'AMD Qty Test Product', 'purchase_ok': True})
+        bank = self.env['res.bank'].sudo().create({'name': 'AMD Qty Test Bank', 'bic': 'AMDQBDDH'})
+
+        order = self.env['purchase.order'].create({
+            'partner_id': supplier.id,
+            'purchase_type': 'import',
+            'order_line': [(0, 0, {
+                'product_id': product.id,
+                'name': 'AMD Qty Line',
+                'product_qty': 20.0,
+                'price_unit': 3.0,
+                'uom_id': product.uom_id.id,
+            })],
+        })
+        po_line = order.order_line.filtered('product_id')
+        pi = self.env['lc.order'].create({
+            'po_number': order.id,
+            'pi_number': 'PI-AMD-001',
+            'port_of_shipment': 'Shanghai',
+            'destination_port': 'Chittagong',
+            'conversion_rate': 120.0,
+            'lc_line_ids': [(0, 0, {
+                'po_line_id': po_line.id,
+                'product_id': product.id,
+                'quantity': 20.0,
+                'unit_price': 3.0,
+                'product_uom_id': po_line.uom_id.id,
+            })],
+        })
+        pi.action_confirm()
+
+        lc = self.env['import.lc'].create({
+            'lc_order_id': pi.id,
+            'lc_number': 'LC-AMD-001',
+            'lc_type': 'foreign',
+            'applicant_bank_id': bank.id,
+            'lc_amount': 0.0,
+            'lc_tolerance_percent': 10.0,
+            'margin_rate': 1.0,
+        })
+        lc.action_confirm()
+        self.assertEqual(lc.state, 'confirmed')
+        self.assertEqual(lc.lc_amount, 60.0)
+        self.assertFalse(lc.has_quantity_amendment)
+        self.assertEqual(lc.product_line_ids[0].amended_quantity, 0.0)
+        self.assertEqual(lc.product_line_ids[0].total_cost, 60.0)
+
+        # AC-1: Test Quantity Increase (20 -> 25)
+        amd_inc = self.env['import.lc.amendment'].create({
+            'import_lc_id': lc.id,
+            'amendment_type': 'quantity',
+            'reason': 'Increase order volume',
+        })
+        amd_inc._onchange_import_lc_id()
+        self.assertEqual(len(amd_inc.product_line_ids), 1)
+        self.assertEqual(amd_inc.product_line_ids[0].original_quantity, 20.0)
+
+        # Set new quantity to 25.0 (increase of +5.0)
+        amd_inc.product_line_ids[0].write({'new_quantity': 25.0})
+        self.assertEqual(amd_inc.product_line_ids[0].quantity_change, 5.0)
+
+        # Submit and approve amendment
+        amd_inc.action_submit()
+        self.assertEqual(amd_inc.state, 'submitted')
+        amd_inc.action_approve()
+        self.assertEqual(amd_inc.state, 'approved')
+
+        # AC-4 & AC-5: Check Import LC reflection after approval
+        lc.invalidate_recordset()
+        self.assertTrue(lc.has_quantity_amendment)
+        line = lc.product_line_ids[0]
+        self.assertEqual(line.amended_quantity, 25.0)
+        self.assertEqual(line.total_cost, 75.0)  # 25 * 3.0
+        self.assertEqual(lc.lc_amount, 75.0)
+        self.assertEqual(lc.lc_amount_bdt, 9000.0)  # 75 * 120.0
+        self.assertEqual(lc.total_lc_cost, 9000.0)
+        self.assertEqual(lc.margin_value, 90.0)  # 1% of 9000.0
+        self.assertEqual(lc.lc_available_amount, 82.5)  # 75 + 7.5 - 0
+
+        # Downstream CI uses the amended quantity (25.0)
+        ci_action = lc.action_create_commercial_invoice()
+        ci_vals = ci_action['context']
+        ci = self.env['import.ci'].create({
+            'import_lc_id': ci_vals['default_import_lc_id'],
+            'ci_number': 'CI-AMD-001',
+        })
+        self.assertEqual(ci.product_line_ids[0].lc_quantity, 25.0)
+
+        # AC-2: Test subsequent Quantity Decrease (25 -> 22)
+        amd_dec = self.env['import.lc.amendment'].create({
+            'import_lc_id': lc.id,
+            'amendment_type': 'quantity',
+            'reason': 'Slight volume adjustment down',
+        })
+        amd_dec._onchange_import_lc_id()
+        self.assertEqual(amd_dec.product_line_ids[0].original_quantity, 25.0)
+        amd_dec.product_line_ids[0].write({'new_quantity': 22.0})
+        amd_dec.action_submit()
+        amd_dec.action_approve()
+
+        lc.invalidate_recordset()
+        line.invalidate_recordset()
+        self.assertEqual(line.amended_quantity, 22.0)
+        self.assertEqual(line.total_cost, 66.0)  # 22 * 3.0
+        self.assertEqual(lc.lc_amount, 66.0)

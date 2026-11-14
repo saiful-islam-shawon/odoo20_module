@@ -651,6 +651,11 @@ class ImportLC(models.Model):
     presentation_period_days = fields.Integer(string='Document Presentation Period (Days)', default=21, tracking=True)
     expiry_place = fields.Char(string='LC Expiry Place', tracking=True)
     landed_cost_count = fields.Integer(string='Landed Cost Count', compute='_compute_landed_cost_count')
+    has_quantity_amendment = fields.Boolean(
+        string='Has Quantity Amendment',
+        compute='_compute_has_quantity_amendment',
+        store=True,
+    )
     can_create_commercial_invoice = fields.Boolean(
         string='Can Create Commercial Invoice',
         compute='_compute_workflow_actions',
@@ -659,6 +664,13 @@ class ImportLC(models.Model):
         string='Can Close LC',
         compute='_compute_workflow_actions',
     )
+
+    @api.depends('amendment_ids.state', 'amendment_ids.amendment_type')
+    def _compute_has_quantity_amendment(self):
+        for record in self:
+            record.has_quantity_amendment = bool(
+                record.amendment_ids.filtered(lambda a: a.state == 'approved' and a.amendment_type == 'quantity')
+            )
 
     @api.depends('lc_amount', 'lc_tolerance_percent', 'lc_conversion_rate',
                  'ci_ids.product_line_ids.total_cost', 'ci_ids.state')
@@ -700,7 +712,12 @@ class ImportLC(models.Model):
                 if line.po_line_id
                 else used_by_product.get(line.product_id.id, 0.0)
             )
-            remaining_quantity = line.quantity - used_quantity
+            effective_qty = (
+                line.amended_quantity
+                if (self.has_quantity_amendment and line.amended_quantity > 0)
+                else line.quantity
+            )
+            remaining_quantity = effective_qty - used_quantity
             if line.uom_id:
                 if line.uom_id.compare(remaining_quantity, 0.0) > 0:
                     return True
@@ -709,8 +726,8 @@ class ImportLC(models.Model):
         return False
 
     @api.depends(
-        'state',
-        'product_line_ids.quantity', 'product_line_ids.product_id',
+        'state', 'has_quantity_amendment',
+        'product_line_ids.quantity', 'product_line_ids.amended_quantity', 'product_line_ids.product_id',
         'product_line_ids.po_line_id', 'product_line_ids.uom_id',
         'ci_ids.state', 'ci_ids.product_line_ids.ci_quantity',
         'ci_ids.product_line_ids.product_id', 'ci_ids.product_line_ids.po_line_id',
@@ -1175,6 +1192,55 @@ class ImportLCProductLine(models.Model):
     )
     uom_id = fields.Many2one('uom.uom', string='Unit of Measure', help='Unit copied from the source PI/PO line.')
     hs_code = fields.Char(string='HS Code', help='Customs HS code required for the import declaration.')
+    amended_quantity = fields.Float(
+        string='Amended QTY',
+        compute='_compute_amended_quantity',
+        digits='Product Unit of Measure',
+        store=True,
+        help='Effective product quantity from the latest approved quantity amendment.'
+    )
+
+    @api.depends(
+        'import_lc_id.has_quantity_amendment',
+        'import_lc_id.amendment_ids.state',
+        'import_lc_id.amendment_ids.amendment_type',
+        'import_lc_id.amendment_ids.product_line_ids.new_quantity',
+        'product_id',
+        'po_line_id',
+    )
+    def _compute_amended_quantity(self):
+        for line in self:
+            lc = line.import_lc_id
+            if not lc or not lc.has_quantity_amendment:
+                line.amended_quantity = 0.0
+                continue
+            latest_amd = self.env['import.lc.amendment'].search([
+                ('import_lc_id', '=', lc.id),
+                ('state', '=', 'approved'),
+                ('amendment_type', '=', 'quantity'),
+            ], order='approved_date desc, id desc', limit=1)
+            if not latest_amd:
+                line.amended_quantity = 0.0
+                continue
+            match = False
+            if line.po_line_id:
+                match = latest_amd.product_line_ids.filtered(lambda al: al.po_line_id == line.po_line_id)[:1]
+            if not match and line.product_id:
+                match = latest_amd.product_line_ids.filtered(lambda al: al.product_id == line.product_id)[:1]
+            if match:
+                line.amended_quantity = match.new_quantity
+            else:
+                line.amended_quantity = line.quantity
+
+    @api.depends('quantity', 'unit_price', 'amended_quantity', 'import_lc_id.has_quantity_amendment')
+    def _compute_total_cost(self):
+        for line in self:
+            effective_qty = (
+                line.amended_quantity
+                if (line.import_lc_id.has_quantity_amendment and line.amended_quantity > 0)
+                else line.quantity
+            )
+            line.total_cost = effective_qty * line.unit_price
 
 
 class ImportCI(models.Model):
