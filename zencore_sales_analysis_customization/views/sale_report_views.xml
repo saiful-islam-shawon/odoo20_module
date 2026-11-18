@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_sale_report_list_inherit_free_product" model="ir.ui.view">
+        <field name="name">sale.report.list.inherit.free.product</field>
+        <field name="model">sale.report</field>
+        <field name="inherit_id" ref="sale.sale_report_view_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//list" position="attributes">
+                <attribute name="js_class">sales_analysis_free_product_list</attribute>
+            </xpath>
+            <xpath expr="//field[@name='product_uom_qty']" position="after">
+                <field name="is_free_product" column_invisible="True"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>
+

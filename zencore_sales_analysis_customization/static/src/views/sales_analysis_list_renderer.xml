@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <t t-name="zencore_sales_analysis_customization.ListRenderer.Rows">
+        <t t-if="!list.isGrouped">
+            <t t-if="this.displayRowCreates and this.props.editable === 'top'">
+                <t t-call="{{ this.constructor.createRowTemplate }}"/>
+            </t>
+            <t t-if="this.isCustomerGroup(groupId) and this.hasFreeProducts(list)">
+                <!-- 1. Render Sold Products First -->
+                <t t-foreach="this.getSoldRecords(list)" t-as="record" t-key="record.id">
+                    <t t-call="{{ this.constructor.recordRowTemplate }}"/>
+                </t>
+                <!-- 2. Render Total Free Product Separator Row -->
+                <tr class="o_free_product_summary_row bg-200 fw-bold border-top border-bottom">
+                    <td t-if="this.hasSelectors" class="o_list_record_selector user-select-none"/>
+                    <t t-foreach="this.columns" t-as="column" t-key="column.id">
+                        <td t-if="column_index === 0" class="fw-bold text-dark px-3 align-middle">
+                            Total Free Product
+                        </td>
+                        <td t-elif="column.name === 'product_uom_qty'" class="o_list_number fw-bold text-end align-middle">
+                            <t t-out="this.formatFreeQty(this.getTotalFreeQty(list))"/>
+                        </td>
+                        <td t-else="" class="align-middle"/>
+                    </t>
+                    <td t-if="this.displayOptionalFields or this.props.list.isGrouped or hasX2ManyAction"/>
+                </tr>
+                <!-- 3. Render Free Products Below Separator -->
+                <t t-foreach="this.getFreeRecords(list)" t-as="record" t-key="record.id">
+                    <t t-call="{{ this.constructor.recordRowTemplate }}"/>
+                </t>
+            </t>
+            <t t-else="">
+                <!-- Standard record rows iteration -->
+                <t t-foreach="list.records" t-as="record" t-key="record.id">
+                    <t t-call="{{ this.constructor.recordRowTemplate }}"/>
+                </t>
+            </t>
+            <t t-if="this.displayRowCreates and this.props.editable !== 'top'">
+                <t t-call="{{ this.constructor.createRowTemplate }}"/>
+            </t>
+            <t t-if="!this.props.list.isGrouped and !this.props.noContentHelp">
+                <tr t-foreach="this.getEmptyRowIds" t-as="emptyRowId" t-key="emptyRowId">
+                    <td t-att-colspan="this.nbCols">&#8203;</td>
+                </tr>
+            </t>
+        </t>
+        <t t-else="">
+            <!-- Group iteration when list is grouped -->
+            <t t-foreach="list.groups" t-as="group" t-key="group.id">
+                <t t-call="{{ this.constructor.groupRowTemplate }}"/>
+                <t t-if="!group.isFolded">
+                    <t t-if="this.displayGroupCreateRow(group) and this.props.editable === 'top'">
+                        <t t-call="{{ this.constructor.groupCreateRowTemplate }}"/>
+                    </t>
+                    <t t-call="{{ this.constructor.rowsTemplate }}" list="group.list" groupId="group.id"/>
+                    <t t-if="this.displayGroupCreateRow(group) and this.props.editable !== 'top'">
+                        <t t-call="{{ this.constructor.groupCreateRowTemplate }}"/>
+                    </t>
+                </t>
+            </t>
+        </t>
+    </t>
+
+</templates>
+
