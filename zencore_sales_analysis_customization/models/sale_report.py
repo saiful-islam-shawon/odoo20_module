@@ -46,24 +46,25 @@ class SaleReport(models.Model):
             order=order,
             **kwargs,
         )
-        if groupby and groupby[0].startswith("partner_id") and aggregates:
-            clean_aggregates = [agg for agg in aggregates if agg != "__count"]
-            if clean_aggregates:
-                sold_domain = Domain(domain) & Domain([("is_free_product", "=", False)])
-                sold_stats = {}
-                for row in self._read_group(sold_domain, [groupby[0]], clean_aggregates):
-                    partner_val = row[0]
-                    pid = partner_val.id if hasattr(partner_val, "id") else partner_val
-                    sold_stats[pid] = dict(zip(clean_aggregates, row[1:]))
+        if groupby and aggregates:
+            first_group_field = groupby[0].split(":")[0]
+            if first_group_field in ("partner_id", "product_id"):
+                clean_aggregates = [agg for agg in aggregates if agg != "__count"]
+                if clean_aggregates:
+                    sold_domain = Domain(domain) & Domain([("is_free_product", "=", False)])
+                    sold_stats = {}
+                    for row in self._read_group(sold_domain, [groupby[0]], clean_aggregates):
+                        key_val = row[0]
+                        key_id = key_val.id if hasattr(key_val, "id") else key_val
+                        sold_stats[key_id] = dict(zip(clean_aggregates, row[1:]))
 
-                for grp in result.get("groups", []):
-                    pval = grp.get("partner_id")
-                    pid = pval[0] if isinstance(pval, (list, tuple)) else pval
-                    if pid in sold_stats:
-                        for agg, val in sold_stats[pid].items():
-                            grp[agg] = val
-                    else:
-                        for agg in clean_aggregates:
-                            grp[agg] = 0.0
+                    for grp in result.get("groups", []):
+                        val = grp.get(first_group_field)
+                        item_id = val[0] if isinstance(val, (list, tuple)) else val
+                        if item_id in sold_stats:
+                            for agg, agg_val in sold_stats[item_id].items():
+                                grp[agg] = agg_val
+                        else:
+                            for agg in clean_aggregates:
+                                grp[agg] = 0.0
         return result
-
