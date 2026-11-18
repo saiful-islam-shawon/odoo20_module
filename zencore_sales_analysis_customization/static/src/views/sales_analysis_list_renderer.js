@@ -2,6 +2,8 @@ import { ListRenderer } from "@web/views/list/list_renderer";
 import { formatFloat } from "@web/core/utils/numbers";
 import { formatMonetary } from "@web/views/fields/formatters";
 
+const TARGET_GROUP_FIELDS = ["partner_id", "product_tmpl_id", "product_id"];
+
 export class SalesAnalysisListRenderer extends ListRenderer {
     static rowsTemplate = "zencore_sales_analysis_customization.ListRenderer.Rows";
 
@@ -12,12 +14,12 @@ export class SalesAnalysisListRenderer extends ListRenderer {
         if (groupId && this.props.list.groups) {
             const group = this.props.list.groups.find((g) => g.id === groupId);
             if (group && group.groupByField) {
-                return ["partner_id", "product_id"].includes(group.groupByField.name);
+                return TARGET_GROUP_FIELDS.includes(group.groupByField.name);
             }
         }
         return Boolean(
             this.props.list.groupByField &&
-            ["partner_id", "product_id"].includes(this.props.list.groupByField.name)
+            TARGET_GROUP_FIELDS.includes(this.props.list.groupByField.name)
         );
     }
 
@@ -63,7 +65,7 @@ export class SalesAnalysisListRenderer extends ListRenderer {
     formatGroupAggregate(group, column) {
         if (
             group.groupByField &&
-            ["partner_id", "product_id"].includes(group.groupByField.name) &&
+            TARGET_GROUP_FIELDS.includes(group.groupByField.name) &&
             (column.name === "product_uom_qty" || column.name === "price_total" || column.name === "price_subtotal")
         ) {
             if (group.list && group.list.records && group.list.records.length > 0) {

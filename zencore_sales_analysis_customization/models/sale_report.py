@@ -48,7 +48,7 @@ class SaleReport(models.Model):
         )
         if groupby and aggregates:
             first_group_field = groupby[0].split(":")[0]
-            if first_group_field in ("partner_id", "product_id"):
+            if first_group_field in ("partner_id", "product_tmpl_id", "product_id"):
                 clean_aggregates = [agg for agg in aggregates if agg != "__count"]
                 if clean_aggregates:
                     sold_domain = Domain(domain) & Domain([("is_free_product", "=", False)])
