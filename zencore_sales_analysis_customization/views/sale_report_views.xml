@@ -8,10 +8,12 @@
             <xpath expr="//list" position="attributes">
                 <attribute name="js_class">sales_analysis_free_product_list</attribute>
             </xpath>
+            <xpath expr="//field[@name='product_uom_qty']" position="before">
+                <field name="free_qty" string="Free Qty" sum="Sum of Free Qty"/>
+            </xpath>
             <xpath expr="//field[@name='product_uom_qty']" position="after">
                 <field name="is_free_product" column_invisible="True"/>
             </xpath>
         </field>
     </record>
 </odoo>
-

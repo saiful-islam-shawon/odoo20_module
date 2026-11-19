@@ -52,10 +52,11 @@ class SalesAnalysisGroupExportXlsxWriter(GroupExportXlsxWriter):
         sold_data = [item[1] for item in all_items if not item[0]]
         free_data = [item[1] for item in all_items if item[0]]
 
-        # Write group header with sold-only aggregates
+        # Write group header with sold-only aggregates and free qty
         label = '%s%s (%s)' % ('    ' * group_depth, group_name, group.count)
         self.write(row, column, label, self.header_bold_style)
 
+        free_qty_idx = next((i for i, f in enumerate(self.fields) if f['name'] == 'free_qty'), None)
         qty_idx = next((i for i, f in enumerate(self.fields) if f['name'] == 'product_uom_qty'), None)
         price_unit_idx = next((i for i, f in enumerate(self.fields) if f['name'] == 'price_unit'), None)
         total_indices = [i for i, f in enumerate(self.fields) if f['name'] in ('price_total', 'price_subtotal')]
@@ -63,6 +64,18 @@ class SalesAnalysisGroupExportXlsxWriter(GroupExportXlsxWriter):
         sold_qty = (
             sum(r[qty_idx] for r in sold_data if isinstance(r[qty_idx], (int, float)))
             if qty_idx is not None
+            else 0.0
+        )
+        total_free_qty = (
+            sum(
+                (
+                    r[free_qty_idx]
+                    if free_qty_idx is not None and isinstance(r[free_qty_idx], (int, float)) and r[free_qty_idx]
+                    else (r[qty_idx] if qty_idx is not None and isinstance(r[qty_idx], (int, float)) else 0.0)
+                )
+                for r in free_data
+            )
+            if free_data
             else 0.0
         )
         first_total_idx = total_indices[0] if total_indices else None
@@ -78,6 +91,9 @@ class SalesAnalysisGroupExportXlsxWriter(GroupExportXlsxWriter):
             header_style = self.header_bold_style
             if col_idx == qty_idx:
                 val = sold_qty
+                header_style = self.header_bold_style_float
+            elif col_idx == free_qty_idx:
+                val = total_free_qty
                 header_style = self.header_bold_style_float
             elif col_idx in total_indices:
                 val = sum(r[col_idx] for r in sold_data if isinstance(r[col_idx], (int, float)))
@@ -101,24 +117,26 @@ class SalesAnalysisGroupExportXlsxWriter(GroupExportXlsxWriter):
             if free_data:
                 free_label = '%sTotal Free Product' % ('    ' * (group_depth + 1))
                 self.write(row, 0, free_label, self.subtotal_style)
-                free_qty = (
-                    sum(r[qty_idx] for r in free_data if isinstance(r[qty_idx], (int, float)))
-                    if qty_idx is not None
-                    else 0.0
-                )
                 free_amount = 0.0
-                if qty_idx is not None and price_unit_idx is not None:
+                if price_unit_idx is not None:
                     for r in free_data:
-                        q = r[qty_idx] if isinstance(r[qty_idx], (int, float)) else 0.0
+                        q = (
+                            r[free_qty_idx]
+                            if free_qty_idx is not None and isinstance(r[free_qty_idx], (int, float)) and r[free_qty_idx]
+                            else (r[qty_idx] if qty_idx is not None and isinstance(r[qty_idx], (int, float)) else 0.0)
+                        )
                         p = r[price_unit_idx] if isinstance(r[price_unit_idx], (int, float)) else 0.0
                         free_amount += q * p
 
                 for col_idx, field in enumerate(self.fields[1:], start=1):
                     val = ''
                     style = self.subtotal_style
-                    if col_idx == qty_idx:
-                        val = free_qty
+                    if col_idx == free_qty_idx:
+                        val = total_free_qty
                         style = self.subtotal_style_float
+                    elif col_idx == qty_idx:
+                        val = ''
+                        style = self.subtotal_style
                     elif col_idx in total_indices:
                         val = free_amount
                         style = self.subtotal_style_monetary

@@ -41,14 +41,14 @@ export class SalesAnalysisListRenderer extends ListRenderer {
 
     getTotalFreeQty(list) {
         return this.getFreeRecords(list).reduce(
-            (acc, r) => acc + (r.data.product_uom_qty || 0),
+            (acc, r) => acc + (r.data.free_qty || r.data.product_uom_qty || 0),
             0
         );
     }
 
     getTotalFreeAmount(list) {
         return this.getFreeRecords(list).reduce(
-            (acc, r) => acc + ((r.data.product_uom_qty || 0) * (r.data.price_unit || 0)),
+            (acc, r) => acc + ((r.data.free_qty || r.data.product_uom_qty || 0) * (r.data.price_unit || 0)),
             0
         );
     }
@@ -65,17 +65,32 @@ export class SalesAnalysisListRenderer extends ListRenderer {
     formatGroupAggregate(group, column) {
         if (
             group.groupByField &&
-            TARGET_GROUP_FIELDS.includes(group.groupByField.name) &&
-            (column.name === "product_uom_qty" || column.name === "price_total" || column.name === "price_subtotal")
+            TARGET_GROUP_FIELDS.includes(group.groupByField.name)
         ) {
             if (group.list && group.list.records && group.list.records.length > 0) {
-                const soldRecords = this.getSoldRecords(group.list);
-                const sumVal = soldRecords.reduce(
-                    (acc, r) => acc + (r.data[column.name] || 0),
-                    0
-                );
                 if (column.name === "product_uom_qty") {
+                    const soldRecords = this.getSoldRecords(group.list);
+                    const sumVal = soldRecords.reduce(
+                        (acc, r) => acc + (r.data.product_uom_qty || 0),
+                        0
+                    );
                     return { value: this.formatFreeQty(sumVal) };
+                }
+                if (column.name === "free_qty") {
+                    const freeRecords = this.getFreeRecords(group.list);
+                    const sumVal = freeRecords.reduce(
+                        (acc, r) => acc + (r.data.free_qty || r.data.product_uom_qty || 0),
+                        0
+                    );
+                    return { value: this.formatFreeQty(sumVal) };
+                }
+                if (column.name === "price_total" || column.name === "price_subtotal") {
+                    const soldRecords = this.getSoldRecords(group.list);
+                    const sumVal = soldRecords.reduce(
+                        (acc, r) => acc + (r.data[column.name] || 0),
+                        0
+                    );
+                    return { value: this.formatFreeAmount(sumVal, group.list) };
                 }
             }
         }
