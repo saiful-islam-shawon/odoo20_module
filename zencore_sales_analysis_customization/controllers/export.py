@@ -43,17 +43,21 @@ class SalesAnalysisGroupExportXlsxWriter(GroupExportXlsxWriter):
         )
 
     def write_group(self, row, column, group_name, group, group_depth=0):
+        # Collect all items for this subtree
+        all_items = _get_all_group_records(group)
+        if not all_items and not group.children:
+            return row, column
+
         group_name = group_name[1] if isinstance(group_name, tuple) and len(group_name) > 1 else group_name
         if group._groupby_type[group_depth] != 'boolean':
             group_name = group_name or request.env._("Undefined")
 
-        # Collect all items for this subtree
-        all_items = _get_all_group_records(group)
         sold_data = [item[1] for item in all_items if not item[0]]
         free_data = [item[1] for item in all_items if item[0]]
 
         # Write group header with sold-only aggregates and free qty
-        label = '%s%s (%s)' % ('    ' * group_depth, group_name, group.count)
+        count_display = len(all_items) if all_items else group.count
+        label = '%s%s (%s)' % ('    ' * group_depth, group_name, count_display)
         self.write(row, column, label, self.header_bold_style)
 
         free_qty_idx = next((i for i, f in enumerate(self.fields) if f['name'] == 'free_qty'), None)
@@ -178,7 +182,11 @@ class CustomExcelExport(ExcelExport):
             groupby_type = [Model._fields[x.split(':', 1)[0].split('.', 1)[0]].type for x in groupby]
             tree = GroupsTreeNode(Model, field_names, groupby, groupby_type)
 
-            SearchModel = Model.with_context(active_test=False) if ids else Model
+            if ids:
+                domain = [('id', 'in', ids)]
+                SearchModel = Model.with_context(active_test=False)
+            else:
+                SearchModel = Model
             groups_data = SearchModel.formatted_read_group(domain, groupby, ['__count', 'id:array_agg'])
 
             record_rows = {}
