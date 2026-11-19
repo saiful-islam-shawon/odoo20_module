@@ -18,9 +18,7 @@
                         <td t-if="column_index === 0" class="fw-bold text-dark px-3 align-middle">
                             Total Free Product
                         </td>
-                        <td t-elif="column.name === 'free_qty'" class="o_list_number fw-bold text-end align-middle">
-                            <t t-out="this.formatFreeQty(this.getTotalFreeQty(list))"/>
-                        </td>
+                        <td t-elif="column.name === 'free_qty'" class="align-middle"/>
                         <td t-elif="column.name === 'product_uom_qty'" class="align-middle"/>
                         <td t-elif="column.name === 'price_total' or column.name === 'price_subtotal'" class="o_list_number fw-bold text-end align-middle">
                             <t t-out="this.formatFreeAmount(this.getTotalFreeAmount(list), list)"/>

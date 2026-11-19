@@ -113,7 +113,7 @@ class SalesAnalysisGroupExportXlsxWriter(GroupExportXlsxWriter):
             for record in sold_data:
                 row, column = self._write_row(row, 0, record)
 
-            # Write "Total Free Product" row if free records exist
+            # Write "Total Free Product" row if free records exist (without any quantity value)
             if free_data:
                 free_label = '%sTotal Free Product' % ('    ' * (group_depth + 1))
                 self.write(row, 0, free_label, self.subtotal_style)
@@ -131,13 +131,7 @@ class SalesAnalysisGroupExportXlsxWriter(GroupExportXlsxWriter):
                 for col_idx, field in enumerate(self.fields[1:], start=1):
                     val = ''
                     style = self.subtotal_style
-                    if col_idx == free_qty_idx:
-                        val = total_free_qty
-                        style = self.subtotal_style_float
-                    elif col_idx == qty_idx:
-                        val = ''
-                        style = self.subtotal_style
-                    elif col_idx in total_indices:
+                    if col_idx in total_indices:
                         val = free_amount
                         style = self.subtotal_style_monetary
                     self.write(row, col_idx, val, style)
