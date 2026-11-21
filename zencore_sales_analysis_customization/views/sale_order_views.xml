@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Inherit Quotation / Sale Order Form View to allow editing Quantity on Free Product lines -->
+    <record id="sale_order_view_form_inherit_free_qty" model="ir.ui.view">
+        <field name="name">sale.order.form.inherit.free.qty</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_order_form"/>
+        <field name="priority">20</field>
+        <field name="arch" type="xml">
+            <xpath expr="//list//field[@name='is_reward_line']" position="after">
+                <field name="is_reward_line_readonly" column_invisible="True"/>
+            </xpath>
+            <xpath expr="//list//field[@name='product_uom_qty']" position="attributes">
+                <attribute name="readonly" remove="is_reward_line" separator=" or "/>
+                <attribute name="readonly" add="is_reward_line_readonly" separator=" or "/>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>
+
