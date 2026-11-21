@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Inherit Stock Report List View to add Stock In, Stock Out, and Closing Stock -->
+    <record id="product_product_stock_tree_inherit_movements" model="ir.ui.view">
+        <field name="name">product.product.stock.list.inherit.movements</field>
+        <field name="model">product.product</field>
+        <field name="inherit_id" ref="stock.product_product_stock_tree"/>
+        <field name="priority">110</field>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='free_qty']" position="after">
+                <field name="stock_in_qty" string="Stock In" optional="show" sum="Total Stock In"/>
+                <field name="stock_out_qty" string="Stock Out" optional="show" sum="Total Stock Out"/>
+                <field name="closing_stock_qty" string="Closing Stock" optional="show" sum="Total Closing Stock"/>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>
+
